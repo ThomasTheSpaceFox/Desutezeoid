@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+	<pageconf BGimg="1">
+		<title>another page</title>
+		<BG>BGseaside.jpg</BG>
+	</pageconf>
+	<forks>
+	</forks>
+	<core>
+		<label x="0" y="400" size="40">
+			<con>This is another page! :o</con>
+			<act type="none"/>
+		</label>
+		<label x="0" y="200" size="24">
+			<con>return to first amazing page! :o</con>
+			<act type="iref" ref="test0.xml"/>
+		</label>
+		<label x="0" y="580" size="20" BGCOLOR="#880000" FGCOLOR="#FFFFFF" >
+			<con>QUIT</con>
+			<act type="quit" ref="test1.xml"/>
+		</label>
+	</core>
+</main>
