@@ -1,0 +1,12 @@
+Desutezeoid Technical Documentation.
+engine setup:
+
+ENGSYSTEM.xml:
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<conf>
+	<screen x="800" y="600"/> <!--screen size settings-->
+	<title base="Desutezeoid v1.0 test program."/> <!--base part of the window title. usually the name of the game should be used. -->
+	<beginref>test0.xml</beginref><!--This should point to the starting "page" of the game. such as a title screen or menu.-->
+</conf>

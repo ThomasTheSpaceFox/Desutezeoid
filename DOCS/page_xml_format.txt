@@ -1,0 +1,61 @@
+Desutezeoid Technical Documentation.
+page xml format:
+
+keyids and forks:
+see "keyids_and_forking.txt"
+
+act attributes:
+act attributes are needed by ALL clickable core objects.
+the act attributes are common between all of them.
+<act type="key" ref="null"/> process only keyid and takekey attributes. (useful for scripting)
+<act type="iref" ref="test1.xml"/> page change. 
+<act type="quit" ref="null"/> special engine quit
+<act type="none" ref="null"/> do nothing
+example with notes. this is based on the test pages.
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+	<pageconf BGimg="1">you can disable the background by setting BGimg to "0".
+		<title>another page</title> page title
+		<BG>BGseaside.jpg</BG> page background image
+	</pageconf>
+	<forks>
+		<batchtrig keyid="alpha3">
+			<k if="1" keyid="switch1"/>
+			<k if="1" keyid="switch2"/>
+		</batchtrig>
+		<batchset keyid="predelta" set="1">
+			<k keyid="thisisatest1"/>
+			<k keyid="thisisatest2"/>
+			<k keyid="thisisatest3"/>
+			<k keyid="delta"/>
+		</batchset>
+	</forks>
+	<core>
+		<label x="0" y="400" size="40"> label
+			<con>This is another page! :o</con>
+			<act type="none"/>
+		</label>
+		<label x="0" y="200" size="24"> label x and y coordinates, and font size
+			<con>return to first amazing page! :o</con> the text
+			<act type="iref" ref="test0.xml"/> note the type "iref" changes page to page defined by "ref"
+		</label>
+		<label x="0" y="580" size="20" BGCOLOR="#880000" FGCOLOR="#FFFFFF" >
+			<con>QUIT</con>
+			<act type="quit" ref="test1.xml"/> special engine quit type note how ref still is present
+		</label>
+		<!--a nice tiggle example is shown in the next two.
+		<label x="150" y="230" size="24" BGCOLOR="#880000" FGCOLOR="#FFFFFF" keyid="switch2" offkey="switch2">
+			<con>(off)</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="150" y="230" size="24" BGCOLOR="#008800" FGCOLOR="#FFFFFF" takekey="switch2" onkey="switch2">
+			<con>(on)</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<img x="80" y="80" hovpic="1"> note how this is using the optional hovpic mode.
+			<con>testimg0.png</con> image filename
+			<altcon>testimg1.png</altcon>alternat image filename. only needed in hovpic mode
+			<act type="quit" ref="test1.xml"/> images and labels both support the same act atributes.
+		</img>
+	</core>
+</main>
