@@ -19,6 +19,7 @@ screentag=confroot.find("screen")
 scrnx=int(screentag.attrib.get("x", "800"))
 scrny=int(screentag.attrib.get("y", "600"))
 titletag=confroot.find("title")
+beginref=(confroot.find("beginref")).text
 titlebase=titletag.attrib.get("base", "Desutezeoid: ")
 class clicktab:
 	def __init__(self, box, reftype, ref, keyid, takekey):
@@ -38,7 +39,7 @@ def debugmsg(msg, printplaypos=0):
 			print msg
 prevpage="NULL"
 #point this to your first screen c: no menu program really needed :o
-curpage="test0.xml"
+curpage=beginref
 
 screensurf=pygame.display.set_mode((scrnx, scrny))
 quitflag=0
@@ -139,6 +140,57 @@ while quitflag==0:
 			forksanitycheck=0
 			
 	keybak=list(keylist)
+	
+	for labref in coretag.findall("img"):
+		keyid=labref.attrib.get('keyid', "0")
+		takekey=labref.attrib.get('takekey', "0")
+		onkey=labref.attrib.get('onkey', "0")
+		offkey=labref.attrib.get('offkey', "0")
+		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
+			imgx=int(labref.attrib.get("x"))
+			imgy=int(labref.attrib.get("y"))
+			imgcon=(labref.find("con")).text
+			hovpic=int(labref.attrib.get("hovpic", "0"))
+			act=labref.find("act")
+			acttype=act.attrib.get("type", "none")
+			pos = pygame.mouse.get_pos()
+			imggfx=pygame.image.load(imgcon)
+			clickref=screensurf.blit(imggfx, (imgx, imgy))
+			if hovpic==1:
+				hovcon=(labref.find("altcon")).text
+				hovgfx=pygame.image.load(hovcon)
+				if clickref.collidepoint(pos)==1:
+					clickref=screensurf.blit(hovgfx, (imgx, imgy))
+		
+			if acttype!="none":
+				pos = pygame.mouse.get_pos()
+				if acttype=="iref":
+					ref=act.attrib.get("ref")
+				#for event in pygame.event.get(MOUSEBUTTONDOWN):
+				#pygame.event.get()
+				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
+				#	curpage=ref
+				#	break
+					datstr=clicktab(clickref, "iref", ref, keyid, takekey)
+					clicklist.extend([datstr])
+				if acttype=="quit":
+					ref=act.attrib.get("ref")
+				#for event in pygame.event.get(MOUSEBUTTONDOWN):
+				#pygame.event.get()
+				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
+				#	quitflag=1
+				#	break
+					datstr=clicktab(clickref, "quit", ref, keyid, takekey)
+					clicklist.extend([datstr])
+				if acttype=="key":
+					ref=act.attrib.get("ref")
+				#for event in pygame.event.get(MOUSEBUTTONDOWN):
+				#pygame.event.get()
+				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
+				#	quitflag=1
+				#	break
+					datstr=clicktab(clickref, "key", ref, keyid, takekey)
+					clicklist.extend([datstr])
 	for labref in coretag.findall("label"):
 		keyid=labref.attrib.get('keyid', "0")
 		takekey=labref.attrib.get('takekey', "0")
@@ -191,56 +243,6 @@ while quitflag==0:
 				clicklist.extend([datstr])
 		#else:
 			#time.sleep(0.04)
-	for labref in coretag.findall("img"):
-		keyid=labref.attrib.get('keyid', "0")
-		takekey=labref.attrib.get('takekey', "0")
-		onkey=labref.attrib.get('onkey', "0")
-		offkey=labref.attrib.get('offkey', "0")
-		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
-			imgx=int(labref.attrib.get("x"))
-			imgy=int(labref.attrib.get("y"))
-			imgcon=(labref.find("con")).text
-			hovpic=int(labref.attrib.get("hovpic", "0"))
-			act=labref.find("act")
-			acttype=act.attrib.get("type", "none")
-			pos = pygame.mouse.get_pos()
-			imggfx=pygame.image.load(imgcon)
-			clickref=screensurf.blit(imggfx, (imgx, imgy))
-			if hovpic==1:
-				hovcon=(labref.find("altcon")).text
-				hovgfx=pygame.image.load(hovcon)
-				if clickref.collidepoint(pos)==1:
-					clickref=screensurf.blit(hovgfx, (imgx, imgy))
-		
-			if acttype!="none":
-				pos = pygame.mouse.get_pos()
-				if acttype=="iref":
-					ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	curpage=ref
-				#	break
-					datstr=clicktab(clickref, "iref", ref, keyid, takekey)
-					clicklist.extend([datstr])
-				if acttype=="quit":
-					ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	quitflag=1
-				#	break
-					datstr=clicktab(clickref, "quit", ref, keyid, takekey)
-					clicklist.extend([datstr])
-				if acttype=="key":
-					ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	quitflag=1
-				#	break
-					datstr=clicktab(clickref, "key", ref, keyid, takekey)
-					clicklist.extend([datstr])
 	for event in pygame.event.get():
 		#print "nominal"
 		if event.type==MOUSEBUTTONDOWN:

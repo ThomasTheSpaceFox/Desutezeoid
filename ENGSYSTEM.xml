@@ -2,4 +2,5 @@
 <conf>
 	<screen x="800" y="600"/>
 	<title base="Desutezeoid v1.0 test program." />
+	<beginref>test0.xml</beginref>
 </conf>
