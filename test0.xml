@@ -25,8 +25,16 @@
 		</batchset>
 	</forks>
 	<core>
-		<label x="300" y="400" size="40" transp="1" FGCOLOR="#FFFFFF">
+		<label x="300" y="400" size="40" transp="1" FGCOLOR="#FFFFFF" hoverkey="onhov2">
 			<con>Hello world! :D</con>
+			<act type="none"/>
+		</label>
+		<label x="80" y="130" size="24" transp="1" FGCOLOR="#000000" onkey="onhov1">
+			<con>Hey... an on-hover event. :o</con>
+			<act type="none"/>
+		</label>
+		<label x="300" y="450" size="24" transp="1" FGCOLOR="#000000" onkey="onhov2">
+			<con>Hey... an on-hover event. :o</con>
 			<act type="none"/>
 		</label>
 		<label x="300" y="200" size="24" transp="1" FGCOLOR="#FFFFFF" onkey="delta">
@@ -77,7 +85,7 @@
 			<con>QUIT</con>
 			<act type="quit" ref="test1.xml"/>
 		</label>
-		<img x="80" y="80" hovpic="1">
+		<img x="80" y="80" hovpic="1" hoverkey="onhov1">
 			<con>testimg0.png</con>
 			<altcon>testimg1.png</altcon>
 			<act type="quit" ref="test1.xml"/>

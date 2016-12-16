@@ -12,8 +12,10 @@ all core objects have optional "onkey" and "offkey" attributes.(each specifying 
 -if offkey is specified. the player must *NOT* obtained that keyID!
 -if neither are specified. that core object will be honored regardless.
 -if BOTH onkey and offkey are specified, The player must have the keyid specified in onkey, and must NOT have the keyid specified in offkey.
-also all clickable core objects have "keyid" and "takekey" the former gives a specified keyid on click, the latter has the oposing effect.
-
+Also, all clickable core objects have the following optional attributes:
+-keyid: gives a specified keyid on-click
+-takekey: takes a specified keyid on-click
+-hoverkey: given if mouse curser is hovered over object, actively removed if it isn't.
 
 
 Forks:

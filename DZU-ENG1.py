@@ -11,8 +11,7 @@ from pygame.locals import *
 import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
-print "Desutezeoid arbitrary point and click engine v1.0"
-
+print "Desutezeoid arbitrary point and click engine v1.0.1"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
 screentag=confroot.find("screen")
@@ -140,12 +139,13 @@ while quitflag==0:
 			forksanitycheck=0
 			
 	keybak=list(keylist)
-	
+	#print keylist
 	for labref in coretag.findall("img"):
 		keyid=labref.attrib.get('keyid', "0")
 		takekey=labref.attrib.get('takekey', "0")
 		onkey=labref.attrib.get('onkey', "0")
 		offkey=labref.attrib.get('offkey', "0")
+		hoverkey=labref.attrib.get('hoverkey', "0")
 		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
 			imgx=int(labref.attrib.get("x"))
 			imgy=int(labref.attrib.get("y"))
@@ -156,6 +156,13 @@ while quitflag==0:
 			pos = pygame.mouse.get_pos()
 			imggfx=pygame.image.load(imgcon)
 			clickref=screensurf.blit(imggfx, (imgx, imgy))
+			if hoverkey!="0":
+				if clickref.collidepoint(pos)==1:
+					if not hoverkey in keylist:
+						keylist.extend([hoverkey])
+				else:
+					if hoverkey in keylist:
+						keylist.remove(hoverkey)
 			if hovpic==1:
 				hovcon=(labref.find("altcon")).text
 				hovgfx=pygame.image.load(hovcon)
@@ -196,6 +203,7 @@ while quitflag==0:
 		takekey=labref.attrib.get('takekey', "0")
 		onkey=labref.attrib.get('onkey', "0")
 		offkey=labref.attrib.get('offkey', "0")
+		hoverkey=labref.attrib.get('hoverkey', "0")
 		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
 			labx=int(labref.attrib.get("x"))
 			laby=int(labref.attrib.get("y"))
@@ -212,6 +220,13 @@ while quitflag==0:
 			else:
 				labgfx=labfnt.render(labcon, True, FGCOL)
 			clickref=screensurf.blit(labgfx, (labx, laby))
+			if hoverkey!="0":
+				if clickref.collidepoint(pos)==1:
+					if not hoverkey in keylist:
+						keylist.extend([hoverkey])
+				else:
+					if hoverkey in keylist:
+						keylist.remove(hoverkey)
 			if acttype!="none":
 				pos = pygame.mouse.get_pos()
 			if acttype=="iref":
@@ -245,6 +260,10 @@ while quitflag==0:
 			#time.sleep(0.04)
 	for event in pygame.event.get():
 		#print "nominal"
+		if event.type == QUIT:
+			quitflag=1
+			print ("quit: OS or WM quit")
+			break
 		if event.type==MOUSEBUTTONDOWN:
 			#print "nominal2"
 			for f in clicklist:
