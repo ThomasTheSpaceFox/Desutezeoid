@@ -43,7 +43,7 @@ example with notes. this is based on the test pages.
 			<con>QUIT</con>
 			<act type="quit" ref="test1.xml"/> special engine quit type note how ref still is present
 		</label>
-		<!--a nice tiggle example is shown in the next two.
+		<!--a nice toggle example is shown in the next two.
 		<label x="150" y="230" size="24" BGCOLOR="#880000" FGCOLOR="#FFFFFF" keyid="switch2" offkey="switch2">
 			<con>(off)</con>
 			<act type="key" ref="test1.xml"/>

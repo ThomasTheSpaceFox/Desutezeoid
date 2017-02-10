@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
-	<pageconf BGimg="1">
+	<pageconf BGimg="1" BGM="1">
 		<title>Main Page</title>
 		<BG>BGseaside.jpg</BG>
+		<BGM>BGM1.ogg</BGM>
 	</pageconf>
 	<forks>
 		<batchtrig keyid="alpha">
@@ -17,14 +18,27 @@
 			<k if="1" keyid="switch1"/>
 			<k if="1" keyid="switch2"/>
 		</batchtrig>
+		<!--notice how this trigger lock triggers a sound event. note how the 
+lock keyid prevents the trigger keyid from re-triggering, thus the sound
+triggered by the two toggle switches being on plays only once, and only the 
+first time those toggle switches are in that state.-->
+		<triggerlock keyid="alpha3" lock="soundfx1lock1" trigger="soundfx1"/>
+		<sound keyid="soundfx1" sound="mip.ogg"/>
 		<batchset keyid="predelta" set="1">
 			<k keyid="thisisatest1"/>
 			<k keyid="thisisatest2"/>
 			<k keyid="thisisatest3"/>
 			<k keyid="delta"/>
 		</batchset>
+		<!-- did you notice that label that says "timer" triggers a label that has a dissapearing act?
+here is how that works. after the seconds specified in "seconds" lapses, the keyid specified is removed.
+but only after the keyid is present will the countdown begin. it is safe to remove a keyid when it has a
+timeout fork associated with it. as the timeout instance in question will be removed automatically. 
+The timeout instance is also removed after the specified time lapses.-->
+		<timeout keyid="prototime" seconds="3.5"/>
 	</forks>
 	<core>
+		<!--note the "hoverkey" attribute. this toggles in and out of the keyidlist based on wether the curser is over the label/img instance. this one triggers a label further down.-->
 		<label x="300" y="400" size="40" transp="1" FGCOLOR="#FFFFFF" hoverkey="onhov2">
 			<con>Hello world! :D</con>
 			<act type="none"/>
@@ -33,6 +47,12 @@
 			<con>Hey... an on-hover event. :o</con>
 			<act type="none"/>
 		</label>
+		<!--this is the label thats triggered by that timeout fork-->
+		<label x="80" y="150" size="24" transp="1" FGCOLOR="#000000" onkey="prototime">
+			<con>this should dissapear in 3.5 seconds</con>
+			<act type="none"/>
+		</label>
+		<!--here we have the label thats triggered in the hoverkey example above.-->
 		<label x="300" y="450" size="24" transp="1" FGCOLOR="#000000" onkey="onhov2">
 			<con>Hey... an on-hover event. :o</con>
 			<act type="none"/>
@@ -49,6 +69,15 @@
 			<con>or here!</con>
 			<act type="iref" ref="test1.xml"/>
 		</label>
+		<!--this is the label that triggeres that timeout fork.--> 
+		<label x="0" y="180" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="prototime">
+			<con>timer (click me!)</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<!--take note how these toggle switches work. 
+see how, in each toggle switch, the "keyid" and "offkey" atributes in the "(off)" labels
+and the "takekey" and "onkey" in the "(on)" labels all have the same keyid.
+thats why only one label per switch, is visible at a time.-->
 		<label x="100" y="230" size="24" BGCOLOR="#880000" FGCOLOR="#FFFFFF" keyid="switch1" offkey="switch1">
 			<con>(off)</con>
 			<act type="key" ref="test1.xml"/>
@@ -77,9 +106,12 @@
 			<con>Greetings!</con>
 			<act type="key" ref="test1.xml"/>
 		</label>
-		<label x="0" y="0" size="12">
-			<con>Hello world! :D</con>
-			<act type="none"/>
+		<!--this next label instance uses an "onclick" sound fx. img instances can also do this
+do note that setting the act type to "none" will cause the sound to not play.
+plese use either "iref" or "key"-->
+		<label x="0" y="0" size="16" sfxclick="1" sound="mip.ogg">
+			<con>click me for a sound fx!</con>
+			<act type="key"/>
 		</label>
 		<label x="0" y="580" size="20" BGCOLOR="#880000" FGCOLOR="#FFFFFF" >
 			<con>QUIT</con>

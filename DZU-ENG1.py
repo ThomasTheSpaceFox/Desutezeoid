@@ -11,7 +11,8 @@ from pygame.locals import *
 import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
-print "Desutezeoid arbitrary point and click engine v1.0.1"
+pygame.mixer.init()
+print "Desutezeoid arbitrary point and click engine v1.1.0"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
 screentag=confroot.find("screen")
@@ -21,21 +22,26 @@ titletag=confroot.find("title")
 beginref=(confroot.find("beginref")).text
 titlebase=titletag.attrib.get("base", "Desutezeoid: ")
 class clicktab:
-	def __init__(self, box, reftype, ref, keyid, takekey):
+	def __init__(self, box, reftype, ref, keyid, takekey, sfxclick, sound):
 		self.box=box
 		self.ref=ref
 		self.keyid=keyid
 		self.takekey=takekey
 		self.reftype=reftype
+		self.sfxclick=sfxclick
+		self.sound=sound
+class timeouttab:
+	def __init__(self, seconds, keyid):
+		self.keyid=keyid
+		self.regtime=time.time()
+		self.seconds=seconds
 DEBUG=1
-
-def debugmsg(msg, printplaypos=0):
+#class keyobj:
+#	def __init__(self, keyid):
+#		self=keyid
+def debugmsg(msg):
 	if DEBUG==1:
-		
-		if printplaypos==1:
-			print (msg + " x(" + str(playx) + "),y(" + str(playy) + ")")
-		else:
-			print msg
+		print msg
 prevpage="NULL"
 #point this to your first screen c: no menu program really needed :o
 curpage=beginref
@@ -44,6 +50,7 @@ screensurf=pygame.display.set_mode((scrnx, scrny))
 quitflag=0
 clicklist=list()
 keylist=list(["0"])
+timeoutlist=list()
 keybak=list(keylist)
 forksanitycheck=0
 forksanity=0
@@ -55,6 +62,7 @@ while quitflag==0:
 	#print "tic"
 	if curpage!=prevpage:
 		print "preparsing page"
+		pygame.mixer.music.stop()
 		tree = ET.parse(curpage)
 		root = tree.getroot()
 		prevpage=curpage
@@ -63,6 +71,11 @@ while quitflag==0:
 		pageconf=root.find('pageconf')
 		pagetitle=(pageconf.find('title')).text
 		BGon=int(pageconf.attrib.get("BGimg", "0"))
+		BGMon=int(pageconf.attrib.get("BGM", "0"))
+		if BGMon==1:
+			BGMtrack=(pageconf.find('BGM')).text
+			pygame.mixer.music.load(BGMtrack)
+			pygame.mixer.music.play(-1)
 		pygame.display.set_caption((titlebase + pagetitle), (titlebase + pagetitle))
 		print ("Page title: '" + pagetitle + "'")
 		if BGon==1:
@@ -131,13 +144,51 @@ while quitflag==0:
 							keylist.remove(subkeyid)
 							print keylist
 					forksanity=1
+		for fork in forktag.findall("timeout"):
+			masterkey=fork.attrib.get("keyid")
+			if masterkey in keylist:
+				notinlist=1
+				for tif in timeoutlist:
+					if tif.keyid==masterkey:
+						notinlist=0
+				if notinlist==1:
+					seconds=float(fork.attrib.get("seconds"))
+					timeoutlist.extend([timeouttab(seconds, masterkey)])
+		for fork in forktag.findall("triggerlock"):
+			masterkey=fork.attrib.get("keyid")
+			triggerkey=fork.attrib.get("trigger")
+			lockkey=fork.attrib.get("lock")
+			if masterkey in keylist:
+				#keylist.remove(masterkey)
+				if lockkey not in keylist:
+					if triggerkey not in keylist:
+						keylist.extend([triggerkey])
+						keylist.extend([lockkey])
+		
+					
+		for fork in forktag.findall("sound"):
+			masterkey=fork.attrib.get("keyid")
+			soundname=fork.attrib.get("sound")
+			if masterkey in keylist:
+				keylist.remove(masterkey)
+				soundobj=pygame.mixer.Sound(soundname)
+				soundobj.play()
 		if forksanity==1:
 			forksanitycheck=1
 			forksanity=0
 			#skiploop=1
 		else:
 			forksanitycheck=0
+	
+	for tif in timeoutlist:
+		if tif.keyid not in keylist:
 			
+			timeoutlist.remove(tif)
+		elif ((time.time()) - tif.regtime) > tif.seconds:
+			keylist.remove(tif.keyid)
+			print keylist
+			timeoutlist.remove(tif)		
+		
 	keybak=list(keylist)
 	#print keylist
 	for labref in coretag.findall("img"):
@@ -146,6 +197,8 @@ while quitflag==0:
 		onkey=labref.attrib.get('onkey', "0")
 		offkey=labref.attrib.get('offkey', "0")
 		hoverkey=labref.attrib.get('hoverkey', "0")
+		clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
+		soundname=(labref.attrib.get('sound', "0"))
 		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
 			imgx=int(labref.attrib.get("x"))
 			imgy=int(labref.attrib.get("y"))
@@ -178,7 +231,7 @@ while quitflag==0:
 				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
 				#	curpage=ref
 				#	break
-					datstr=clicktab(clickref, "iref", ref, keyid, takekey)
+					datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
 				if acttype=="quit":
 					ref=act.attrib.get("ref")
@@ -187,7 +240,7 @@ while quitflag==0:
 				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
 				#	quitflag=1
 				#	break
-					datstr=clicktab(clickref, "quit", ref, keyid, takekey)
+					datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
 				if acttype=="key":
 					ref=act.attrib.get("ref")
@@ -196,7 +249,7 @@ while quitflag==0:
 				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
 				#	quitflag=1
 				#	break
-					datstr=clicktab(clickref, "key", ref, keyid, takekey)
+					datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
 	for labref in coretag.findall("label"):
 		keyid=labref.attrib.get('keyid', "0")
@@ -204,6 +257,8 @@ while quitflag==0:
 		onkey=labref.attrib.get('onkey', "0")
 		offkey=labref.attrib.get('offkey', "0")
 		hoverkey=labref.attrib.get('hoverkey', "0")
+		clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
+		soundname=(labref.attrib.get('sound', "0"))
 		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
 			labx=int(labref.attrib.get("x"))
 			laby=int(labref.attrib.get("y"))
@@ -236,7 +291,7 @@ while quitflag==0:
 				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
 				#	curpage=ref
 				#	break
-				datstr=clicktab(clickref, "iref", ref, keyid, takekey)
+				datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
 				clicklist.extend([datstr])
 			if acttype=="quit":
 				ref=act.attrib.get("ref")
@@ -245,7 +300,7 @@ while quitflag==0:
 				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
 				#	quitflag=1
 				#	break
-				datstr=clicktab(clickref, "quit", ref, keyid, takekey)
+				datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
 				clicklist.extend([datstr])
 			if acttype=="key":
 				ref=act.attrib.get("ref")
@@ -254,12 +309,14 @@ while quitflag==0:
 				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
 				#	quitflag=1
 				#	break
-				datstr=clicktab(clickref, "key", ref, keyid, takekey)
+				datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
 				clicklist.extend([datstr])
 		#else:
 			#time.sleep(0.04)
+	eventhappen=0
 	for event in pygame.event.get():
 		#print "nominal"
+		eventhappen=1
 		if event.type == QUIT:
 			quitflag=1
 			print ("quit: OS or WM quit")
@@ -269,6 +326,9 @@ while quitflag==0:
 			for f in clicklist:
 				#print "nominal3"
 				if f.box.collidepoint(event.pos)==1 and event.button==1:
+					if f.sfxclick==1:
+						clicksound=pygame.mixer.Sound(f.sound)
+						clicksound.play()
 					if f.keyid!="0":
 						if not f.keyid in keylist:
 							keylist.extend([f.keyid])
@@ -285,6 +345,10 @@ while quitflag==0:
 						print ("quit: onclick quit")
 						quitflag=1
 						break
+	if eventhappen==0:
+		time.sleep(0.1)
+
+		
 	pygame.display.update()
 	pygame.event.pump()
 	pygame.event.clear()

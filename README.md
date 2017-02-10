@@ -1,7 +1,7 @@
 #   Desutezeoid
-v1.0  
+v1.1.0 
 an arbitrary point and click engine.       
-(c) 2015-2016 Thomas Leathers      
+(c) 2015-2017 Thomas Leathers      
 
 
 Desutezeoid is free software: you can redistribute it and/or modify
