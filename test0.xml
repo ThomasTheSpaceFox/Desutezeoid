@@ -34,8 +34,13 @@ first time those toggle switches are in that state.-->
 here is how that works. after the seconds specified in "seconds" lapses, the keyid specified is removed.
 but only after the keyid is present will the countdown begin. it is safe to remove a keyid when it has a
 timeout fork associated with it. as the timeout instance in question will be removed automatically. 
-The timeout instance is also removed after the specified time lapses.-->
-		<timeout keyid="prototime" seconds="3.5"/>
+The timeout instance is also removed after the specified time lapses. also if the optional post keyid atribbute is set, a keyid will be passively added after timeout.-->
+		<timeout keyid="prototime" seconds="3.5" post="soundfx1"/>
+		<!--this is an endless loop of 3 keyids. this is started by a keyid added by the initkeys section of config. also note this should be in all pages' xml files. that will keep the loop running.
+		and with a nonlooping sequence, such as an "on-click" animation. you would only need it on the page the animation is present on.-->
+		<timeout keyid="timeloop1" seconds="0.5" post="timeloop2"/>
+		<timeout keyid="timeloop2" seconds="0.5" post="timeloop3"/>
+		<timeout keyid="timeloop3" seconds="0.5" post="timeloop1"/>
 	</forks>
 	<core>
 		<!--note the "hoverkey" attribute. this toggles in and out of the keyidlist based on wether the curser is over the label/img instance. this one triggers a label further down.-->
@@ -43,6 +48,7 @@ The timeout instance is also removed after the specified time lapses.-->
 			<con>Hello world! :D</con>
 			<act type="none"/>
 		</label>
+		<!--note on label colors: if you only specify "FGCOLOR", the label will have a transparent background.-->
 		<label x="80" y="130" size="24" transp="1" FGCOLOR="#000000" onkey="onhov1">
 			<con>Hey... an on-hover event. :o</con>
 			<act type="none"/>
@@ -57,14 +63,17 @@ The timeout instance is also removed after the specified time lapses.-->
 			<con>Hey... an on-hover event. :o</con>
 			<act type="none"/>
 		</label>
-		<label x="300" y="200" size="24" transp="1" FGCOLOR="#FFFFFF" onkey="delta">
-			<con>:o Where did this come from? :)</con>
-			<act type="none"/>
-		</label>
+		<!--basic page linking example.-->
 		<label x="0" y="200" size="24" FGCOLOR="#000088" BGCOLOR="#FFFFFF">
 			<con>click here!</con>
 			<act type="iref" ref="test1.xml"/>
 		</label>
+		<!--this is triggered by the batchset mentioned below.-->
+		<label x="300" y="200" size="24" transp="1" FGCOLOR="#FFFFFF" onkey="delta">
+			<con>:o Where did this come from? :)</con>
+			<act type="none"/>
+		</label>
+		<!--notice how this adds a keyid that triggers a batch set.-->
 		<label x="0" y="230" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="predelta">
 			<con>or here!</con>
 			<act type="iref" ref="test1.xml"/>
@@ -121,6 +130,19 @@ plese use either "iref" or "key"-->
 			<con>testimg0.png</con>
 			<altcon>testimg1.png</altcon>
 			<act type="quit" ref="test1.xml"/>
+		</img>
+		<!--lets animate a test animation with that timeout loop!-->
+		<img x="300" y="100" onkey="timeloop1">
+			<con>animtest1a.png</con>
+			<act type="none"/>
+		</img>
+		<img x="300" y="100" onkey="timeloop2">
+			<con>animtest1b.png</con>
+			<act type="none"/>
+		</img>
+		<img x="300" y="100" onkey="timeloop3">
+			<con>animtest1c.png</con>
+			<act type="none"/>
 		</img>
 	</core>
 </main>

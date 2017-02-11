@@ -5,6 +5,15 @@
 		<BG>BGseaside.jpg</BG>
 	</pageconf>
 	<forks>
+		<!--keep loop from first page going...-->
+		<timeout keyid="timeloop1" seconds="0.5" post="timeloop2"/>
+		<timeout keyid="timeloop2" seconds="0.5" post="timeloop3"/>
+		<timeout keyid="timeloop3" seconds="0.5" post="timeloop1"/>
+		<timeout keyid="pagejumpdelay" seconds="1" post="pagejumptest"/>
+		<!--pagejump fork. "jumps" to the specified page. useful when a keyid should trigger a page change. 
+such as in a page that acts as a story sequence for example, you would have the
+last timeout in the sequence trigger one of these.-->
+		<pagejump keyid="pagejumptest" page="test0.xml"/>
 	</forks>
 	<core>
 		<label x="0" y="400" size="40">
@@ -14,6 +23,14 @@
 		<label x="0" y="200" size="24">
 			<con>return to first amazing page! :o</con>
 			<act type="iref" ref="test0.xml"/>
+		</label>
+		<label x="0" y="300" size="24" keyid="pagejumpdelay" offkey="pagejumpdelay" >
+			<con>test pagejump.</con>
+			<act type="key"/>
+		</label>
+		<label x="0" y="300" size="24" onkey="pagejumpdelay">
+			<con>starting booster rockets...</con>
+			<act type="none"/>
 		</label>
 		<label x="0" y="580" size="20" BGCOLOR="#880000" FGCOLOR="#FFFFFF" >
 			<con>QUIT</con>

@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <conf>
+	<!--window size-->
 	<screen x="800" y="600"/>
-	<title base="Desutezeoid v1.1.0 test program. " />
+	<!--Game/program Title-->
+	<title base="Desutezeoid v1.1.2 test program. " />
+	<!--page to load at engine start.-->
 	<beginref>test0.xml</beginref>
+	<!--keyids loaded into the keyid enviornment at startup.-->
+	<initkeys>
+		<k keyid="timeloop1"/>
+		<k keyid="testkey1"/>
+	</initkeys>
 </conf>

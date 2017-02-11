@@ -12,14 +12,23 @@ import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-print "Desutezeoid arbitrary point and click engine v1.1.0"
+print "Desutezeoid arbitrary point and click engine v1.1.2"
+print "parsing ENGSYSTEM.xml"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
 screentag=confroot.find("screen")
+print "populate keylist with null keyid, add any keys in initkeys."
+initkeystag=confroot.find("initkeys")
+keylist=list(["0"])
+for initk in initkeystag.findall("k"):
+	if (initk.attrib.get("keyid"))!="0":
+		keylist.extend([initk.attrib.get("keyid")])
+print keylist
 scrnx=int(screentag.attrib.get("x", "800"))
 scrny=int(screentag.attrib.get("y", "600"))
 titletag=confroot.find("title")
 beginref=(confroot.find("beginref")).text
+print "config parsed."
 titlebase=titletag.attrib.get("base", "Desutezeoid: ")
 class clicktab:
 	def __init__(self, box, reftype, ref, keyid, takekey, sfxclick, sound):
@@ -31,10 +40,11 @@ class clicktab:
 		self.sfxclick=sfxclick
 		self.sound=sound
 class timeouttab:
-	def __init__(self, seconds, keyid):
+	def __init__(self, seconds, keyid, postkey):
 		self.keyid=keyid
 		self.regtime=time.time()
 		self.seconds=seconds
+		self.postkey=postkey
 DEBUG=1
 #class keyobj:
 #	def __init__(self, keyid):
@@ -49,11 +59,12 @@ curpage=beginref
 screensurf=pygame.display.set_mode((scrnx, scrny))
 quitflag=0
 clicklist=list()
-keylist=list(["0"])
+
 timeoutlist=list()
 keybak=list(keylist)
 forksanitycheck=0
 forksanity=0
+print "done. begin mainloop."
 while quitflag==0:
 	huris=0
 	clicklist=list()
@@ -144,6 +155,15 @@ while quitflag==0:
 							keylist.remove(subkeyid)
 							print keylist
 					forksanity=1
+		pagejumpflag=0
+		for fork in forktag.findall("pagejump"):
+			masterkey=fork.attrib.get("keyid")
+			if masterkey in keylist:
+				keylist.remove(masterkey)
+				curpage=fork.attrib.get("page")
+				print ("iref: loading page '" + f.ref + "'")
+				pagejumpflag=1
+				break
 		for fork in forktag.findall("timeout"):
 			masterkey=fork.attrib.get("keyid")
 			if masterkey in keylist:
@@ -153,7 +173,8 @@ while quitflag==0:
 						notinlist=0
 				if notinlist==1:
 					seconds=float(fork.attrib.get("seconds"))
-					timeoutlist.extend([timeouttab(seconds, masterkey)])
+					postkey=fork.attrib.get("post", "0")
+					timeoutlist.extend([timeouttab(seconds, masterkey, postkey)])
 		for fork in forktag.findall("triggerlock"):
 			masterkey=fork.attrib.get("keyid")
 			triggerkey=fork.attrib.get("trigger")
@@ -186,6 +207,9 @@ while quitflag==0:
 			timeoutlist.remove(tif)
 		elif ((time.time()) - tif.regtime) > tif.seconds:
 			keylist.remove(tif.keyid)
+			if tif.postkey not in keylist:
+				if tif.postkey!="0":
+					keylist.extend([tif.postkey])
 			print keylist
 			timeoutlist.remove(tif)		
 		
