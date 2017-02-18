@@ -7,12 +7,13 @@ import pygame.mixer
 import pygame
 import time
 import os
+import copy
 from pygame.locals import *
 import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-print "Desutezeoid arbitrary point and click engine v1.1.2"
+print "Desutezeoid arbitrary point and click engine v1.1.3"
 print "parsing ENGSYSTEM.xml"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
@@ -23,11 +24,17 @@ keylist=list(["0"])
 for initk in initkeystag.findall("k"):
 	if (initk.attrib.get("keyid"))!="0":
 		keylist.extend([initk.attrib.get("keyid")])
-print keylist
+
 scrnx=int(screentag.attrib.get("x", "800"))
 scrny=int(screentag.attrib.get("y", "600"))
 titletag=confroot.find("title")
+debugtag=confroot.find("debug")
+DEBUG=int(debugtag.attrib.get("debug", "1"))
+printkeys=int(debugtag.attrib.get("printkeys", "1"))
 beginref=(confroot.find("beginref")).text
+
+globalcoretag=confroot.find("globalcore")
+globalforkstag=confroot.find("globalforks")
 print "config parsed."
 titlebase=titletag.attrib.get("base", "Desutezeoid: ")
 class clicktab:
@@ -45,13 +52,17 @@ class timeouttab:
 		self.regtime=time.time()
 		self.seconds=seconds
 		self.postkey=postkey
-DEBUG=1
+
 #class keyobj:
 #	def __init__(self, keyid):
 #		self=keyid
 def debugmsg(msg):
 	if DEBUG==1:
 		print msg
+def keyprint():
+	if printkeys==1:
+		print keylist
+keyprint()
 prevpage="NULL"
 #point this to your first screen c: no menu program really needed :o
 curpage=beginref
@@ -73,14 +84,23 @@ while quitflag==0:
 	#print "tic"
 	if curpage!=prevpage:
 		print "preparsing page"
-		pygame.mixer.music.stop()
+		
 		tree = ET.parse(curpage)
 		root = tree.getroot()
 		prevpage=curpage
 		coretag=root.find('core')
 		forktag=root.find('forks')
+		print "parsing global core objects into page structure..."
+		for glb in globalcoretag:
+			coretag.append(copy.deepcopy(glb))
+		print "parsing global fork objects into page structure..."
+		for glb in globalforkstag:
+			forktag.append(copy.deepcopy(glb))
 		pageconf=root.find('pageconf')
 		pagetitle=(pageconf.find('title')).text
+		BGMstop=int(pageconf.attrib.get("BGMstop", "1"))
+		if BGMstop==1:
+			pygame.mixer.music.stop()
 		BGon=int(pageconf.attrib.get("BGimg", "0"))
 		BGMon=int(pageconf.attrib.get("BGM", "0"))
 		if BGMon==1:
@@ -127,12 +147,14 @@ while quitflag==0:
 			if len(set(complist)) == 1:
 				if not masterkey in keylist:
 					keylist.extend([masterkey])
-					print keylist
+					#print keylist
+					keyprint()
 					forksanity=1
 			else:
 				if masterkey in keylist:
 					keylist.remove(masterkey)
-					print keylist
+					#print keylist
+					keyprint()
 					forksanity=1
 		for fork in forktag.findall("batchset"):
 			#print "batch"
@@ -146,14 +168,16 @@ while quitflag==0:
 						subkeyid=subkey.attrib.get("keyid")
 						if not subkeyid in keylist:
 							keylist.extend([subkeyid])
-							print keylist
+							#print keylist
+							keyprint()
 					forksanity=1
 				else:
 					for subkey in fork.findall("k"):
 						subkeyid=subkey.attrib.get("keyid")
 						if subkeyid in keylist:
 							keylist.remove(subkeyid)
-							print keylist
+							#print keylist
+							keyprint()
 					forksanity=1
 		pagejumpflag=0
 		for fork in forktag.findall("pagejump"):
@@ -210,7 +234,8 @@ while quitflag==0:
 			if tif.postkey not in keylist:
 				if tif.postkey!="0":
 					keylist.extend([tif.postkey])
-			print keylist
+			#print keylist
+			keyprint()
 			timeoutlist.remove(tif)		
 		
 	keybak=list(keylist)
@@ -275,6 +300,113 @@ while quitflag==0:
 				#	break
 					datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
+	for labref in coretag.findall("box"):
+		keyid=labref.attrib.get('keyid', "0")
+		takekey=labref.attrib.get('takekey', "0")
+		onkey=labref.attrib.get('onkey', "0")
+		offkey=labref.attrib.get('offkey', "0")
+		hoverkey=labref.attrib.get('hoverkey', "0")
+		clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
+		soundname=(labref.attrib.get('sound', "0"))
+		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
+			imgx=int(labref.attrib.get("x"))
+			imgy=int(labref.attrib.get("y"))
+			sizex=int(labref.attrib.get("sizex"))
+			sizey=int(labref.attrib.get("sizey"))
+			onhov=int(labref.attrib.get("onhov", "0"))
+			hovcolor=pygame.Color(labref.attrib.get("HOVCOLOR", "#FFFFFF"))
+			hovalpha=int(labref.attrib.get("hovalpha", "140"))
+			boxalpha=int(labref.attrib.get("alpha", "100"))
+			boxcolor=pygame.Color(labref.attrib.get("COLOR", "#FFFFFF"))
+			#imgcon=(labref.find("con")).text
+			act=labref.find("act")
+			acttype=act.attrib.get("type", "none")
+			pos = pygame.mouse.get_pos()
+			#imggfx=pygame.image.load(imgcon)
+			boxgfx=pygame.Surface((sizex, sizey))
+			boxgfx.convert_alpha()
+			#imggfx.fill(boxcolor)
+			boxgfx.set_alpha(0)
+			clickref=screensurf.blit(boxgfx, (imgx, imgy))
+			if onhov==1 and clickref.collidepoint(pos)==1:
+				boxgfx.fill(hovcolor)
+				boxgfx.set_alpha(hovalpha)
+				#skip blitting a second time if alpha is 0.
+				if hovalpha!=0:
+					clickref=screensurf.blit(boxgfx, (imgx, imgy))
+			else:
+				boxgfx.fill(boxcolor)
+				boxgfx.set_alpha(boxalpha)
+				#skip blitting a second time if alpha is 0.
+				if boxalpha!=0:
+					clickref=screensurf.blit(boxgfx, (imgx, imgy))
+			if hoverkey!="0":
+				if clickref.collidepoint(pos)==1:
+					if not hoverkey in keylist:
+						keylist.extend([hoverkey])
+				else:
+					if hoverkey in keylist:
+						keylist.remove(hoverkey)		
+			if acttype!="none":
+				pos = pygame.mouse.get_pos()
+				if acttype=="iref":
+					ref=act.attrib.get("ref")
+				#for event in pygame.event.get(MOUSEBUTTONDOWN):
+				#pygame.event.get()
+				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
+				#	curpage=ref
+				#	break
+					datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
+					clicklist.extend([datstr])
+				if acttype=="quit":
+					ref=act.attrib.get("ref")
+				#for event in pygame.event.get(MOUSEBUTTONDOWN):
+				#pygame.event.get()
+				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
+				#	quitflag=1
+				#	break
+					datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
+					clicklist.extend([datstr])
+				if acttype=="key":
+					ref=act.attrib.get("ref")
+				#for event in pygame.event.get(MOUSEBUTTONDOWN):
+				#pygame.event.get()
+				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
+				#	quitflag=1
+				#	break
+					datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
+					clicklist.extend([datstr])
+	for texref in coretag.findall("text"):
+		onkey=texref.attrib.get('onkey', "0")
+		offkey=texref.attrib.get('offkey', "0")
+		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
+			labx=int(texref.attrib.get("x"))
+			laby=int(texref.attrib.get("y"))
+			size=int(texref.attrib.get("size"))
+			FGCOL=pygame.Color(texref.attrib.get("FGCOLOR", "#FFFFFF"))
+			BGCOL=pygame.Color(texref.attrib.get("BGCOLOR", "#000000"))
+			transp=int(texref.attrib.get("transp", "0"))
+			texfnt=pygame.font.SysFont(None, size)
+			pixcnt1=laby
+			pixjmp=(size+0)
+			textcont=(texref.text + "\n")
+			textchunk=""
+			#this draws the text body line-per-line
+			for texch in textcont:
+				if texch=="\n":
+					#if at newline, render line of text, clear textchunk, and add to pixcnt1
+					if transp==0:
+						texgfx=texfnt.render(textchunk, True, FGCOL, BGCOL)
+					else:
+						texgfx=texfnt.render(textchunk, True, FGCOL)
+					screensurf.blit(texgfx, (labx, pixcnt1))
+					pixcnt1 += pixjmp
+					textchunk=""
+				else:
+					#if not at a newline yet, keep building textchunk.
+					textchunk=(textchunk + texch)
+			
+			#clickref=screensurf.blit(labgfx, (labx, laby))
 	for labref in coretag.findall("label"):
 		keyid=labref.attrib.get('keyid', "0")
 		takekey=labref.attrib.get('takekey', "0")
@@ -356,11 +488,13 @@ while quitflag==0:
 					if f.keyid!="0":
 						if not f.keyid in keylist:
 							keylist.extend([f.keyid])
-							print keylist
+							#print keylist
+							keyprint()
 					if f.takekey!="0":
 						if takekey in keylist and f.takekey!="0":
 							keylist.remove(f.takekey)
-							print keylist
+							#print keylist
+							keyprint()
 					if f.reftype=="iref":
 						curpage=f.ref
 						print ("iref: loading page '" + f.ref + "'")

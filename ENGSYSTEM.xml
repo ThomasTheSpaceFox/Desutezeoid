@@ -3,12 +3,41 @@
 	<!--window size-->
 	<screen x="800" y="600"/>
 	<!--Game/program Title-->
-	<title base="Desutezeoid v1.1.2 test program. " />
+	<title base="Desutezeoid v1.1.3 test program. " />
 	<!--page to load at engine start.-->
 	<beginref>test0.xml</beginref>
+	<!--debug settings. used in development and testing. printkeys controls keyid list printing.-->
+	<debug debug="1" printkeys="1"/>
 	<!--keyids loaded into the keyid enviornment at startup.-->
 	<initkeys>
 		<k keyid="timeloop1"/>
 		<k keyid="testkey1"/>
 	</initkeys>
+	
+	<!--Explanation of "globalforks" and "globalcore": these corrispond to the "forks" and "core" sections of page xml files. these are populated into corresponding areas of the page structure in memory. This is why "forks" and "core objects" here act as if they are in every page's xml file.-->
+	
+	<!--These forks are present on each page-->
+	<globalforks>
+		<!--this is an endless loop of 3 keyids. this is started by a keyid added by the initkeys section of config. also note how since this is in globalforks, it stays running.
+		and with a nonlooping sequence, such as an "on-click" animation. you would only need it on the page the animation is present on.-->
+		<timeout keyid="timeloop1" seconds="0.5" post="timeloop2"/>
+		<timeout keyid="timeloop2" seconds="0.5" post="timeloop3"/>
+		<timeout keyid="timeloop3" seconds="0.5" post="timeloop1"/>
+	</globalforks>
+	<!--these core objects are present on each page-->
+	<globalcore>
+		<!--this label uses the act type "quit" when clicked, this will quit the "game" also note how since this is present in globalcore, it shows on every page.-->
+		<label x="0" y="580" size="20" BGCOLOR="#880000" FGCOLOR="#FFFFFF" >
+			<con>QUIT</con>
+			<act type="quit" ref="test1.xml"/>
+		</label>
+		<label x="40" y="580" size="20" BGCOLOR="#008800" FGCOLOR="#FFFFFF" >
+			<con>About</con>
+			<act type="iref" ref="about.xml"/>
+		</label>
+		<label x="80" y="580" size="20" BGCOLOR="#008800" FGCOLOR="#FFFFFF" >
+			<con>Home</con>
+			<act type="iref" ref="test0.xml"/>
+		</label>
+	</globalcore>
 </conf>

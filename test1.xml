@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
-	<pageconf BGimg="1">
+	<!--setting BGMstop to "0" keeps any music from the previous page playing (unless the page has defined Background music.) BGMstop falls back to "1" if not specified.-->
+	<pageconf BGimg="1" BGMstop="0">
 		<title>another page</title>
 		<BG>BGseaside.jpg</BG>
 	</pageconf>
 	<forks>
-		<!--keep loop from first page going...-->
-		<timeout keyid="timeloop1" seconds="0.5" post="timeloop2"/>
-		<timeout keyid="timeloop2" seconds="0.5" post="timeloop3"/>
-		<timeout keyid="timeloop3" seconds="0.5" post="timeloop1"/>
 		<timeout keyid="pagejumpdelay" seconds="1" post="pagejumptest"/>
 		<!--pagejump fork. "jumps" to the specified page. useful when a keyid should trigger a page change. 
 such as in a page that acts as a story sequence for example, you would have the
@@ -32,9 +29,6 @@ last timeout in the sequence trigger one of these.-->
 			<con>starting booster rockets...</con>
 			<act type="none"/>
 		</label>
-		<label x="0" y="580" size="20" BGCOLOR="#880000" FGCOLOR="#FFFFFF" >
-			<con>QUIT</con>
-			<act type="quit" ref="test1.xml"/>
-		</label>
+		
 	</core>
 </main>
