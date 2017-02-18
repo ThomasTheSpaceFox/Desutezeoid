@@ -1,5 +1,5 @@
 #   Desutezeoid
-v1.1.3
+v1.2.0
 an arbitrary point and click engine.       
 (c) 2015-2017 Thomas Leathers      
 

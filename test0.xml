@@ -18,6 +18,10 @@
 			<k if="1" keyid="switch1"/>
 			<k if="1" keyid="switch2"/>
 		</batchtrig>
+		<ortrig keyid="alpha4">
+			<k if="1" keyid="switch1"/>
+			<k if="1" keyid="switch2"/>
+		</ortrig>
 		<!--notice how this trigger lock triggers a sound event. note how the 
 lock keyid prevents the trigger keyid from re-triggering, thus the sound
 triggered by the two toggle switches being on plays only once, and only the 
@@ -104,6 +108,33 @@ thats why only one label per switch, is visible at a time.-->
 			<con>(on)</con>
 			<act type="key" ref="test1.xml"/>
 		</label>
+		<!--this is some simple keyid logic that shows a drop-down menu.
+		we start with the button for the menu. it behaves like the swithes above.-->
+		<label x="200" y="230" size="25" BGCOLOR="#AAAAAA" FGCOLOR="#000000" keyid="dropmenu1" offkey="dropmenu1">
+			<con>menu</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="200" y="230" size="25" BGCOLOR="#BBBBBB" FGCOLOR="#000000" takekey="dropmenu1" onkey="dropmenu1">
+			<con>menu</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<!--the menu items are normal labels triggered by the keyid of the switch above. simple.-->
+		<label x="200" y="250" size="25" BGCOLOR="#AAAAAA" FGCOLOR="#000000" onkey="dropmenu1">
+			<con>menu item 1</con>
+			<act type="none" ref="test1.xml"/>
+		</label>
+		<label x="200" y="270" size="25" BGCOLOR="#AAAAAA" FGCOLOR="#000000" onkey="dropmenu1">
+			<con>menu item 2</con>
+			<act type="none" ref="test1.xml"/>
+		</label>
+		<label x="200" y="290" size="24" BGCOLOR="#AAAAAA" FGCOLOR="#000000" onkey="dropmenu1">
+			<con>about</con>
+			<act type="iref" ref="about.xml"/>
+		</label>
+		<label x="200" y="310" size="24" BGCOLOR="#AAAAAA" FGCOLOR="#000000" onkey="dropmenu1" sfxclick="1" sound="mip.ogg">
+			<con>sound fx</con>
+			<act type="key" ref="about.xml"/>
+		</label>
 		<label x="125" y="210" size="24" BGCOLOR="#000000" FGCOLOR="#FFFFFF" onkey="alpha">
 			<con>HI!</con>
 			<act type="key" ref="test1.xml"/>
@@ -114,6 +145,10 @@ thats why only one label per switch, is visible at a time.-->
 		</label>
 		<label x="125" y="210" size="24" BGCOLOR="#000000" FGCOLOR="#FFFFFF" onkey="alpha3">
 			<con>Greetings!</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="10" y="252" size="24" BGCOLOR="#000000" FGCOLOR="#FFFFFF" onkey="alpha4">
+			<con>Welcome To Desutezeoid!</con>
 			<act type="key" ref="test1.xml"/>
 		</label>
 		<!--this next label instance uses an "onclick" sound fx. img instances can also do this

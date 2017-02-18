@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-print "Desutezeoid arbitrary point and click engine v1.1.3"
+print "Desutezeoid arbitrary point and click engine v1.2.0"
 print "parsing ENGSYSTEM.xml"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
@@ -31,6 +31,9 @@ titletag=confroot.find("title")
 debugtag=confroot.find("debug")
 DEBUG=int(debugtag.attrib.get("debug", "1"))
 printkeys=int(debugtag.attrib.get("printkeys", "1"))
+clickfields=int(debugtag.attrib.get("clickfields", "0"))
+cfcolor=pygame.Color(debugtag.attrib.get("cfcolor", "#888888"))
+
 beginref=(confroot.find("beginref")).text
 
 globalcoretag=confroot.find("globalcore")
@@ -113,117 +116,136 @@ while quitflag==0:
 			BGfile=(pageconf.find('BG')).text
 			BG=pygame.image.load(BGfile)
 		screensurf.fill((170, 170, 170))
-		#pygame.event.get()
-		#while pygame.mouse.get_pressed()[0]!=0:
-		#	pygame.event.get()
-		#	print "wait"
-		#	print pygame.mouse.get_pressed()[0]
-		#	time.sleep(0.1)
 		print "done. begin mainloop"
 	if BGon==1:
 		screensurf.blit(BG, (0, 0))
 	#print keylist
 	#print keybak
 	#if keylist!=keybak or forksanitycheck==1:
-	if True:
-		#debugmsg("keyid change detected. reparsing forks.")
-		for fork in forktag.findall("batchtrig"):
-			#print "batchtrig"
-			masterkey=fork.attrib.get("keyid")
-			complist=[1] 
-			for keyif in fork.findall("k"):
-				ifpol=keyif.attrib.get("if")
-				subkey=keyif.attrib.get("keyid")
-				if subkey in keylist:
-					if ifpol=="1":
-						complist.extend([1])
-					else:
-						complist.extend([0])
-				elif not subkey in keylist:
-					if ifpol=="0":
-						complist.extend([1])
-					else:
-						complist.extend([0])
-			if len(set(complist)) == 1:
-				if not masterkey in keylist:
-					keylist.extend([masterkey])
-					#print keylist
-					keyprint()
-					forksanity=1
-			else:
-				if masterkey in keylist:
-					keylist.remove(masterkey)
-					#print keylist
-					keyprint()
-					forksanity=1
-		for fork in forktag.findall("batchset"):
-			#print "batch"
-			#print fork
-			masterkey=fork.attrib.get("keyid")
-			toggpol=fork.attrib.get("set")
-			if masterkey in keylist:
-				keylist.remove(masterkey)
-				if toggpol=="1":
-					for subkey in fork.findall("k"):
-						subkeyid=subkey.attrib.get("keyid")
-						if not subkeyid in keylist:
-							keylist.extend([subkeyid])
-							#print keylist
-							keyprint()
-					forksanity=1
-				else:
-					for subkey in fork.findall("k"):
-						subkeyid=subkey.attrib.get("keyid")
-						if subkeyid in keylist:
-							keylist.remove(subkeyid)
-							#print keylist
-							keyprint()
-					forksanity=1
-		pagejumpflag=0
-		for fork in forktag.findall("pagejump"):
-			masterkey=fork.attrib.get("keyid")
-			if masterkey in keylist:
-				keylist.remove(masterkey)
-				curpage=fork.attrib.get("page")
-				print ("iref: loading page '" + f.ref + "'")
-				pagejumpflag=1
-				break
-		for fork in forktag.findall("timeout"):
-			masterkey=fork.attrib.get("keyid")
-			if masterkey in keylist:
-				notinlist=1
-				for tif in timeoutlist:
-					if tif.keyid==masterkey:
-						notinlist=0
-				if notinlist==1:
-					seconds=float(fork.attrib.get("seconds"))
-					postkey=fork.attrib.get("post", "0")
-					timeoutlist.extend([timeouttab(seconds, masterkey, postkey)])
-		for fork in forktag.findall("triggerlock"):
-			masterkey=fork.attrib.get("keyid")
-			triggerkey=fork.attrib.get("trigger")
-			lockkey=fork.attrib.get("lock")
-			if masterkey in keylist:
-				#keylist.remove(masterkey)
-				if lockkey not in keylist:
-					if triggerkey not in keylist:
-						keylist.extend([triggerkey])
-						keylist.extend([lockkey])
-		
-					
-		for fork in forktag.findall("sound"):
-			masterkey=fork.attrib.get("keyid")
-			soundname=fork.attrib.get("sound")
-			if masterkey in keylist:
-				keylist.remove(masterkey)
-				soundobj=pygame.mixer.Sound(soundname)
-				soundobj.play()
-		if forksanity==1:
-			forksanitycheck=1
-			forksanity=0
-			#skiploop=1
+	
+	#debugmsg("keyid change detected. reparsing forks.")
+	for fork in forktag.findall("ortrig"):
+		#print "batchtrig"
+		masterkey=fork.attrib.get("keyid")
+		orflg=0
+		for keyif in fork.findall("k"):
+			ifpol=keyif.attrib.get("if")
+			subkey=keyif.attrib.get("keyid")
+			if subkey in keylist:
+				if ifpol=="1":
+					orflg=1
+			elif not subkey in keylist:
+				if ifpol=="0":
+					orflg=1
+		if orflg == 1:
+			if not masterkey in keylist:
+				keylist.extend([masterkey])
+				#print keylist
+				keyprint()
+				forksanity=1
 		else:
-			forksanitycheck=0
+			if masterkey in keylist:
+				keylist.remove(masterkey)
+				#print keylist
+				keyprint()
+				forksanity=1
+	for fork in forktag.findall("batchtrig"):
+		#print "batchtrig"
+		masterkey=fork.attrib.get("keyid")
+		complist=[1] 
+		for keyif in fork.findall("k"):
+			ifpol=keyif.attrib.get("if")
+			subkey=keyif.attrib.get("keyid")
+			if subkey in keylist:
+				if ifpol=="1":
+					complist.extend([1])
+				else:
+					complist.extend([0])
+			elif not subkey in keylist:
+				if ifpol=="0":
+					complist.extend([1])
+				else:
+					complist.extend([0])
+		if len(set(complist)) == 1:
+			if not masterkey in keylist:
+				keylist.extend([masterkey])
+				#print keylist
+				keyprint()
+				forksanity=1
+		else:
+			if masterkey in keylist:
+				keylist.remove(masterkey)
+				#print keylist
+				keyprint()
+				forksanity=1
+	for fork in forktag.findall("batchset"):
+		#print "batch"
+		#print fork
+		masterkey=fork.attrib.get("keyid")
+		toggpol=fork.attrib.get("set")
+		if masterkey in keylist:
+			keylist.remove(masterkey)
+			if toggpol=="1":
+				for subkey in fork.findall("k"):
+					subkeyid=subkey.attrib.get("keyid")
+					if not subkeyid in keylist:
+						keylist.extend([subkeyid])
+						#print keylist
+						keyprint()
+				forksanity=1
+			else:
+				for subkey in fork.findall("k"):
+					subkeyid=subkey.attrib.get("keyid")
+					if subkeyid in keylist:
+						keylist.remove(subkeyid)
+						#print keylist
+						keyprint()
+				forksanity=1
+	pagejumpflag=0
+	for fork in forktag.findall("pagejump"):
+		masterkey=fork.attrib.get("keyid")
+		if masterkey in keylist:
+			keylist.remove(masterkey)
+			curpage=fork.attrib.get("page")
+			print ("iref: loading page '" + f.ref + "'")
+			pagejumpflag=1
+			break
+	for fork in forktag.findall("timeout"):
+		masterkey=fork.attrib.get("keyid")
+		if masterkey in keylist:
+			notinlist=1
+			for tif in timeoutlist:
+				if tif.keyid==masterkey:
+					notinlist=0
+			if notinlist==1:
+				seconds=float(fork.attrib.get("seconds"))
+				postkey=fork.attrib.get("post", "0")
+				timeoutlist.extend([timeouttab(seconds, masterkey, postkey)])
+	for fork in forktag.findall("triggerlock"):
+		masterkey=fork.attrib.get("keyid")
+		triggerkey=fork.attrib.get("trigger")
+		lockkey=fork.attrib.get("lock")
+		if masterkey in keylist:
+			#keylist.remove(masterkey)
+			if lockkey not in keylist:
+				if triggerkey not in keylist:
+					keylist.extend([triggerkey])
+					keylist.extend([lockkey])
+	
+				
+	for fork in forktag.findall("sound"):
+		masterkey=fork.attrib.get("keyid")
+		soundname=fork.attrib.get("sound")
+		if masterkey in keylist:
+			keylist.remove(masterkey)
+			soundobj=pygame.mixer.Sound(soundname)
+			soundobj.play()
+	if forksanity==1:
+		forksanitycheck=1
+		forksanity=0
+		#skiploop=1
+	else:
+		forksanitycheck=0
 	
 	for tif in timeoutlist:
 		if tif.keyid not in keylist:
@@ -275,29 +297,14 @@ while quitflag==0:
 				pos = pygame.mouse.get_pos()
 				if acttype=="iref":
 					ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	curpage=ref
-				#	break
 					datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
 				if acttype=="quit":
 					ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	quitflag=1
-				#	break
 					datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
 				if acttype=="key":
 					ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	quitflag=1
-				#	break
 					datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
 	for labref in coretag.findall("box"):
@@ -351,29 +358,14 @@ while quitflag==0:
 				pos = pygame.mouse.get_pos()
 				if acttype=="iref":
 					ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	curpage=ref
-				#	break
 					datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
 				if acttype=="quit":
 					ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	quitflag=1
-				#	break
 					datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
 				if acttype=="key":
 					ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	quitflag=1
-				#	break
 					datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
 	for texref in coretag.findall("text"):
@@ -442,33 +434,21 @@ while quitflag==0:
 				pos = pygame.mouse.get_pos()
 			if acttype=="iref":
 				ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	curpage=ref
-				#	break
 				datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
 				clicklist.extend([datstr])
 			if acttype=="quit":
 				ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	quitflag=1
-				#	break
 				datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
 				clicklist.extend([datstr])
 			if acttype=="key":
 				ref=act.attrib.get("ref")
-				#for event in pygame.event.get(MOUSEBUTTONDOWN):
-				#pygame.event.get()
-				#if clickref.collidepoint(pos)==1 and (pygame.mouse.get_pressed()[0])==1:
-				#	quitflag=1
-				#	break
 				datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
 				clicklist.extend([datstr])
 		#else:
 			#time.sleep(0.04)
+	if clickfields==1:
+		for f in clicklist:
+			pygame.draw.rect(screensurf, cfcolor, f.box, 1)
 	eventhappen=0
 	for event in pygame.event.get():
 		#print "nominal"
@@ -509,5 +489,4 @@ while quitflag==0:
 		
 	pygame.display.update()
 	pygame.event.pump()
-	pygame.event.clear()
 	

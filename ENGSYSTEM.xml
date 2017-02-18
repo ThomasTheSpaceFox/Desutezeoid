@@ -3,11 +3,12 @@
 	<!--window size-->
 	<screen x="800" y="600"/>
 	<!--Game/program Title-->
-	<title base="Desutezeoid v1.1.3 test program. " />
+	<title base="Desutezeoid v1.2.0 test program. " />
 	<!--page to load at engine start.-->
 	<beginref>test0.xml</beginref>
-	<!--debug settings. used in development and testing. printkeys controls keyid list printing.-->
-	<debug debug="1" printkeys="1"/>
+	<!--debug settings. used in development and testing. printkeys controls keyid list printing.
+	clickfields uses cfcolor to show outlines around each click field. useful for debugging.-->
+	<debug debug="1" printkeys="1" clickfields="0" cfcolor="#FFFF00"/>
 	<!--keyids loaded into the keyid enviornment at startup.-->
 	<initkeys>
 		<k keyid="timeloop1"/>
