@@ -1,6 +1,6 @@
 Desutezeoid Technical Documentation.
 Overview:
-Desutezeoid v1.2.0
+Desutezeoid v1.2.1
 (c) 2015-2017 Thomas Leathers
 
 

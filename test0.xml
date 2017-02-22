@@ -22,6 +22,19 @@
 			<k if="1" keyid="switch1"/>
 			<k if="1" keyid="switch2"/>
 		</ortrig>
+		<!--These generate normal and yes/no dialogs respectively. both modes have appropiate selection
+		 keyid attributes.  to use yes/no mode, set ynflag="1", and use yesflag and noflag for respective
+		  "post" keyids, in normal mode, use the "okkey" attribute.  these use the internal engine ui
+		   parameters, you can specifiy ui parameters like colors and text size in the "ui" section of ENGSYSTEM.xml
+		   
+		   Special note: only one uipop dialog can be active at any one time!-->
+		<uipop keyid="uidialog1" msg="Hello, this is a normal dialog." okkey="normaldialogok"/>
+		<!--now lets use some custom visual parameters! :D-->
+		<uipop keyid="uidialog3" msg="This Dialog is red." BGCOLOR="#AA0000" FGCOLOR="#FFFFFF" />
+		<!--HUGE text :) -->
+		<uipop keyid="uidialog4" msg="This Dialog is BIG." BGCOLOR="#00AA00" FGCOLOR="#FFFFFF" textsize="70" />
+		<!--yes/no dialog-->
+		<uipop keyid="uidialog2" msg="Hello, this is a yes or no dialog." ynflag="1" nokey="nokeyyndiag" yeskey="yeskeyyndiag" />
 		<!--notice how this trigger lock triggers a sound event. note how the 
 lock keyid prevents the trigger keyid from re-triggering, thus the sound
 triggered by the two toggle switches being on plays only once, and only the 
@@ -88,6 +101,25 @@ The timeout instance is also removed after the specified time lapses. also if th
 			<con>timer (click me!)</con>
 			<act type="key" ref="test1.xml"/>
 		</label>
+		
+		<label x="0" y="400" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="uidialog1">
+			<con>test normal dialog</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="0" y="455" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="uidialog3">
+			<con>test colorized dialog</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="0" y="475" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="uidialog4">
+			<con>test custom text size dialog</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+
+		<label x="0" y="430" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="uidialog2">
+			<con>test yes/no dialog</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		
 		<!--take note how these toggle switches work. 
 see how, in each toggle switch, the "keyid" and "offkey" atributes in the "(off)" labels
 and the "takekey" and "onkey" in the "(on)" labels all have the same keyid.
