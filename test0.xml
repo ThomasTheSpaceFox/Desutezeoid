@@ -33,8 +33,34 @@
 		<uipop keyid="uidialog3" msg="This Dialog is red." BGCOLOR="#AA0000" FGCOLOR="#FFFFFF" />
 		<!--HUGE text :) -->
 		<uipop keyid="uidialog4" msg="This Dialog is BIG." BGCOLOR="#00AA00" FGCOLOR="#FFFFFF" textsize="70" />
+		<!--dialog with image specified by the "img" attribute.-->
+		<uipop keyid="uidialog5" msg="This Dialog has an image." BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25" img="testimage300.png" />
+
+		
 		<!--yes/no dialog-->
+		
 		<uipop keyid="uidialog2" msg="Hello, this is a yes or no dialog." ynflag="1" nokey="nokeyyndiag" yeskey="yeskeyyndiag" />
+		<uimenu keyid="uimenu1" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25">
+			<item con="This is a menu." noact="1"/>
+			<item con="-------------------" noact="1"/>
+			
+			<item con="play sound" keyid="soundfx1" stay="1"/>
+			<item con="test dialog with image" keyid="uidialog5" stay="1"/>
+			<item con="close menu"/>
+		</uimenu>
+		<uimenu keyid="dialogtests" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25">
+			<item con="Desutezeoid dialog system tests." noact="1"/>
+			<item con="-------------------" noact="1"/>
+			<item con="test normal dialog" keyid="uidialog1" stay="1"/>
+			<item con="test yes/no dialog" keyid="uidialog2" stay="1"/>
+			<item con="test custom color dialog" keyid="uidialog3" stay="1"/>
+			<item con="test custom text size dialog" keyid="uidialog4" stay="1"/>
+			<item con="test dialog with image" keyid="uidialog5" stay="1"/>
+			<item con="close menu"/>
+		</uimenu>
+		
+		
+		
 		<!--notice how this trigger lock triggers a sound event. note how the 
 lock keyid prevents the trigger keyid from re-triggering, thus the sound
 triggered by the two toggle switches being on plays only once, and only the 
@@ -102,21 +128,12 @@ The timeout instance is also removed after the specified time lapses. also if th
 			<act type="key" ref="test1.xml"/>
 		</label>
 		
-		<label x="0" y="400" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="uidialog1">
-			<con>test normal dialog</con>
+		<label x="0" y="515" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="dialogtests">
+			<con>ui dialogs test/example menu.</con>
 			<act type="key" ref="test1.xml"/>
 		</label>
-		<label x="0" y="455" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="uidialog3">
-			<con>test colorized dialog</con>
-			<act type="key" ref="test1.xml"/>
-		</label>
-		<label x="0" y="475" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="uidialog4">
-			<con>test custom text size dialog</con>
-			<act type="key" ref="test1.xml"/>
-		</label>
-
-		<label x="0" y="430" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="uidialog2">
-			<con>test yes/no dialog</con>
+		<label x="0" y="535" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="uimenu1">
+			<con>test uimenu</con>
 			<act type="key" ref="test1.xml"/>
 		</label>
 		

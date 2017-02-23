@@ -1,12 +1,14 @@
 Desutezeoid Technical Documentation.
 Overview:
-Desutezeoid v1.2.1
+Desutezeoid v1.2.2
 (c) 2015-2017 Thomas Leathers
 
 
 -Desutezeoid is an arbitrary point and click engine written in python and pygame.  It is designed to be driven using a series of xml files.  Each "screen" is an xml file. 
 
 -The engine uses a boolean "keyid" and "forking" scripting structure that is parsed each code cycle.
+
+
 
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 programmer note: see comments in included example xml pages. especially "test0.xml"

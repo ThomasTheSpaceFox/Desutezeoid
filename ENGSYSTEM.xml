@@ -3,7 +3,7 @@
 	<!--window size-->
 	<screen x="800" y="600"/>
 	<!--Game/program Title/windown icon.-->
-	<title base="Desutezeoid v1.2.1 test program. " icon="icon.png" />
+	<title base="Desutezeoid v1.2.2 test program. " icon="icon.png" />
 	<!--page to load at engine start.-->
 	<beginref>test0.xml</beginref>
 	<!--debug settings. used in development and testing. printkeys controls keyid list printing.
@@ -19,6 +19,7 @@
 	<initkeys>
 		<k keyid="timeloop1"/>
 		<k keyid="testkey1"/>
+		<k keyid="welcome"/>
 	</initkeys>
 	
 	<!--Explanation of "globalforks" and "globalcore": these corrispond to the "forks" and "core" sections of page xml files. these are populated into corresponding areas of the page structure in memory. This is why "forks" and "core objects" here act as if they are in every page's xml file.-->
@@ -32,6 +33,8 @@
 		<timeout keyid="timeloop3" seconds="0.5" post="timeloop1"/>
 		<!--The useprev attribute causes a jump to the previous page loaded.-->
 		<pagejump keyid="pagejumptestB" useprev="1" page="test0.xml"/>
+		<uipop keyid="welcome" msg="Welcome to the Desutezeoid test program!"/>
+
 		
 	</globalforks>
 	<!--these core objects are present on each page-->
