@@ -3,7 +3,7 @@
 	<!--window size-->
 	<screen x="800" y="600"/>
 	<!--Game/program Title/windown icon.-->
-	<title base="Desutezeoid v1.2.2 test program. " icon="icon.png" />
+	<title base="Desutezeoid v1.4.0 test program. " icon="icon.png" />
 	<!--page to load at engine start.-->
 	<beginref>test0.xml</beginref>
 	<!--debug settings. used in development and testing. printkeys controls keyid list printing.
@@ -21,16 +21,20 @@
 		<k keyid="testkey1"/>
 		<k keyid="welcome"/>
 	</initkeys>
-	
+	<!--keyids that should persist in main.sav to be added on next engine load, if they were present on engine quit. main.sav should be in a game's .gitignore or equiv. as this is meant as a way to make user progress persist. notice how the two example switches are tracked, making their state persist.-->
+	<savkeys>
+		<k keyid="switch1"/>
+		<k keyid="switch2"/>
+	</savkeys>
 	<!--Explanation of "globalforks" and "globalcore": these corrispond to the "forks" and "core" sections of page xml files. these are populated into corresponding areas of the page structure in memory. This is why "forks" and "core objects" here act as if they are in every page's xml file.-->
 	
 	<!--These forks are present on each page-->
 	<globalforks>
 		<!--this is an endless loop of 3 keyids. this is started by a keyid added by the initkeys section of config. also note how since this is in globalforks, it stays running.
 		and with a nonlooping sequence, such as an "on-click" animation. you would only need it on the page the animation is present on.-->
-		<timeout keyid="timeloop1" seconds="0.5" post="timeloop2"/>
-		<timeout keyid="timeloop2" seconds="0.5" post="timeloop3"/>
-		<timeout keyid="timeloop3" seconds="0.5" post="timeloop1"/>
+		<timeout keyid="timeloop1" seconds="0.01" post="timeloop2"/>
+		<timeout keyid="timeloop2" seconds="0.01" post="timeloop3"/>
+		<timeout keyid="timeloop3" seconds="0.01" post="timeloop1"/>
 		<!--The useprev attribute causes a jump to the previous page loaded.-->
 		<pagejump keyid="pagejumptestB" useprev="1" page="test0.xml"/>
 		<uipop keyid="welcome" msg="Welcome to the Desutezeoid test program!"/>

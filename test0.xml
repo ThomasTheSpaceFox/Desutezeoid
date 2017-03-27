@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
-	<pageconf BGimg="1" BGM="1">
+	<pageconf BGimg="1" BGM="1" pagekeys="1">
 		<title>Main Page</title>
 		<BG>BGseaside.jpg</BG>
 		<BGM>BGM1.ogg</BGM>
 	</pageconf>
+	<pagekeys>
+		<k keyid="testpagekeys"/>
+	</pagekeys>
 	<forks>
 		<batchtrig keyid="alpha">
 			<k if="1" keyid="switch1"/>
@@ -39,15 +42,26 @@
 		
 		<!--yes/no dialog-->
 		
+
 		<uipop keyid="uidialog2" msg="Hello, this is a yes or no dialog." ynflag="1" nokey="nokeyyndiag" yeskey="yeskeyyndiag" />
+		
+		<pagejump keyid="pagejumpmenu1" page="about.xml"/>
 		<uimenu keyid="uimenu1" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25">
 			<item con="This is a menu." noact="1"/>
 			<item con="-------------------" noact="1"/>
 			
 			<item con="play sound" keyid="soundfx1" stay="1"/>
+			<item con="run test 1" keyid="pagejumpmenu1" stay="1"/>
 			<item con="test dialog with image" keyid="uidialog5" stay="1"/>
+			<item con="play music" keyid="mustrkplay" stay="1"/>
+			<item con="stop music" keyid="mustrkstop" stay="1"/>
 			<item con="close menu"/>
 		</uimenu>
+		<!--Background Music control-->
+		<music keyid="mustrkload" track="BGM1.ogg" />
+		<music keyid="mustrkstop" stop="1"/>
+		<music keyid="mustrkplay" play="1"/>
+		
 		<uimenu keyid="dialogtests" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25">
 			<item con="Desutezeoid dialog system tests." noact="1"/>
 			<item con="-------------------" noact="1"/>
@@ -72,6 +86,11 @@ first time those toggle switches are in that state.-->
 			<k keyid="thisisatest2"/>
 			<k keyid="thisisatest3"/>
 			<k keyid="delta"/>
+		</batchset>
+		<!--SPecial mode 2 batchset. this inverts the keyid's state when triggered. in this example, the two example "switches", are inverted.-->
+		<batchset keyid="switchinvert" set="2">
+			<k keyid="switch1"/>
+			<k keyid="switch2"/>
 		</batchset>
 		<!-- did you notice that label that says "timer" triggers a label that has a dissapearing act?
 here is how that works. after the seconds specified in "seconds" lapses, the keyid specified is removed.
@@ -155,6 +174,11 @@ thats why only one label per switch, is visible at a time.-->
 		</label>
 		<label x="150" y="230" size="24" BGCOLOR="#008800" FGCOLOR="#FFFFFF" takekey="switch2" onkey="switch2">
 			<con>(on)</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<!--this label triggers a special "mode 2" batchset. thus inverting the switch states.-->
+		<label x="150" y="280" size="24" BGCOLOR="#880088" FGCOLOR="#FFFFFF"  keyid="switchinvert">
+			<con>(invert)</con>
 			<act type="key" ref="test1.xml"/>
 		</label>
 		<!--this is some simple keyid logic that shows a drop-down menu.
