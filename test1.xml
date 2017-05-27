@@ -35,6 +35,13 @@ last timeout in the sequence trigger one of these.-->
 			<con>starting booster rockets...</con>
 			<act type="none"/>
 		</label>
-		
+		<img x="400" y="100" vscroll="2" hscroll="4">
+			<con>animtest1a.png</con>
+			<act type="none"/>
+		</img>
+		<img x="500" y="100" vscroll='-2' hscroll="4">
+			<con>animtest1a.png</con>
+			<act type="none"/>
+		</img>
 	</core>
 </main>

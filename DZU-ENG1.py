@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-print "Desutezeoid arbitrary point and click engine v1.4.0"
+print "Desutezeoid arbitrary point and click engine v1.4.1"
 print "parsing ENGSYSTEM.xml"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
@@ -529,6 +529,11 @@ while quitflag==0:
 		hoverkey=labref.attrib.get('hoverkey', "0")
 		clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
 		soundname=(labref.attrib.get('sound', "0"))
+		vscrollval=int(labref.attrib.get('vscroll', "0"))
+		hscrollval=int(labref.attrib.get('hscroll', "0"))
+		vscfl=int(labref.attrib.get('vscINT', "0"))
+		hscfl=int(labref.attrib.get('hscINT', "0"))
+		
 		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
 			imgx=int(labref.attrib.get("x"))
 			imgy=int(labref.attrib.get("y"))
@@ -537,8 +542,38 @@ while quitflag==0:
 			act=labref.find("act")
 			acttype=act.attrib.get("type", "none")
 			pos = pygame.mouse.get_pos()
-			#imggfx=pygame.image.load(imgcon)
+			#scrolling operation init code. (variables are stored inside xml tree in ram)
+			if vscfl==0 and vscrollval!=0:
+				vscfl=1
+				labref.set('vscINT', "1")
+				labref.set('vscINTOF', str(vscrollval))
+			if hscfl==0 and hscrollval!=0:
+				hscfl=1
+				labref.set('hscINT', "1")
+				labref.set('hscINTOF', str(hscrollval))
+			vscoffset=int(labref.attrib.get('vscINTOF', "0"))
+			hscoffset=int(labref.attrib.get('hscINTOF', "0"))
 			imggfx=filelookup(imgcon)
+			if vscfl==1:
+				vscoffset += vscrollval
+				if imggfx.get_height()<vscoffset:
+					vscoffset=0
+				if imggfx.get_height()<(vscoffset * -1):
+					vscoffset=0
+				labref.set('vscINTOF', str(vscoffset))
+			if hscfl==1:
+				hscoffset += hscrollval
+				if imggfx.get_width()<hscoffset:
+					hscoffset=0
+				if imggfx.get_width()<(hscoffset * -1):
+					hscoffset=0
+				labref.set('hscINTOF', str(hscoffset))
+			#imggfx=pygame.image.load(imgcon)
+			
+			if hscfl==1:
+				imggfx=dzulib.hscroll(hscoffset, imggfx)
+			if vscfl==1:
+				imggfx=dzulib.vscroll(vscoffset, imggfx)
 			clickref=screensurf.blit(imggfx, (imgx, imgy))
 			if hoverkey!="0":
 				if clickref.collidepoint(pos)==1:
