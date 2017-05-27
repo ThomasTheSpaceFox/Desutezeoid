@@ -563,7 +563,14 @@ while quitflag==0:
 				imgx=(pos[0] - int(imggfx.get_width() / 2))
 			if folmousevflg==2:
 				imgy=(pos[1] - int(imggfx.get_height() / 2))
-			
+			if folmousehflg==3:
+				moux1=(abs(pos[0] - screensurf.get_width()) - int(imggfx.get_width() / 2))
+				imgx=moux1
+				#print "x" + str(imgx)
+			if folmousevflg==3:
+				mouy1=(abs(pos[1] - screensurf.get_height()) - int(imggfx.get_height() / 2))
+				imgy=mouy1
+				#print "y" + str(imgy)
 			if vscfl==1:
 				vscoffset += vscrollval
 				if imggfx.get_height()<vscoffset:
