@@ -533,7 +533,8 @@ while quitflag==0:
 		hscrollval=int(labref.attrib.get('hscroll', "0"))
 		vscfl=int(labref.attrib.get('vscINT', "0"))
 		hscfl=int(labref.attrib.get('hscINT', "0"))
-		
+		folmousehflg=int(labref.attrib.get('mouseh', "0"))
+		folmousevflg=int(labref.attrib.get('mousev', "0"))
 		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
 			imgx=int(labref.attrib.get("x"))
 			imgy=int(labref.attrib.get("y"))
@@ -554,6 +555,15 @@ while quitflag==0:
 			vscoffset=int(labref.attrib.get('vscINTOF', "0"))
 			hscoffset=int(labref.attrib.get('hscINTOF', "0"))
 			imggfx=filelookup(imgcon)
+			if folmousehflg==1:
+				imgx=pos[0]
+			if folmousevflg==1:
+				imgy=pos[1]
+			if folmousehflg==2:
+				imgx=(pos[0] - int(imggfx.get_width() / 2))
+			if folmousevflg==2:
+				imgy=(pos[1] - int(imggfx.get_height() / 2))
+			
 			if vscfl==1:
 				vscoffset += vscrollval
 				if imggfx.get_height()<vscoffset:

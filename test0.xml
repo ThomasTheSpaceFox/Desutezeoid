@@ -241,6 +241,7 @@ plese use either "iref" or "key"-->
 			<con>animtest1a.png</con>
 			<act type="none"/>
 		</img>
+		
 		<img x="300" y="100" onkey="timeloop2">
 			<con>animtest1b.png</con>
 			<act type="none"/>

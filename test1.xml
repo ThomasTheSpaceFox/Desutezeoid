@@ -35,12 +35,23 @@ last timeout in the sequence trigger one of these.-->
 			<con>starting booster rockets...</con>
 			<act type="none"/>
 		</label>
+		<!--Oooo! scroling images-->
 		<img x="400" y="100" vscroll="2" hscroll="4">
 			<con>animtest1a.png</con>
 			<act type="none"/>
 		</img>
 		<img x="500" y="100" vscroll='-2' hscroll="4">
 			<con>animtest1a.png</con>
+			<act type="none"/>
+		</img>
+		<!--These are those images that follow the pointer .o.
+		set to 1 for top-left corner, set to 2 for center.-->
+		<img x="300" y="100" mouseh="2">
+			<con>folx.png</con>
+			<act type="none"/>
+		</img>
+		<img x="300" y="100" mousev="2">
+			<con>foly.png</con>
 			<act type="none"/>
 		</img>
 	</core>

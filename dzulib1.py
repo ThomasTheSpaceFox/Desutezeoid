@@ -27,6 +27,7 @@ def initmainsave():
 def vscroll(scrollval, image):
 	offs=image.get_height()
 	newimage=image.copy()
+	newimage.fill((0, 0, 0, 0))
 	newimage.blit(image, (0, scrollval))
 	if (str(scrollval))[0]=="-":
 		newimage.blit(image, (0, (scrollval + offs)))
@@ -36,6 +37,7 @@ def vscroll(scrollval, image):
 def hscroll(scrollval, image):
 	offs=image.get_width()
 	newimage=image.copy()
+	newimage.fill((0, 0, 0, 0))
 	newimage.blit(image, (scrollval, 0))
 	if (str(scrollval))[0]=="-":
 		newimage.blit(image, ((scrollval + offs), 0))
