@@ -612,6 +612,10 @@ while quitflag==0:
 					ref=act.attrib.get("ref")
 					datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
+				if acttype=="prev":
+					ref=act.attrib.get("ref")
+					datstr=clicktab(clickref, "prev", ref, keyid, takekey, clicksoundflg, soundname)
+					clicklist.extend([datstr])
 				if acttype=="quit":
 					ref=act.attrib.get("ref")
 					datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
@@ -672,6 +676,10 @@ while quitflag==0:
 				if acttype=="iref":
 					ref=act.attrib.get("ref")
 					datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
+					clicklist.extend([datstr])
+				if acttype=="prev":
+					ref=act.attrib.get("ref")
+					datstr=clicktab(clickref, "prev", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
 				if acttype=="quit":
 					ref=act.attrib.get("ref")
@@ -749,6 +757,10 @@ while quitflag==0:
 				ref=act.attrib.get("ref")
 				datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
 				clicklist.extend([datstr])
+			if acttype=="prev":
+				ref=act.attrib.get("ref")
+				datstr=clicktab(clickref, "prev", ref, keyid, takekey, clicksoundflg, soundname)
+				clicklist.extend([datstr])
 			if acttype=="quit":
 				ref=act.attrib.get("ref")
 				datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
@@ -805,6 +817,10 @@ while quitflag==0:
 					if f.reftype=="iref":
 						curpage=f.ref
 						print ("iref: loading page '" + f.ref + "'")
+						break
+					if f.reftype=="prev" and cachepage!="NULL":
+						curpage=cachepage
+						print ("prev: go to previous page")
 						break
 					if f.reftype=="quit":
 						uiquit=1

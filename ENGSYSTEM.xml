@@ -8,7 +8,7 @@
 	<beginref>test0.xml</beginref>
 	<!--debug settings. used in development and testing. printkeys controls keyid list printing.
 	clickfields uses cfcolor to show outlines around each click field. useful for debugging.-->
-	<debug debug="1" printkeys="1" clickfields="0" cfcolor="#FFFF00"/>
+	<debug debug="1" printkeys="0" clickfields="0" cfcolor="#FFFF00"/>
 	<!--settings for desutezeoid's internal User Interface.-->
 	<ui>
 		<main BGCOLOR="#BBCFE6" FGCOLOR="#000000" textsize="24"/>
@@ -38,6 +38,9 @@
 		<!--The useprev attribute causes a jump to the previous page loaded.-->
 		<pagejump keyid="pagejumptestB" useprev="1" page="test0.xml"/>
 		<uipop keyid="welcome" msg="Welcome to the Desutezeoid test program!"/>
+		<!--The main menu is defined here. item tag explained: noact="1" makes an item unclickable,
+		stay="1" keeps menu open on click, keyid specifies keyid to add as usual,
+		con is the item label. uimenu tag explained: keyid is the keyid that triggres the menu, use BGCOLOR, FGCOLOR, and textsize to overide defaults defined in UI section above.-->
 		<uimenu keyid="mainmenu1" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25">
 			<item con="Main Menu | page 1" noact="1"/>
 			<item con="Main page" keyid="pagejumppage1" stay="1"/>
@@ -49,6 +52,7 @@
 			<item con="Flashlight effect." keyid="pagejumppage7" stay="1"/>
 			<item con="-------------------" noact="1"/>
 			<!--<item con="more..." keyid="mainmenu2" stay="0"/>-->
+			<!--REMEMBER TO ADD A "CLOSE MENU" item to the menu!!!!!!!-->
 			<item con="close menu"/>
 		</uimenu>
 		<uimenu keyid="mainmenu2" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25">
@@ -57,6 +61,7 @@
 			<item con="more..." keyid="mainmenu1" stay="0"/>
 			<item con="close menu"/>
 		</uimenu>
+		<!--Since uimenu can't pagejump itself, we have some keyids that trigger pagejumps-->
 		<pagejump keyid="pagejumppage1" page="test0.xml"/>
 		<pagejump keyid="pagejumppage2" page="test1.xml"/>
 		<pagejump keyid="pagejumppage3" page="about.xml"/>
@@ -67,34 +72,36 @@
 	</globalforks>
 	<!--these core objects are present on each page-->
 	<globalcore>
-		<!--this label uses the act type "quit" when clicked, this will quit the "game" also note how since this is present in globalcore, it shows on every page.-->
-		<!--<label x="0" y="580" size="20" BGCOLOR="#880000" FGCOLOR="#FFFFFF" >
-			<con>QUIT</con>
-			<act type="quit" ref="test1.xml"/>
-		</label>
-		<label x="40" y="580" size="20" BGCOLOR="#008800" FGCOLOR="#FFFFFF" >
-			<con>About</con>
-			<act type="iref" ref="about.xml"/>
-		</label>
-		<label x="80" y="580" size="20" BGCOLOR="#008800" FGCOLOR="#FFFFFF" >
-			<con>Home</con>
-			<act type="iref" ref="test0.xml"/>
-		</label>
-		<label x="120" y="580" size="20" BGCOLOR="#008800" keyid="pagejumptestB" FGCOLOR="#FFFFFF" >
-			<con>Prev</con>
-			<act type="key"/>
-		</label>
-		<label x="40" y="580" size="20" BGCOLOR="#008888" keyid="mainmenu1" FGCOLOR="#FFFFFF" >
-			<con>Menu</con>
-			<act type="key"/>
-		</label>-->
+		<!--That nifty hud? its defined here. the menu is just a uimenu fork
+		any screen object that should do nothing if clicked should set its act type to "none"
+		if this is the case, keyid and takekey will be ignored.-->
+		<img x="0" y="570">
+			<con>hudbar.png</con>
+			<act type="none"/>
+		</img>
+		<!--this img tag has its act type set to "quit" making a quit button is that easy.-->
 		<img x="0" y="577">
 			<con>quitbutton.png</con>
 			<act type="quit"/>
 		</img>
+		<!-- the menu button uses the "key" type so its on-click keyids take effect.-->
 		<img x="46" y="577" keyid="mainmenu1">
 			<con>menubutton.png</con>
 			<act type="key"/>
+		</img>
+		<!--act type "iref" is used with the ref attribute to change pages on click. on-click keyids still take effect. ref only needs to be specified if "iref" act type is used.-->
+		<img x="92" y="577">
+			<con>homebutton.png</con>
+			<act type="iref" ref="test0.xml"/>
+		</img>
+		<img x="138" y="577">
+			<con>aboutbutton.png</con>
+			<act type="iref" ref="about.xml"/>
+		</img>
+		<!--another special act type is "prev". it does the same thing as a pagejump with useprev="1" set. it simply goes to the previous page.-->
+		<img x="184" y="577">
+			<con>prevbutton.png</con>
+			<act type="prev"/>
 		</img>
 	</globalcore>
 </conf>
