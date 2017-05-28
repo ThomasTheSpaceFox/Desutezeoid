@@ -1,3 +1,4 @@
 # main save file
 main.sav
 *.pyc
+*.pyo

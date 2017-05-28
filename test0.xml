@@ -191,13 +191,17 @@ thats why only one label per switch, is visible at a time.-->
 			<con>warp things...</con>
 			<act type="iref" ref="warptest1.xml"/>
 		</label>
-		<label x="400" y="250" size="25" BGCOLOR="#AAAAFF" FGCOLOR="#000000">
+		<label x="400" y="255" size="25" BGCOLOR="#AAAAFF" FGCOLOR="#000000">
 			<con>Telescopic</con>
 			<act type="iref" ref="spotlight.xml"/>
 		</label>
-		<label x="400" y="270" size="25" BGCOLOR="#AAAAFF" FGCOLOR="#000000">
+		<label x="400" y="280" size="25" BGCOLOR="#AAAAFF" FGCOLOR="#000000">
 			<con>flash light</con>
 			<act type="iref" ref="flashlight.xml"/>
+		</label>
+		<label x="400" y="305" size="25" BGCOLOR="#AAAAFF" FGCOLOR="#000000">
+			<con>3D prerendered panoramic</con>
+			<act type="iref" ref="warptest2.xml"/>
 		</label>
 		<label x="200" y="230" size="25" BGCOLOR="#BBBBBB" FGCOLOR="#000000" takekey="dropmenu1" onkey="dropmenu1">
 			<con>menu</con>

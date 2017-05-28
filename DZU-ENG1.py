@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-print "Desutezeoid arbitrary point and click engine v1.4.1"
+print "Desutezeoid arbitrary point and click engine v1.4.2"
 print "parsing ENGSYSTEM.xml"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
@@ -49,6 +49,7 @@ filedict={}
 
 
 def filelookup(filename):
+	global filedict
 	if filename in filedict:
 		return filedict[filename]
 	else:

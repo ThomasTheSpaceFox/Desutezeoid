@@ -2,8 +2,8 @@
 <main>
 	<!--setting BGMstop to "0" keeps any music from the previous page playing (unless the page has defined Background music.) BGMstop falls back to "1" if not specified.-->
 	<pageconf BGimg="0" BGMstop="0">
-		<title>Lens warp, follow mouse effect.</title>
-		<BG>BGseaside.jpg</BG>
+		<title>3D prerendered Panoramic, follow mouse effect.</title>
+		<BG>DZU-Pano-3D-1.jpg</BG>
 	</pageconf>
 	<forks>
 	</forks>
@@ -15,12 +15,7 @@
 		you can also use a very wide panoramic camera in 3D software like blender
 		also turning off BGimg in pageconf can speed up rendering.-->
 		<img x="0" y="0" mouseh="3" mousev="3">
-			<con>warptest1.jpg</con>
-			<act type="none" ref="test0.xml"/>
-		</img>
-		<!--the "spotlight" is just a black image with a circle cut out in mouseh/mousev mode 2-->
-		<img x="0" y="0" mouseh="2" mousev="2">
-			<con>spotlight.png</con>
+			<con>DZU-Pano-3D-1.jpg</con>
 			<act type="none" ref="test0.xml"/>
 		</img>
 	</core>

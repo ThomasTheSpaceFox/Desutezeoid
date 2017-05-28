@@ -3,7 +3,7 @@
 	<!--window size-->
 	<screen x="800" y="600"/>
 	<!--Game/program Title/windown icon.-->
-	<title base="Desutezeoid v1.4.1 test program. " icon="icon.png" />
+	<title base="Desutezeoid v1.4.2 test program. " icon="icon.png" />
 	<!--page to load at engine start.-->
 	<beginref>test0.xml</beginref>
 	<!--debug settings. used in development and testing. printkeys controls keyid list printing.
@@ -38,13 +38,37 @@
 		<!--The useprev attribute causes a jump to the previous page loaded.-->
 		<pagejump keyid="pagejumptestB" useprev="1" page="test0.xml"/>
 		<uipop keyid="welcome" msg="Welcome to the Desutezeoid test program!"/>
-
-		
+		<uimenu keyid="mainmenu1" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25">
+			<item con="Main Menu | page 1" noact="1"/>
+			<item con="Main page" keyid="pagejumppage1" stay="1"/>
+			<item con="Another page" keyid="pagejumppage2" stay="1"/>
+			<item con="About" keyid="pagejumppage3" stay="1"/>
+			<item con="warp things..." keyid="pagejumppage4" stay="1"/>
+			<item con="Telescopic" keyid="pagejumppage5" stay="1"/>
+			<item con="3D prerendered panoramic" keyid="pagejumppage6" stay="1"/>
+			<item con="Flashlight effect." keyid="pagejumppage7" stay="1"/>
+			<item con="-------------------" noact="1"/>
+			<!--<item con="more..." keyid="mainmenu2" stay="0"/>-->
+			<item con="close menu"/>
+		</uimenu>
+		<uimenu keyid="mainmenu2" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25">
+			<item con="Main Menu | page 2" noact="1"/>
+			<item con="-------------------" noact="1"/>
+			<item con="more..." keyid="mainmenu1" stay="0"/>
+			<item con="close menu"/>
+		</uimenu>
+		<pagejump keyid="pagejumppage1" page="test0.xml"/>
+		<pagejump keyid="pagejumppage2" page="test1.xml"/>
+		<pagejump keyid="pagejumppage3" page="about.xml"/>
+		<pagejump keyid="pagejumppage4" page="warptest1.xml"/>
+		<pagejump keyid="pagejumppage5" page="spotlight.xml"/>
+		<pagejump keyid="pagejumppage6" page="warptest2.xml"/>
+		<pagejump keyid="pagejumppage7" page="flashlight.xml"/>
 	</globalforks>
 	<!--these core objects are present on each page-->
 	<globalcore>
 		<!--this label uses the act type "quit" when clicked, this will quit the "game" also note how since this is present in globalcore, it shows on every page.-->
-		<label x="0" y="580" size="20" BGCOLOR="#880000" FGCOLOR="#FFFFFF" >
+		<!--<label x="0" y="580" size="20" BGCOLOR="#880000" FGCOLOR="#FFFFFF" >
 			<con>QUIT</con>
 			<act type="quit" ref="test1.xml"/>
 		</label>
@@ -60,6 +84,17 @@
 			<con>Prev</con>
 			<act type="key"/>
 		</label>
-		
+		<label x="40" y="580" size="20" BGCOLOR="#008888" keyid="mainmenu1" FGCOLOR="#FFFFFF" >
+			<con>Menu</con>
+			<act type="key"/>
+		</label>-->
+		<img x="0" y="577">
+			<con>quitbutton.png</con>
+			<act type="quit"/>
+		</img>
+		<img x="46" y="577" keyid="mainmenu1">
+			<con>menubutton.png</con>
+			<act type="key"/>
+		</img>
 	</globalcore>
 </conf>
