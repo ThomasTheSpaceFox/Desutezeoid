@@ -45,6 +45,8 @@ except IOError:
 	
 print "main.sav loaded"
 
+pygame.event.set_allowed([QUIT, MOUSEBUTTONDOWN])
+
 filedict={}
 
 
