@@ -134,10 +134,10 @@ def keyprint():
 		print keylist
 keyprint()
 prevpage="NULL"
-#point this to your first screen c: no menu program really needed :o
 curpage=beginref
 
 screensurf=pygame.display.set_mode((scrnx, scrny))
+screensurf.set_alpha(None)
 quitflag=0
 clicklist=list()
 
@@ -269,7 +269,8 @@ qmenuflg=0
 while quitflag==0:
 	huris=0
 	clicklist=list()
-	time.sleep(0.1)
+	#Engine Speed
+	time.sleep(0.05)
 	pos = pygame.mouse.get_pos()
 	#print "tic"
 	if curpage!=prevpage:
@@ -311,7 +312,7 @@ while quitflag==0:
 		print ("Page title: '" + pagetitle + "'")
 		if BGon==1:
 			BGfile=(pageconf.find('BG')).text
-			BG=pygame.image.load(BGfile)
+			BG=pygame.image.load(BGfile).convert()
 		screensurf.fill((170, 170, 170))
 		print "done. begin mainloop"
 	if BGon==1:
@@ -838,11 +839,11 @@ while quitflag==0:
 						qpopflg=0
 					if f.quitab==3:
 						qmenuflg=0
-	if eventhappen==0:
-		time.sleep(0.01)
+	#if eventhappen==0:
+	#	time.sleep(0.01)
 
 		
-	pygame.display.update()
+	pygame.display.flip()
 	pygame.event.pump()
 
 print "updating main.sav Please Wait."
