@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-print "Desutezeoid arbitrary point and click engine v1.4.2"
+print "Desutezeoid arbitrary point and click engine v1.4.3"
 print "parsing ENGSYSTEM.xml"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
@@ -53,7 +53,10 @@ def filelookup(filename):
 	if filename in filedict:
 		return filedict[filename]
 	else:
-		imgret=pygame.image.load(filename)
+		if (filename.lower()).endswith(".jpg") or (filename.lower()).endswith(".jpeg"):
+			imgret=pygame.image.load(filename).convert()
+		else:
+			imgret=pygame.image.load(filename).convert_alpha()
 		filedict[filename]=imgret
 		return imgret
 

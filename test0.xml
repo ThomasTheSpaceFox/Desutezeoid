@@ -7,6 +7,9 @@
 	</pageconf>
 	<pagekeys>
 		<k keyid="testpagekeys"/>
+		<!--Start the timer. (see below in forks section)-->
+		<k keyid="cleartimer"/>
+		<k keyid="startloop"/>
 	</pagekeys>
 	<forks>
 		<batchtrig keyid="alpha">
@@ -98,7 +101,22 @@ but only after the keyid is present will the countdown begin. it is safe to remo
 timeout fork associated with it. as the timeout instance in question will be removed automatically. 
 The timeout instance is also removed after the specified time lapses. also if the optional post keyid atribbute is set, a keyid will be passively added after timeout.-->
 		<timeout keyid="prototime" seconds="3.5" post="soundfx1"/>
-		
+		<!--Explanation of timer: add cleartimer and startloop to pagekeys,
+		cleartimer sets timer keyids to 0, startloop starts the loop. NOTE:
+		THE "cleartimer" batchset MUST BE PLACED BEFORE the "startloop" batchset!!!-->
+		<batchset keyid="cleartimer" set="0">
+			<k keyid="timeloop1"/>
+			<k keyid="timeloop2"/>
+			<k keyid="timeloop3"/>
+		</batchset>
+		<!--AFTER the cleartimer batset has reset the timer keys, start the timer.-->
+		<batchset keyid="startloop" set="1">
+			<k keyid="timeloop1"/>
+		</batchset>
+		<!--the timeout loop itself. timeouts are an important part of keyid forking logic.-->
+		<timeout keyid="timeloop1" seconds="0.01" post="timeloop2"/>
+		<timeout keyid="timeloop2" seconds="0.01" post="timeloop3"/>
+		<timeout keyid="timeloop3" seconds="0.01" post="timeloop1"/>
 	</forks>
 	<core>
 		<!--note the "hoverkey" attribute. this toggles in and out of the keyidlist based on wether the curser is over the label/img instance. this one triggers a label further down.-->
@@ -106,7 +124,9 @@ The timeout instance is also removed after the specified time lapses. also if th
 			<con>Hello world! :D</con>
 			<act type="none"/>
 		</label>
-		<!--This is the box object. it generates a solid color box of the specified size. like img, and label, it is clickable, has separate hover visual attributes, and so on. "COLOR" is an html #RRGGBB format color. as is "HOVCOLOR". hovcolor is used when the mouse is over the box, and "onhov" is specified as "1". otherwise "COLOR" is used. also you can overwride the default alpha values using "alpha" and "hovalpha" both alpha values should be a number from 0 to 255.--> 
+		<!--This is the box object. it generates a solid color box of the specified size. like img, and label, it is clickable, has separate hover visual attributes, and so on. "COLOR" is an html #RRGGBB format color. as is "HOVCOLOR". hovcolor is used when the mouse is over the box, and "onhov" is specified as "1". otherwise "COLOR" is used. also you can overwride the default alpha values using "alpha" and "hovalpha" both alpha values should be a number from 0 to 255.
+		
+		Box Tip: use the selection tool in gimp on your backgorund and copy the position and size from the tool options tab.--> 
 		<box x="300" y="200" sizex="40" sizey="60" COLOR="#FF0000" alpha="60" hovalpha="150" onhov="1" HOVCOLOR="#FF0000">
 			<act type="none"/>
 		</box>

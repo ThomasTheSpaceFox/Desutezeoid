@@ -8,10 +8,10 @@
 	<forks>
 	</forks>
 	<core>
-		
 		<img x="0" y="0" mouseh="2" mousev="2">
 			<con>flashlight.png</con>
 			<act type="none" ref="test0.xml"/>
 		</img>
+		
 	</core>
 </main>

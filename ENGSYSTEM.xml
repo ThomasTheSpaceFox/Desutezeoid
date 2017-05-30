@@ -3,12 +3,12 @@
 	<!--window size-->
 	<screen x="800" y="600"/>
 	<!--Game/program Title/windown icon.-->
-	<title base="Desutezeoid v1.4.2 test program. " icon="icon.png" />
+	<title base="Desutezeoid v1.4.3 test program. " icon="icon.png" />
 	<!--page to load at engine start.-->
 	<beginref>test0.xml</beginref>
 	<!--debug settings. used in development and testing. printkeys controls keyid list printing.
 	clickfields uses cfcolor to show outlines around each click field. useful for debugging.-->
-	<debug debug="1" printkeys="0" clickfields="0" cfcolor="#FFFF00"/>
+	<debug debug="1" printkeys="1" clickfields="0" cfcolor="#FFFF00"/>
 	<!--settings for desutezeoid's internal User Interface.-->
 	<ui>
 		<main BGCOLOR="#BBCFE6" FGCOLOR="#000000" textsize="24"/>
@@ -30,11 +30,6 @@
 	
 	<!--These forks are present on each page-->
 	<globalforks>
-		<!--this is an endless loop of 3 keyids. this is started by a keyid added by the initkeys section of config. also note how since this is in globalforks, it stays running.
-		and with a nonlooping sequence, such as an "on-click" animation. you would only need it on the page the animation is present on.-->
-		<timeout keyid="timeloop1" seconds="0.01" post="timeloop2"/>
-		<timeout keyid="timeloop2" seconds="0.01" post="timeloop3"/>
-		<timeout keyid="timeloop3" seconds="0.01" post="timeloop1"/>
 		<!--The useprev attribute causes a jump to the previous page loaded.-->
 		<pagejump keyid="pagejumptestB" useprev="1" page="test0.xml"/>
 		<uipop keyid="welcome" msg="Welcome to the Desutezeoid test program!"/>
@@ -50,6 +45,7 @@
 			<item con="Telescopic" keyid="pagejumppage5" stay="1"/>
 			<item con="3D prerendered panoramic" keyid="pagejumppage6" stay="1"/>
 			<item con="Flashlight effect." keyid="pagejumppage7" stay="1"/>
+			<item con="Rain effect." keyid="pagejumppage8" stay="1"/>
 			<item con="-------------------" noact="1"/>
 			<!--<item con="more..." keyid="mainmenu2" stay="0"/>-->
 			<!--REMEMBER TO ADD A "CLOSE MENU" item to the menu!!!!!!!-->
@@ -69,6 +65,7 @@
 		<pagejump keyid="pagejumppage5" page="spotlight.xml"/>
 		<pagejump keyid="pagejumppage6" page="warptest2.xml"/>
 		<pagejump keyid="pagejumppage7" page="flashlight.xml"/>
+		<pagejump keyid="pagejumppage8" page="rain.xml"/>
 	</globalforks>
 	<!--these core objects are present on each page-->
 	<globalcore>
