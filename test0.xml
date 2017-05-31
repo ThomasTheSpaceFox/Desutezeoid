@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
-	<pageconf BGimg="1" BGM="1" pagekeys="1">
-		<title>Main Page</title>
+	<pageconf BGimg="1" BGM="0" BGMstop="0" pagekeys="1">
+		<title>Test Page 0</title>
 		<BG>BGseaside.jpg</BG>
 		<BGM>BGM1.ogg</BGM>
 	</pageconf>
@@ -201,49 +201,6 @@ thats why only one label per switch, is visible at a time.-->
 			<con>(invert)</con>
 			<act type="key" ref="test1.xml"/>
 		</label>
-		<!--this is some simple keyid logic that shows a drop-down menu.
-		we start with the button for the menu. it behaves like the swithes above.-->
-		<label x="200" y="230" size="25" BGCOLOR="#AAAAAA" FGCOLOR="#000000" keyid="dropmenu1" offkey="dropmenu1">
-			<con>menu</con>
-			<act type="key" ref="test1.xml"/>
-		</label>
-		<label x="400" y="230" size="25" BGCOLOR="#AAAAFF" FGCOLOR="#000000">
-			<con>warp things...</con>
-			<act type="iref" ref="warptest1.xml"/>
-		</label>
-		<label x="400" y="255" size="25" BGCOLOR="#AAAAFF" FGCOLOR="#000000">
-			<con>Telescopic</con>
-			<act type="iref" ref="spotlight.xml"/>
-		</label>
-		<label x="400" y="280" size="25" BGCOLOR="#AAAAFF" FGCOLOR="#000000">
-			<con>flash light</con>
-			<act type="iref" ref="flashlight.xml"/>
-		</label>
-		<label x="400" y="305" size="25" BGCOLOR="#AAAAFF" FGCOLOR="#000000">
-			<con>3D prerendered panoramic</con>
-			<act type="iref" ref="warptest2.xml"/>
-		</label>
-		<label x="200" y="230" size="25" BGCOLOR="#BBBBBB" FGCOLOR="#000000" takekey="dropmenu1" onkey="dropmenu1">
-			<con>menu</con>
-			<act type="key" ref="test1.xml"/>
-		</label>
-		<!--the menu items are normal labels triggered by the keyid of the switch above. simple.-->
-		<label x="200" y="250" size="25" BGCOLOR="#AAAAAA" FGCOLOR="#000000" onkey="dropmenu1">
-			<con>menu item 1</con>
-			<act type="none" ref="test1.xml"/>
-		</label>
-		<label x="200" y="270" size="25" BGCOLOR="#AAAAAA" FGCOLOR="#000000" onkey="dropmenu1">
-			<con>menu item 2</con>
-			<act type="none" ref="test1.xml"/>
-		</label>
-		<label x="200" y="290" size="24" BGCOLOR="#AAAAAA" FGCOLOR="#000000" onkey="dropmenu1">
-			<con>about</con>
-			<act type="iref" ref="about.xml"/>
-		</label>
-		<label x="200" y="310" size="24" BGCOLOR="#AAAAAA" FGCOLOR="#000000" onkey="dropmenu1" sfxclick="1" sound="mip.ogg">
-			<con>sound fx</con>
-			<act type="key" ref="about.xml"/>
-		</label>
 		<label x="125" y="210" size="24" BGCOLOR="#000000" FGCOLOR="#FFFFFF" onkey="alpha">
 			<con>HI!</con>
 			<act type="key" ref="test1.xml"/>
@@ -268,22 +225,22 @@ plese use either "iref" or "key"-->
 			<act type="key"/>
 		</label>
 		<img x="80" y="80" hovpic="1" hoverkey="onhov1">
-			<con>testimg0.png</con>
-			<altcon>testimg1.png</altcon>
+			<con>no-tr-testimg0.png</con>
+			<altcon>no-tr-testimg1.png</altcon>
 			<act type="quit" ref="test1.xml"/>
 		</img>
 		<!--lets animate a test animation with that timeout loop in "globalcore"! See engine config file (ENGSYSTEM.xml) comments for further explanation.-->
 		<img x="300" y="100" onkey="timeloop1">
-			<con>animtest1a.png</con>
+			<con>no-tr-animtest1a.png</con>
 			<act type="none"/>
 		</img>
 		
 		<img x="300" y="100" onkey="timeloop2">
-			<con>animtest1b.png</con>
+			<con>no-tr-animtest1b.png</con>
 			<act type="none"/>
 		</img>
 		<img x="300" y="100" onkey="timeloop3">
-			<con>animtest1c.png</con>
+			<con>no-tr-animtest1c.png</con>
 			<act type="none"/>
 		</img>
 		<img x="0" y="0" mouseh="2" mousev="2" onkey="warptest1" takekey="warptest1">

@@ -5,7 +5,7 @@
 	<!--Game/program Title/windown icon.-->
 	<title base="Desutezeoid v1.4.3 test program. " icon="icon.png" />
 	<!--page to load at engine start.-->
-	<beginref>test0.xml</beginref>
+	<beginref>startpage.xml</beginref>
 	<!--debug settings. used in development and testing. printkeys controls keyid list printing.
 	clickfields uses cfcolor to show outlines around each click field. useful for debugging.-->
 	<debug debug="1" printkeys="1" clickfields="0" cfcolor="#FFFF00"/>
@@ -19,7 +19,7 @@
 	<initkeys>
 		<k keyid="timeloop1"/>
 		<k keyid="testkey1"/>
-		<k keyid="welcome"/>
+		<!--<k keyid="welcome"/>-->
 	</initkeys>
 	<!--keyids that should persist in main.sav to be added on next engine load, if they were present on engine quit. main.sav should be in a game's .gitignore or equiv. as this is meant as a way to make user progress persist. notice how the two example switches are tracked, making their state persist.-->
 	<savkeys>
@@ -37,10 +37,10 @@
 		stay="1" keeps menu open on click, keyid specifies keyid to add as usual,
 		con is the item label. uimenu tag explained: keyid is the keyid that triggres the menu, use BGCOLOR, FGCOLOR, and textsize to overide defaults defined in UI section above.-->
 		<uimenu keyid="mainmenu1" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25">
-			<item con="Main Menu | page 1" noact="1"/>
-			<item con="Main page" keyid="pagejumppage1" stay="1"/>
-			<item con="Another page" keyid="pagejumppage2" stay="1"/>
-			<item con="About" keyid="pagejumppage3" stay="1"/>
+			<item con="Main Menu" noact="1"/>
+			<item con="Test Page 0" keyid="pagejumppage1" stay="1"/>
+			<item con="Test Page 1" keyid="pagejumppage2" stay="1"/>
+			<!--<item con="About" keyid="pagejumppage3" stay="1"/>-->
 			<item con="warp things..." keyid="pagejumppage4" stay="1"/>
 			<item con="Telescopic" keyid="pagejumppage5" stay="1"/>
 			<item con="3D prerendered panoramic" keyid="pagejumppage6" stay="1"/>
@@ -78,26 +78,26 @@
 		</img>
 		<!--this img tag has its act type set to "quit" making a quit button is that easy.-->
 		<img x="0" y="577">
-			<con>quitbutton.png</con>
+			<con>no-tr-quitbutton.png</con>
 			<act type="quit"/>
 		</img>
 		<!-- the menu button uses the "key" type so its on-click keyids take effect.-->
 		<img x="46" y="577" keyid="mainmenu1">
-			<con>menubutton.png</con>
+			<con>no-tr-menubutton.png</con>
 			<act type="key"/>
 		</img>
 		<!--act type "iref" is used with the ref attribute to change pages on click. on-click keyids still take effect. ref only needs to be specified if "iref" act type is used.-->
 		<img x="92" y="577">
-			<con>homebutton.png</con>
-			<act type="iref" ref="test0.xml"/>
+			<con>no-tr-homebutton.png</con>
+			<act type="iref" ref="startpage.xml"/>
 		</img>
 		<img x="138" y="577">
-			<con>aboutbutton.png</con>
+			<con>no-tr-aboutbutton.png</con>
 			<act type="iref" ref="about.xml"/>
 		</img>
 		<!--another special act type is "prev". it does the same thing as a pagejump with useprev="1" set. it simply goes to the previous page.-->
 		<img x="184" y="577">
-			<con>prevbutton.png</con>
+			<con>no-tr-prevbutton.png</con>
 			<act type="prev"/>
 		</img>
 	</globalcore>

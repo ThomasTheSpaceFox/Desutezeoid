@@ -55,7 +55,7 @@ def filelookup(filename):
 	if filename in filedict:
 		return filedict[filename]
 	else:
-		if (filename.lower()).endswith(".jpg") or (filename.lower()).endswith(".jpeg"):
+		if (filename.lower()).endswith(".jpg") or (filename.lower()).endswith(".jpeg") or (filename.lower()).startswith("no-tr"):
 			imgret=pygame.image.load(filename).convert()
 		else:
 			imgret=pygame.image.load(filename).convert_alpha()

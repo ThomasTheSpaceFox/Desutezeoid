@@ -2,7 +2,7 @@
 <main>
 	<!--setting BGMstop to "0" keeps any music from the previous page playing (unless the page has defined Background music.) BGMstop falls back to "1" if not specified.-->
 	<pageconf BGimg="1" BGMstop="0">
-		<title>another page</title>
+		<title>Test Page 1</title>
 		<BG>BGseaside.jpg</BG>
 	</pageconf>
 	<forks>
@@ -37,11 +37,11 @@ last timeout in the sequence trigger one of these.-->
 		</label>
 		<!--Oooo! scroling images-->
 		<img x="400" y="100" vscroll="2" hscroll="4">
-			<con>animtest1a.png</con>
+			<con>no-tr-animtest1a.png</con>
 			<act type="none"/>
 		</img>
 		<img x="500" y="100" vscroll='-2' hscroll="4">
-			<con>animtest1a.png</con>
+			<con>no-tr-animtest1a.png</con>
 			<act type="none"/>
 		</img>
 		<!--These are those images that follow the pointer .o.

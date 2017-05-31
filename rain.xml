@@ -23,7 +23,7 @@
 		<timeout keyid="rainloop3" seconds="2.9" post="rainloop1"/>
 	</forks>
 	<core>
-		<img x="0" y="0" vscroll="20" offkey="rainloop1">
+		<img x="94" y="66" vscroll="20" offkey="rainloop1">
 			<con>rainfx1.png</con>
 			<act type="none"/>
 		</img>
