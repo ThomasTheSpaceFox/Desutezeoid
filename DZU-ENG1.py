@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-print "Desutezeoid arbitrary point and click engine v1.4.3"
+print "Desutezeoid arbitrary point and click engine v1.5.0"
 print "parsing ENGSYSTEM.xml"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
@@ -528,253 +528,255 @@ while quitflag==0:
 		
 	keybak=list(keylist)
 	#print keylist
-	for labref in coretag.findall("img"):
-		keyid=labref.attrib.get('keyid', "0")
-		takekey=labref.attrib.get('takekey', "0")
-		onkey=labref.attrib.get('onkey', "0")
-		offkey=labref.attrib.get('offkey', "0")
-		hoverkey=labref.attrib.get('hoverkey', "0")
-		clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
-		soundname=(labref.attrib.get('sound', "0"))
-		vscrollval=int(labref.attrib.get('vscroll', "0"))
-		hscrollval=int(labref.attrib.get('hscroll', "0"))
-		vscfl=int(labref.attrib.get('vscINT', "0"))
-		hscfl=int(labref.attrib.get('hscINT', "0"))
-		folmousehflg=int(labref.attrib.get('mouseh', "0"))
-		folmousevflg=int(labref.attrib.get('mousev', "0"))
-		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
-			imgx=int(labref.attrib.get("x"))
-			imgy=int(labref.attrib.get("y"))
-			imgcon=(labref.find("con")).text
-			hovpic=int(labref.attrib.get("hovpic", "0"))
-			act=labref.find("act")
-			acttype=act.attrib.get("type", "none")
-			pos = pygame.mouse.get_pos()
-			#scrolling operation init code. (variables are stored inside xml tree in ram)
-			if vscfl==0 and vscrollval!=0:
-				vscfl=1
-				labref.set('vscINT', "1")
-				labref.set('vscINTOF', str(vscrollval))
-			if hscfl==0 and hscrollval!=0:
-				hscfl=1
-				labref.set('hscINT', "1")
-				labref.set('hscINTOF', str(hscrollval))
-			vscoffset=int(labref.attrib.get('vscINTOF', "0"))
-			hscoffset=int(labref.attrib.get('hscINTOF', "0"))
-			imggfx=filelookup(imgcon)
-			if folmousehflg==1:
-				imgx=pos[0]
-			if folmousevflg==1:
-				imgy=pos[1]
-			if folmousehflg==2:
-				imgx=(pos[0] - int(imggfx.get_width() / 2))
-			if folmousevflg==2:
-				imgy=(pos[1] - int(imggfx.get_height() / 2))
-			if folmousehflg==3:
-				moux1=(abs(pos[0] - screensurf.get_width()) - int(imggfx.get_width() / 2))
-				imgx=moux1
-				#print "x" + str(imgx)
-			if folmousevflg==3:
-				mouy1=(abs(pos[1] - screensurf.get_height()) - int(imggfx.get_height() / 2))
-				imgy=mouy1
-				#print "y" + str(imgy)
-			if vscfl==1:
-				vscoffset += vscrollval
-				if imggfx.get_height()<vscoffset:
-					vscoffset=0
-				if imggfx.get_height()<(vscoffset * -1):
-					vscoffset=0
-				labref.set('vscINTOF', str(vscoffset))
-			if hscfl==1:
-				hscoffset += hscrollval
-				if imggfx.get_width()<hscoffset:
-					hscoffset=0
-				if imggfx.get_width()<(hscoffset * -1):
-					hscoffset=0
-				labref.set('hscINTOF', str(hscoffset))
-			#imggfx=pygame.image.load(imgcon)
-			
-			if hscfl==1:
-				imggfx=dzulib.hscroll(hscoffset, imggfx)
-			if vscfl==1:
-				imggfx=dzulib.vscroll(vscoffset, imggfx)
-			clickref=screensurf.blit(imggfx, (imgx, imgy))
-			if hoverkey!="0":
-				if clickref.collidepoint(pos)==1:
-					if not hoverkey in keylist:
-						keylist.extend([hoverkey])
-				else:
-					if hoverkey in keylist:
-						keylist.remove(hoverkey)
-			if hovpic==1:
-				hovcon=(labref.find("altcon")).text
-				hovgfx=filelookup(hovcon)
-				if clickref.collidepoint(pos)==1:
-					clickref=screensurf.blit(hovgfx, (imgx, imgy))
-		
-			if acttype!="none":
+	#core object render-parser
+	for labref in coretag.findall("*"):
+		if labref.tag=="img":
+			keyid=labref.attrib.get('keyid', "0")
+			takekey=labref.attrib.get('takekey', "0")
+			onkey=labref.attrib.get('onkey', "0")
+			offkey=labref.attrib.get('offkey', "0")
+			hoverkey=labref.attrib.get('hoverkey', "0")
+			clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
+			soundname=(labref.attrib.get('sound', "0"))
+			vscrollval=int(labref.attrib.get('vscroll', "0"))
+			hscrollval=int(labref.attrib.get('hscroll', "0"))
+			vscfl=int(labref.attrib.get('vscINT', "0"))
+			hscfl=int(labref.attrib.get('hscINT', "0"))
+			folmousehflg=int(labref.attrib.get('mouseh', "0"))
+			folmousevflg=int(labref.attrib.get('mousev', "0"))
+			if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
+				imgx=int(labref.attrib.get("x"))
+				imgy=int(labref.attrib.get("y"))
+				imgcon=(labref.find("con")).text
+				hovpic=int(labref.attrib.get("hovpic", "0"))
+				act=labref.find("act")
+				acttype=act.attrib.get("type", "none")
 				pos = pygame.mouse.get_pos()
-				if acttype=="iref":
-					ref=act.attrib.get("ref")
-					datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
-					clicklist.extend([datstr])
-				if acttype=="prev":
-					ref=act.attrib.get("ref")
-					datstr=clicktab(clickref, "prev", ref, keyid, takekey, clicksoundflg, soundname)
-					clicklist.extend([datstr])
-				if acttype=="quit":
-					ref=act.attrib.get("ref")
-					datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
-					clicklist.extend([datstr])
-				if acttype=="key":
-					ref=act.attrib.get("ref")
-					datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
-					clicklist.extend([datstr])
-	for labref in coretag.findall("box"):
-		keyid=labref.attrib.get('keyid', "0")
-		takekey=labref.attrib.get('takekey', "0")
-		onkey=labref.attrib.get('onkey', "0")
-		offkey=labref.attrib.get('offkey', "0")
-		hoverkey=labref.attrib.get('hoverkey', "0")
-		clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
-		soundname=(labref.attrib.get('sound', "0"))
-		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
-			imgx=int(labref.attrib.get("x"))
-			imgy=int(labref.attrib.get("y"))
-			sizex=int(labref.attrib.get("sizex"))
-			sizey=int(labref.attrib.get("sizey"))
-			onhov=int(labref.attrib.get("onhov", "0"))
-			hovcolor=pygame.Color(labref.attrib.get("HOVCOLOR", "#FFFFFF"))
-			hovalpha=int(labref.attrib.get("hovalpha", "140"))
-			boxalpha=int(labref.attrib.get("alpha", "100"))
-			boxcolor=pygame.Color(labref.attrib.get("COLOR", "#FFFFFF"))
-			#imgcon=(labref.find("con")).text
-			act=labref.find("act")
-			acttype=act.attrib.get("type", "none")
-			pos = pygame.mouse.get_pos()
-			#imggfx=pygame.image.load(imgcon)
-			boxgfx=pygame.Surface((sizex, sizey))
-			boxgfx.convert_alpha()
-			#imggfx.fill(boxcolor)
-			boxgfx.set_alpha(0)
-			clickref=screensurf.blit(boxgfx, (imgx, imgy))
-			if onhov==1 and clickref.collidepoint(pos)==1:
-				boxgfx.fill(hovcolor)
-				boxgfx.set_alpha(hovalpha)
-				#skip blitting a second time if alpha is 0.
-				if hovalpha!=0:
-					clickref=screensurf.blit(boxgfx, (imgx, imgy))
-			else:
-				boxgfx.fill(boxcolor)
-				boxgfx.set_alpha(boxalpha)
-				#skip blitting a second time if alpha is 0.
-				if boxalpha!=0:
-					clickref=screensurf.blit(boxgfx, (imgx, imgy))
-			if hoverkey!="0":
-				if clickref.collidepoint(pos)==1:
-					if not hoverkey in keylist:
-						keylist.extend([hoverkey])
-				else:
-					if hoverkey in keylist:
-						keylist.remove(hoverkey)		
-			if acttype!="none":
-				pos = pygame.mouse.get_pos()
-				if acttype=="iref":
-					ref=act.attrib.get("ref")
-					datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
-					clicklist.extend([datstr])
-				if acttype=="prev":
-					ref=act.attrib.get("ref")
-					datstr=clicktab(clickref, "prev", ref, keyid, takekey, clicksoundflg, soundname)
-					clicklist.extend([datstr])
-				if acttype=="quit":
-					ref=act.attrib.get("ref")
-					datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
-					clicklist.extend([datstr])
-				if acttype=="key":
-					ref=act.attrib.get("ref")
-					datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
-					clicklist.extend([datstr])
-	for texref in coretag.findall("text"):
-		onkey=texref.attrib.get('onkey', "0")
-		offkey=texref.attrib.get('offkey', "0")
-		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
-			labx=int(texref.attrib.get("x"))
-			laby=int(texref.attrib.get("y"))
-			size=int(texref.attrib.get("size"))
-			FGCOL=pygame.Color(texref.attrib.get("FGCOLOR", "#FFFFFF"))
-			BGCOL=pygame.Color(texref.attrib.get("BGCOLOR", "#000000"))
-			transp=int(texref.attrib.get("transp", "0"))
-			texfnt=pygame.font.SysFont(None, size)
-			pixcnt1=laby
-			pixjmp=(size+0)
-			textcont=(texref.text + "\n")
-			textchunk=""
-			#this draws the text body line-per-line
-			for texch in textcont:
-				if texch=="\n":
-					#if at newline, render line of text, clear textchunk, and add to pixcnt1
-					if transp==0:
-						texgfx=texfnt.render(textchunk, True, FGCOL, BGCOL)
+				#scrolling operation init code. (variables are stored inside xml tree in ram)
+				if vscfl==0 and vscrollval!=0:
+					vscfl=1
+					labref.set('vscINT', "1")
+					labref.set('vscINTOF', str(vscrollval))
+				if hscfl==0 and hscrollval!=0:
+					hscfl=1
+					labref.set('hscINT', "1")
+					labref.set('hscINTOF', str(hscrollval))
+				vscoffset=int(labref.attrib.get('vscINTOF', "0"))
+				hscoffset=int(labref.attrib.get('hscINTOF', "0"))
+				imggfx=filelookup(imgcon)
+				if folmousehflg==1:
+					imgx=pos[0]
+				if folmousevflg==1:
+					imgy=pos[1]
+				if folmousehflg==2:
+					imgx=(pos[0] - int(imggfx.get_width() / 2))
+				if folmousevflg==2:
+					imgy=(pos[1] - int(imggfx.get_height() / 2))
+				if folmousehflg==3:
+					moux1=(abs(pos[0] - screensurf.get_width()) - int(imggfx.get_width() / 2))
+					imgx=moux1
+					#print "x" + str(imgx)
+				if folmousevflg==3:
+					mouy1=(abs(pos[1] - screensurf.get_height()) - int(imggfx.get_height() / 2))
+					imgy=mouy1
+					#print "y" + str(imgy)
+				if vscfl==1:
+					vscoffset += vscrollval
+					if imggfx.get_height()<vscoffset:
+						vscoffset=0
+					if imggfx.get_height()<(vscoffset * -1):
+						vscoffset=0
+					labref.set('vscINTOF', str(vscoffset))
+				if hscfl==1:
+					hscoffset += hscrollval
+					if imggfx.get_width()<hscoffset:
+						hscoffset=0
+					if imggfx.get_width()<(hscoffset * -1):
+						hscoffset=0
+					labref.set('hscINTOF', str(hscoffset))
+				#imggfx=pygame.image.load(imgcon)
+				
+				if hscfl==1:
+					imggfx=dzulib.hscroll(hscoffset, imggfx)
+				if vscfl==1:
+					imggfx=dzulib.vscroll(vscoffset, imggfx)
+				clickref=screensurf.blit(imggfx, (imgx, imgy))
+				if hoverkey!="0":
+					if clickref.collidepoint(pos)==1:
+						if not hoverkey in keylist:
+							keylist.extend([hoverkey])
 					else:
-						texgfx=texfnt.render(textchunk, True, FGCOL)
-					screensurf.blit(texgfx, (labx, pixcnt1))
-					pixcnt1 += pixjmp
-					textchunk=""
-				else:
-					#if not at a newline yet, keep building textchunk.
-					textchunk=(textchunk + texch)
+						if hoverkey in keylist:
+							keylist.remove(hoverkey)
+				if hovpic==1:
+					hovcon=(labref.find("altcon")).text
+					hovgfx=filelookup(hovcon)
+					if clickref.collidepoint(pos)==1:
+						clickref=screensurf.blit(hovgfx, (imgx, imgy))
 			
-			#clickref=screensurf.blit(labgfx, (labx, laby))
-	for labref in coretag.findall("label"):
-		keyid=labref.attrib.get('keyid', "0")
-		takekey=labref.attrib.get('takekey', "0")
-		onkey=labref.attrib.get('onkey', "0")
-		offkey=labref.attrib.get('offkey', "0")
-		hoverkey=labref.attrib.get('hoverkey', "0")
-		clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
-		soundname=(labref.attrib.get('sound', "0"))
-		if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
-			labx=int(labref.attrib.get("x"))
-			laby=int(labref.attrib.get("y"))
-			size=int(labref.attrib.get("size"))
-			FGCOL=pygame.Color(labref.attrib.get("FGCOLOR", "#FFFFFF"))
-			BGCOL=pygame.Color(labref.attrib.get("BGCOLOR", "#000000"))
-			labcon=(labref.find("con")).text
-			act=labref.find("act")
-			acttype=act.attrib.get("type", "none")
-			transp=int(labref.attrib.get("transp", "0"))
-			labfnt=pygame.font.SysFont(None, size)
-			if transp==0:
-				labgfx=labfnt.render(labcon, True, FGCOL, BGCOL)
-			else:
-				labgfx=labfnt.render(labcon, True, FGCOL)
-			clickref=screensurf.blit(labgfx, (labx, laby))
-			if hoverkey!="0":
-				if clickref.collidepoint(pos)==1:
-					if not hoverkey in keylist:
-						keylist.extend([hoverkey])
-				else:
-					if hoverkey in keylist:
-						keylist.remove(hoverkey)
-			if acttype!="none":
+				if acttype!="none":
+					pos = pygame.mouse.get_pos()
+					if acttype=="iref":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+					if acttype=="prev":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "prev", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+					if acttype=="quit":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+					if acttype=="key":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+		if labref.tag=="box":
+			keyid=labref.attrib.get('keyid', "0")
+			takekey=labref.attrib.get('takekey', "0")
+			onkey=labref.attrib.get('onkey', "0")
+			offkey=labref.attrib.get('offkey', "0")
+			hoverkey=labref.attrib.get('hoverkey', "0")
+			clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
+			soundname=(labref.attrib.get('sound', "0"))
+			if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
+				imgx=int(labref.attrib.get("x"))
+				imgy=int(labref.attrib.get("y"))
+				sizex=int(labref.attrib.get("sizex"))
+				sizey=int(labref.attrib.get("sizey"))
+				onhov=int(labref.attrib.get("onhov", "0"))
+				hovcolor=pygame.Color(labref.attrib.get("HOVCOLOR", "#FFFFFF"))
+				hovalpha=int(labref.attrib.get("hovalpha", "140"))
+				boxalpha=int(labref.attrib.get("alpha", "100"))
+				boxcolor=pygame.Color(labref.attrib.get("COLOR", "#FFFFFF"))
+				#imgcon=(labref.find("con")).text
+				act=labref.find("act")
+				acttype=act.attrib.get("type", "none")
 				pos = pygame.mouse.get_pos()
-			if acttype=="iref":
-				ref=act.attrib.get("ref")
-				datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
-				clicklist.extend([datstr])
-			if acttype=="prev":
-				ref=act.attrib.get("ref")
-				datstr=clicktab(clickref, "prev", ref, keyid, takekey, clicksoundflg, soundname)
-				clicklist.extend([datstr])
-			if acttype=="quit":
-				ref=act.attrib.get("ref")
-				datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
-				clicklist.extend([datstr])
-			if acttype=="key":
-				ref=act.attrib.get("ref")
-				datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
-				clicklist.extend([datstr])
+				#imggfx=pygame.image.load(imgcon)
+				boxgfx=pygame.Surface((sizex, sizey))
+				boxgfx.convert_alpha()
+				#imggfx.fill(boxcolor)
+				boxgfx.set_alpha(0)
+				clickref=screensurf.blit(boxgfx, (imgx, imgy))
+				if onhov==1 and clickref.collidepoint(pos)==1:
+					boxgfx.fill(hovcolor)
+					boxgfx.set_alpha(hovalpha)
+					#skip blitting a second time if alpha is 0.
+					if hovalpha!=0:
+						clickref=screensurf.blit(boxgfx, (imgx, imgy))
+				else:
+					boxgfx.fill(boxcolor)
+					boxgfx.set_alpha(boxalpha)
+					#skip blitting a second time if alpha is 0.
+					if boxalpha!=0:
+						clickref=screensurf.blit(boxgfx, (imgx, imgy))
+				if hoverkey!="0":
+					if clickref.collidepoint(pos)==1:
+						if not hoverkey in keylist:
+							keylist.extend([hoverkey])
+					else:
+						if hoverkey in keylist:
+							keylist.remove(hoverkey)		
+				if acttype!="none":
+					pos = pygame.mouse.get_pos()
+					if acttype=="iref":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+					if acttype=="prev":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "prev", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+					if acttype=="quit":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+					if acttype=="key":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+		if labref.tag=="text":
+			onkey=labref.attrib.get('onkey', "0")
+			offkey=labref.attrib.get('offkey', "0")
+			if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
+				labx=int(labref.attrib.get("x"))
+				laby=int(labref.attrib.get("y"))
+				size=int(labref.attrib.get("size"))
+				FGCOL=pygame.Color(labref.attrib.get("FGCOLOR", "#FFFFFF"))
+				BGCOL=pygame.Color(labref.attrib.get("BGCOLOR", "#000000"))
+				transp=int(labref.attrib.get("transp", "0"))
+				texfnt=pygame.font.SysFont(None, size)
+				pixcnt1=laby
+				pixjmp=(size+0)
+				textcont=(labref.text + "\n")
+				textchunk=""
+				#this draws the text body line-per-line
+				for texch in textcont:
+					if texch=="\n":
+						#if at newline, render line of text, clear textchunk, and add to pixcnt1
+						if transp==0:
+							texgfx=texfnt.render(textchunk, True, FGCOL, BGCOL)
+						else:
+							texgfx=texfnt.render(textchunk, True, FGCOL)
+						screensurf.blit(texgfx, (labx, pixcnt1))
+						pixcnt1 += pixjmp
+						textchunk=""
+					else:
+						#if not at a newline yet, keep building textchunk.
+						textchunk=(textchunk + texch)
+				
+				#clickref=screensurf.blit(labgfx, (labx, laby))
+		if labref.tag=="label":
+			keyid=labref.attrib.get('keyid', "0")
+			takekey=labref.attrib.get('takekey', "0")
+			onkey=labref.attrib.get('onkey', "0")
+			offkey=labref.attrib.get('offkey', "0")
+			hoverkey=labref.attrib.get('hoverkey', "0")
+			clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
+			soundname=(labref.attrib.get('sound', "0"))
+			if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
+				labx=int(labref.attrib.get("x"))
+				laby=int(labref.attrib.get("y"))
+				size=int(labref.attrib.get("size"))
+				FGCOL=pygame.Color(labref.attrib.get("FGCOLOR", "#FFFFFF"))
+				BGCOL=pygame.Color(labref.attrib.get("BGCOLOR", "#000000"))
+				labcon=(labref.find("con")).text
+				act=labref.find("act")
+				acttype=act.attrib.get("type", "none")
+				transp=int(labref.attrib.get("transp", "0"))
+				labfnt=pygame.font.SysFont(None, size)
+				if transp==0:
+					labgfx=labfnt.render(labcon, True, FGCOL, BGCOL)
+				else:
+					labgfx=labfnt.render(labcon, True, FGCOL)
+				clickref=screensurf.blit(labgfx, (labx, laby))
+				if hoverkey!="0":
+					if clickref.collidepoint(pos)==1:
+						if not hoverkey in keylist:
+							keylist.extend([hoverkey])
+					else:
+						if hoverkey in keylist:
+							keylist.remove(hoverkey)
+				if acttype!="none":
+					pos = pygame.mouse.get_pos()
+				if acttype=="iref":
+					ref=act.attrib.get("ref")
+					datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
+					clicklist.extend([datstr])
+				if acttype=="prev":
+					ref=act.attrib.get("ref")
+					datstr=clicktab(clickref, "prev", ref, keyid, takekey, clicksoundflg, soundname)
+					clicklist.extend([datstr])
+				if acttype=="quit":
+					ref=act.attrib.get("ref")
+					datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
+					clicklist.extend([datstr])
+				if acttype=="key":
+					ref=act.attrib.get("ref")
+					datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
+					clicklist.extend([datstr])
 	
 	if qmenuflg==1:
 		#qmenudat=(qpopx, qpopy, itemlist, FGCOL, BGCOL, QFNTSIZE)

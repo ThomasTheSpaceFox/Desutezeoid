@@ -136,11 +136,7 @@ The timeout instance is also removed after the specified time lapses. also if th
 			<con>Hey... an on-hover event. :o</con>
 			<act type="none"/>
 		</label>
-		<!--this is the label thats triggered by that timeout fork-->
-		<label x="80" y="150" size="24" transp="1" FGCOLOR="#000000" onkey="prototime">
-			<con>this should dissapear in 3.5 seconds</con>
-			<act type="none"/>
-		</label>
+		
 		<!--here we have the label thats triggered in the hoverkey example above.-->
 		<label x="300" y="450" size="24" transp="1" FGCOLOR="#000000" onkey="onhov2">
 			<con>Hey... an on-hover event. :o</con>
@@ -243,6 +239,11 @@ plese use either "iref" or "key"-->
 			<con>no-tr-animtest1c.png</con>
 			<act type="none"/>
 		</img>
+		<!--this is the label thats triggered by that timeout fork. why is it here? its here because it needs to be rendered after the test animation.-->
+		<label x="80" y="150" size="24" transp="1" FGCOLOR="#000000" onkey="prototime">
+			<con>this should dissapear in 3.5 seconds</con>
+			<act type="none"/>
+		</label>
 		<img x="0" y="0" mouseh="2" mousev="2" onkey="warptest1" takekey="warptest1">
 			<con>warptest1.jpg</con>
 			<act type="key"/>
