@@ -18,11 +18,13 @@ savtree='''<?xml version="1.0" encoding="UTF-8"?>
 	</keysav>
 </sav>
 '''
+#main.sav init.
 def initmainsave():
 	print ('Initalize main.sav')
 	mainsavfile = open('main.sav', 'w')
 	mainsavfile.write(savtree)
 	mainsavfile.close()
+
 #image scrollers
 def vscroll(scrollval, image):
 	offs=image.get_height()
@@ -34,6 +36,7 @@ def vscroll(scrollval, image):
 	else:
 		newimage.blit(image, (0, (scrollval - offs)))
 	return newimage
+
 def hscroll(scrollval, image):
 	offs=image.get_width()
 	newimage=image.copy()
@@ -43,5 +46,5 @@ def hscroll(scrollval, image):
 		newimage.blit(image, ((scrollval + offs), 0))
 	else:
 		newimage.blit(image, ((scrollval - offs), 0))
-	
 	return newimage
+

@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Desutezeoid HTML documentation</title>
+  </head>
+  <body>
+    <table width="100%" cellspacing="0" cellpadding="2" border="0">
+      <tbody>
+        <tr align="center">
+          <td valign="top" bgcolor="#000044">
+            <h1><font color="#ffffff">Desutezeoid</font></h1>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><a href="index.html">Home</a> - <b>Keyids
+              &amp; forking</b> - <a href="coreobjects.html">Core
+              objects</a><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">The basic idea behind a keyid, is its a
+            alphanumeric id, that either exists in the keylist or
+            doesn't.&nbsp; This creates a form of Boolean logic.<br>
+            <br>
+            forks belong in the "fork" section of pages.<br>
+            <br>
+            there is a special id that you should never try to use, as
+            its used as a "null/fallback" keyid, and will be ignored.<br>
+            "0"<br>
+            <br>
+            the idea behind "keyid forks" or "forks" for short, is you
+            are "forking" the keyids in different ways, and are causing
+            various events to occur.<br>
+            <br>
+            Desutezeoid's test/example program includes many examples of
+            these forks in action, also, for using core objects with
+            keyids, see the core objects documentation.<br>
+            <br>
+            <h3>List of Keyid forks</h3>
+            <br>
+            <table width="100%" cellspacing="0" cellpadding="2"
+              border="1">
+              <tbody>
+                <tr>
+                  <td valign="top" bgcolor="#ccccff"><b>XML code of fork</b><b><br>
+                    </b></td>
+                  <td valign="top" bgcolor="#ccccff"><b>Description</b><br>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="60%" valign="top">&lt;timeout
+                    keyid="prototime" seconds="3.5" post="soundfx1"/&gt;<br>
+                  </td>
+                  <td valign="top">The timeout fork removes keyid
+                    specified with "keyid attribute after "seconds" has
+                    passed. if "post" is specified, that keyid will be
+                    added after the first "times out"<br>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="60%" valign="top">&lt;batchset
+                    keyid="switchinvert" set="2"&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp; &lt;k keyid="switch1"/&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp; &lt;k keyid="switch2"/&gt;<br>
+                    &lt;/batchset&gt;<br>
+                  </td>
+                  <td valign="top">batchset removes the keyid specified
+                    in "keyid" when triggered, and will either add
+                    (set="1"), remove (set="0"), or invert (set="2") the
+                    keyids specified in each "k" child element's "keyid"
+                    attribute. <br>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="60%" valign="top">&lt;sound
+                    keyid="soundfx1" sound="mip.ogg"/&gt;<br>
+                  </td>
+                  <td valign="top">sound removes the keyid specified in
+                    the "keyid" attribute, and plays the sound file
+                    specified by "sound"<br>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="60%" valign="top">&lt;triggerlock
+                    keyid="alpha3" lock="soundfx1lock1"
+                    trigger="soundfx1"/&gt;<br>
+                  </td>
+                  <td valign="top">triggerlock doesn't remove the
+                    "keyid" attribute keyid, but instead adds "lock"
+                    attribute keyid thus preventing it from triggering
+                    "trigger" more than once unless "lock" attribute
+                    keyid is removed<br>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="60%" valign="top">&lt;music
+                    keyid="mustrkload" track="BGM1.ogg" /&gt;<br>
+                    &lt;music keyid="mustrkstop" stop="1"/&gt;<br>
+                    &lt;music keyid="mustrkplay" play="1"/&gt;<br>
+                  </td>
+                  <td valign="top">music is similar to the sound fork,
+                    but controls the Background music. setting stop="1"
+                    will stop the music, setting play="1" will play the
+                    most recently played track, and setting "track" to a
+                    sound file will play that sound file on loop as the
+                    background music, as if it was triggered by a page's
+                    music settings.<br>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="60%" valign="top">&lt;pagejump
+                    keyid="pagejumpmenu1" page="about.xml"/&gt;<br>
+                  </td>
+                  <td valign="top">pagejump removes its "keyid"
+                    attribute keyid and switches the Page XML to that
+                    specified in the "page" attribute. its basically a
+                    fork equivalent to the "iref" act type.<br>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="60%" valign="top">&lt;batchtrig
+                    keyid="alpha"&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp; &lt;k if="1"
+                    keyid="switch1"/&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp; &lt;k if="0"
+                    keyid="switch2"/&gt;<br>
+                    &lt;/batchtrig&gt;<br>
+                  </td>
+                  <td valign="top">batchtrig is the opposite to
+                    batchset, in that it adds "keyid" attribute keyid if
+                    ALL the conditions laid out in the "k" child tags is
+                    met. if="1" means the k tag's keyid must be present,
+                    if="0" means it must not be present. <br>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="60%" valign="top">&lt;ortrig
+                    keyid="alpha4"&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;k if="1"
+                    keyid="switch1"/&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;k if="1"
+                    keyid="switch2"/&gt;<br>
+                    &lt;/ortrig&gt;<br>
+                  </td>
+                  <td valign="top">ortrig is exactly the same as
+                    batchtrig except 1 thing: only one of the k tags
+                    needs its condition met, hence the tag name: <b>or</b>trig<br>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="60%" valign="top">&lt;uipop
+                    keyid="uidialog3" msg="This Dialog is red."
+                    BGCOLOR="#AA0000" FGCOLOR="#FFFFFF" /&gt;<br>
+                    <br>
+                    &lt;uipop keyid="uidialog4" msg="This Dialog is
+                    BIG." BGCOLOR="#00AA00" FGCOLOR="#FFFFFF"
+                    textsize="70" /&gt;<br>
+                    <br>
+                    &lt;uipop keyid="uidialog2" msg="Hello, this is a
+                    yes or no dialog." ynflag="1" nokey="nokeyyndiag"
+                    yeskey="yeskeyyndiag" /&gt;<br>
+                    <br>
+                    &lt;uipop keyid="uidialog5" msg="This Dialog has an
+                    image." BGCOLOR="#0000AA" FGCOLOR="#FFFFFF"
+                    textsize="25" img="testimage300.png" /&gt;<br>
+                    <br>
+                  </td>
+                  <td valign="top">uipop is a useful fork to present the
+                    user with a popup dialog.<br>
+                    you can overwrite the ENGSYSTEM.XML settings for
+                    colors and text size using "FGCOLOR", "BGCOLOR", and
+                    "textsize"<br>
+                    you can specify an image using the "img" attribute,
+                    if you specify ynflag="1", specify nokey and yeskey
+                    to prompt the user with a yes/no question.<br>
+                    <br>
+                    "msg" specifies the message, and like many other
+                    forks its triggered by the keyid specified in
+                    "keyid", and removes that keyid when triggered.<br>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="60%" valign="top">&lt;uimenu
+                    keyid="uimenu1" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF"
+                    textsize="25"&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;item con="This
+                    is a menu." noact="1"/&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;item
+                    con="-------------------" noact="1"/&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp; <br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;item con="play
+                    sound" keyid="soundfx1" stay="1"/&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;item con="run
+                    test 1" keyid="pagejumpmenu1" stay="1"/&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;item con="test
+                    dialog with image" keyid="uidialog5" stay="1"/&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;item con="play
+                    music" keyid="mustrkplay" stay="1"/&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;item con="stop
+                    music" keyid="mustrkstop" stay="1"/&gt;<br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;item con="close
+                    menu"/&gt;<br>
+                    &lt;/uimenu&gt;<br>
+                  </td>
+                  <td valign="top">uimenu is another popup fork, but
+                    presents the user with a menu. each menu item is a
+                    child element called "item",&nbsp; the "con"
+                    attribute defines the item's text, specity "keyid"
+                    to add a keyid on-click, and use stay="1" to keep
+                    the menu open on click.<br>
+                    <br>
+                    also, for unclickable items, use noact="1"<br>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+  </body>
+</html>
