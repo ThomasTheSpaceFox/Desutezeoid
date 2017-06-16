@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-print "Desutezeoid arbitrary point and click engine v1.5.0"
+print "Desutezeoid arbitrary point and click engine v1.5.1"
 print "parsing ENGSYSTEM.xml"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
@@ -48,7 +48,7 @@ print "main.sav loaded"
 pygame.event.set_allowed([QUIT, MOUSEBUTTONDOWN])
 
 filedict={}
-
+textdict={}
 
 def filelookup(filename):
 	global filedict
@@ -62,6 +62,22 @@ def filelookup(filename):
 		filedict[filename]=imgret
 		return imgret
 
+def textrender(text, size, fgcolor, bgcolor, transp):
+	keyx=(text + str(size) + fgcolor + bgcolor + str(transp))
+	if keyx in textdict:
+		return textdict[keyx]
+	else:
+		fgcolor=pygame.Color(fgcolor)
+		bgcolor=pygame.Color(bgcolor)
+		texfnt=pygame.font.SysFont(None, size)
+		if transp==0:
+			texgfx=texfnt.render(text, True, fgcolor, bgcolor)
+		else:
+			texgfx=texfnt.render(text, True, fgcolor)
+		textdict[keyx]=texgfx
+		return texgfx
+			
+	
 
 print "populate keylist with null keyid, add any keys in initkeys."
 initkeystag=confroot.find("initkeys")
@@ -144,17 +160,21 @@ quitflag=0
 clicklist=list()
 
 #menu dialog function
-def qmenu(xpos, ypos, itemlist, fgcol=uifgcolor, bgcol=uibgcolor, uipoptextsize=uitextsize):
-	qfnt=pygame.font.SysFont(None, uipoptextsize)
+def qmenu(xpos, ypos, itemlist, fgcol=uifgcolorstr, bgcol=uibgcolorstr, uipoptextsize=uitextsize):
+	#qfnt=pygame.font.SysFont(None, uipoptextsize)
 	texty=3
 	textx=100
+	fgc=pygame.Color(fgcol)
+	bgc=pygame.Color(bgcol)
 	itemlistB=list()
 	for itm in itemlist:
 		texty += uipoptextsize
 		if itm.noact==1:
-			qtext1=qfnt.render(itm.con, True, fgcol, bgcol)
+			#qtext1=qfnt.render(itm.con, True, fgcol, bgcol)
+			qtext1=textrender(itm.con, uipoptextsize, fgcol, bgcol, 0)
 		else:
-			qtext1=qfnt.render(itm.con, True, bgcol, fgcol)
+			#qtext1=qfnt.render(itm.con, True, bgcol, fgcol)
+			qtext1=textrender(itm.con, uipoptextsize, bgcol, fgcol, 0)
 		#print itm.con
 		itmB=uimenutab(itm.con, itm.keyid, itm.stay, itm.noact, qtext1)
 		if (qtext1.get_width())>textx:
@@ -168,7 +188,7 @@ def qmenu(xpos, ypos, itemlist, fgcol=uifgcolor, bgcol=uibgcolor, uipoptextsize=
 	if qboxwidth<100:
 		qboxwidth=100
 	qbox=pygame.Surface((qboxwidth, qboxhight))
-	qbox.fill((bgcol))
+	qbox.fill((bgc))
 	boxtrace=screensurf.blit(qbox, (xpos, ypos))
 
 	
@@ -185,15 +205,17 @@ def qmenu(xpos, ypos, itemlist, fgcol=uifgcolor, bgcol=uibgcolor, uipoptextsize=
 				itmclicktab=clicktab(itmclick, "key", "none", itm.keyid, "0", 0, "none")
 			retlist.extend([itmclicktab])
 	#screensurf.blit(qtext1, ((xpos + 3), (ypos + 3)))
-	pygame.draw.rect(screensurf, fgcol, boxtrace, 3)
+	pygame.draw.rect(screensurf, fgc, boxtrace, 3)
 	return(retlist)
 
 	
 
 
 #simple dialog popup generator. used by uipop forks and the engine quit dialogs.
-def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=uifgcolor, bgcol=uibgcolor, uipoptextsize=uitextsize, img="none"):
-	qfnt=pygame.font.SysFont(None, uipoptextsize)
+def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=uifgcolorstr, bgcol=uibgcolorstr, uipoptextsize=uitextsize, img="none"):
+	#qfnt=pygame.font.SysFont(None, uipoptextsize)
+	fgc=pygame.Color(fgcol)
+	bgc=pygame.Color(bgcol)
 	if img!="none":
 		qimg=filelookup(img)
 		qimgflg=1
@@ -204,7 +226,8 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 		qimgy=0
 		qimgx=0
 	prevxpos=xpos
-	qtext1=qfnt.render(qmsg, True, fgcol, bgcol)
+	#qtext1=qfnt.render(qmsg, True, fgcol, bgcol)
+	qtext1=textrender(qmsg, uipoptextsize, fgcol, bgcol, 0)
 	xpos=((xpos - int(qtext1.get_width() / 2)) - 3)
 	if qimgflg==1:
 		#if image is present, center ypos on image
@@ -218,15 +241,17 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 		#if image is wider than text, center xpos on image
 		xpos=((prevxpos - int(qimgx / 2)) - 3)
 	qbox=pygame.Surface((qboxwidth, qboxhight))
-	qbox.fill((bgcol))
+	qbox.fill((bgc))
 	boxtrace=screensurf.blit(qbox, (xpos, ypos))
 	if qimgflg==1:
 		screensurf.blit(qimg, ((xpos + 3), (ypos + 3)))
 	screensurf.blit(qtext1, ((xpos + 3), (ypos + qimgy + 3)))
-	pygame.draw.rect(screensurf, fgcol, boxtrace, 3)
+	pygame.draw.rect(screensurf, fgc, boxtrace, 3)
 	if quyn==1:
-		qytext=qfnt.render("Yes", True, bgcol, fgcol)
-		qntext=qfnt.render("No", True, bgcol, fgcol)
+		#qytext=qfnt.render("Yes", True, bgcol, fgcol)
+		#qntext=qfnt.render("No", True, bgcol, fgcol)
+		qytext=textrender("Yes", uipoptextsize, bgcol, fgcol, 0)
+		qntext=textrender("No", uipoptextsize, bgcol, fgcol, 0)
 		yesclick=screensurf.blit(qytext, ((xpos + 10), (ypos + qimgy + 10 + uipoptextsize)))
 		noclick=screensurf.blit(qntext, ((xpos + 50), (ypos + qimgy + 10 + uipoptextsize)))
 		ref="none"
@@ -245,7 +270,8 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 
 		return(retclicks, quyn)
 	else:
-		qytext=qfnt.render("Ok", True, bgcol, fgcol)
+		#qytext=qfnt.render("Ok", True, bgcol, fgcol)
+		qytext=textrender("Ok", uipoptextsize, bgcol, fgcol, 0)
 		yesclick=screensurf.blit(qytext, ((xpos + 10), (ypos + qimgy + 10 + uipoptextsize)))
 		ref="none"
 		takekey="0"
@@ -276,8 +302,12 @@ while quitflag==0:
 	pos = pygame.mouse.get_pos()
 	#print "tic"
 	if curpage!=prevpage:
+		print "flushing image cache"
+		del filedict
+		filedict={}
+		del textdict
+		textdict={}
 		print "preparsing page"
-		
 		tree = ET.parse(curpage)
 		root = tree.getroot()
 		cachepage=prevpage
@@ -441,8 +471,10 @@ while quitflag==0:
 		msg=fork.attrib.get("msg")
 		qpopx=int(fork.attrib.get("x",(screensurf.get_rect().centerx)))
 		qpopy=int(fork.attrib.get("y",(screensurf.get_rect().centery)))
-		FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", uifgcolorstr))
-		BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", uibgcolorstr))
+		#FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", uifgcolorstr))
+		#BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", uibgcolorstr))
+		FGCOL=fork.attrib.get("FGCOLOR", uifgcolorstr)
+		BGCOL=fork.attrib.get("BGCOLOR", uibgcolorstr)
 		QFNTSIZE=int(fork.attrib.get("textsize", uitextsize))
 		uiimg=fork.attrib.get("img", "none")
 
@@ -465,8 +497,10 @@ while quitflag==0:
 		masterkey=fork.attrib.get("keyid")
 		qpopx=int(fork.attrib.get("x",(screensurf.get_rect().centerx)))
 		qpopy=int(fork.attrib.get("y",(screensurf.get_rect().centery)))
-		FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", uifgcolorstr))
-		BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", uibgcolorstr))
+		#FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", uifgcolorstr))
+		#BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", uibgcolorstr))
+		FGCOL=fork.attrib.get("FGCOLOR", uifgcolorstr)
+		BGCOL=fork.attrib.get("BGCOLOR", uibgcolorstr)
 		QFNTSIZE=int(fork.attrib.get("textsize", uitextsize))
 		if masterkey in keylist:
 			keylist.remove(masterkey)
@@ -704,10 +738,12 @@ while quitflag==0:
 				labx=int(labref.attrib.get("x"))
 				laby=int(labref.attrib.get("y"))
 				size=int(labref.attrib.get("size"))
-				FGCOL=pygame.Color(labref.attrib.get("FGCOLOR", "#FFFFFF"))
-				BGCOL=pygame.Color(labref.attrib.get("BGCOLOR", "#000000"))
+				#FGCOL=pygame.Color(labref.attrib.get("FGCOLOR", "#FFFFFF"))
+				#BGCOL=pygame.Color(labref.attrib.get("BGCOLOR", "#000000"))
+				FGCOL=labref.attrib.get("FGCOLOR", "#FFFFFF")
+				BGCOL=labref.attrib.get("BGCOLOR", "#000000")
 				transp=int(labref.attrib.get("transp", "0"))
-				texfnt=pygame.font.SysFont(None, size)
+				#texfnt=pygame.font.SysFont(None, size)
 				pixcnt1=laby
 				pixjmp=(size+0)
 				textcont=(labref.text + "\n")
@@ -716,10 +752,11 @@ while quitflag==0:
 				for texch in textcont:
 					if texch=="\n":
 						#if at newline, render line of text, clear textchunk, and add to pixcnt1
-						if transp==0:
-							texgfx=texfnt.render(textchunk, True, FGCOL, BGCOL)
-						else:
-							texgfx=texfnt.render(textchunk, True, FGCOL)
+						#if transp==0:
+						#	texgfx=texfnt.render(textchunk, True, FGCOL, BGCOL)
+						#else:
+						#	texgfx=texfnt.render(textchunk, True, FGCOL)
+						texgfx=textrender(textchunk, size, FGCOL, BGCOL, transp)
 						screensurf.blit(texgfx, (labx, pixcnt1))
 						pixcnt1 += pixjmp
 						textchunk=""
@@ -740,17 +777,22 @@ while quitflag==0:
 				labx=int(labref.attrib.get("x"))
 				laby=int(labref.attrib.get("y"))
 				size=int(labref.attrib.get("size"))
-				FGCOL=pygame.Color(labref.attrib.get("FGCOLOR", "#FFFFFF"))
-				BGCOL=pygame.Color(labref.attrib.get("BGCOLOR", "#000000"))
+				#FGCOL=pygame.Color(labref.attrib.get("FGCOLOR", "#FFFFFF"))
+				#BGCOL=pygame.Color(labref.attrib.get("BGCOLOR", "#000000"))
+				FGCOL=labref.attrib.get("FGCOLOR", "#FFFFFF")
+				BGCOL=labref.attrib.get("BGCOLOR", "#000000")
 				labcon=(labref.find("con")).text
 				act=labref.find("act")
 				acttype=act.attrib.get("type", "none")
 				transp=int(labref.attrib.get("transp", "0"))
-				labfnt=pygame.font.SysFont(None, size)
-				if transp==0:
-					labgfx=labfnt.render(labcon, True, FGCOL, BGCOL)
-				else:
-					labgfx=labfnt.render(labcon, True, FGCOL)
+				#labfnt=pygame.font.SysFont(None, size)
+				#if transp==0:
+				#	labgfx=labfnt.render(labcon, True, FGCOL, BGCOL)
+				#else:
+				#	labgfx=labfnt.render(labcon, True, FGCOL)
+				labgfx=textrender(labcon, size, FGCOL, BGCOL, transp)
+				
+				#textrender
 				clickref=screensurf.blit(labgfx, (labx, laby))
 				if hoverkey!="0":
 					if clickref.collidepoint(pos)==1:
