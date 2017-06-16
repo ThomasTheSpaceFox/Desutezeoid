@@ -695,16 +695,18 @@ while quitflag==0:
 				boxgfx.set_alpha(0)
 				clickref=screensurf.blit(boxgfx, (imgx, imgy))
 				if onhov==1 and clickref.collidepoint(pos)==1:
-					boxgfx.fill(hovcolor)
-					boxgfx.set_alpha(hovalpha)
+					
 					#skip blitting a second time if alpha is 0.
 					if hovalpha!=0:
+						boxgfx.fill(hovcolor)
+						boxgfx.set_alpha(hovalpha)
 						clickref=screensurf.blit(boxgfx, (imgx, imgy))
 				else:
-					boxgfx.fill(boxcolor)
-					boxgfx.set_alpha(boxalpha)
+					
 					#skip blitting a second time if alpha is 0.
 					if boxalpha!=0:
+						boxgfx.fill(boxcolor)
+						boxgfx.set_alpha(boxalpha)
 						clickref=screensurf.blit(boxgfx, (imgx, imgy))
 				if hoverkey!="0":
 					if clickref.collidepoint(pos)==1:
