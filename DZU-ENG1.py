@@ -63,6 +63,7 @@ def filelookup(filename):
 		return imgret
 
 def textrender(text, size, fgcolor, bgcolor, transp):
+	global textdict
 	keyx=(text + str(size) + fgcolor + bgcolor + str(transp))
 	if keyx in textdict:
 		return textdict[keyx]
