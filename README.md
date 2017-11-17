@@ -1,8 +1,12 @@
 #   Desutezeoid
-v1.5.2   
+v1.6.0   
 an arbitrary point and click engine.       
 Copyright (c) 2015-2017 Thomas Leathers      
 
+Notice: the API and usage manual, (desutezeoid_manual.odt) is under a different license:
+the GNU Free Documentation License. See said manual for more information.
+A pdf export of desutezeoid_manual.odt, is provided and should be considered
+an Opaque copy. See the Gnu FDL in the manual itself for more information.
 
 Desutezeoid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

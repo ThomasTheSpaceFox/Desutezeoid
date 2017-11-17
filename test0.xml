@@ -117,8 +117,17 @@ The timeout instance is also removed after the specified time lapses. also if th
 		<timeout keyid="timeloop1" seconds="0.01" post="timeloop2"/>
 		<timeout keyid="timeloop2" seconds="0.01" post="timeloop3"/>
 		<timeout keyid="timeloop3" seconds="0.01" post="timeloop1"/>
+		<!--this is part of the plugin 'test.dzup.py'-->
+		<testfork keyid="switch1"/>
 	</forks>
 	<core>
+		<!--these are part of the plugin 'test.dzup.py'-->
+		<test x="200" y="200"/>
+		<test x="200" y="280"/>
+		<!--this is part of the plugin 'test2.dzup.py'-->
+		<test2 x="200" y="280" keyid="plugintest2acttest">
+			<act type="key"/>
+		</test2>
 		<!--note the "hoverkey" attribute. this toggles in and out of the keyidlist based on wether the curser is over the label/img instance. this one triggers a label further down.-->
 		<label x="300" y="400" size="40" transp="1" FGCOLOR="#FFFFFF" hoverkey="onhov2">
 			<con>Hello world! :D</con>

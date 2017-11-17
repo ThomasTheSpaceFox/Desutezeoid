@@ -10,6 +10,8 @@ import os
 import copy
 # load dzulib1 Desutezeoid support library
 import dzulib1 as dzulib
+import dzupluglib
+from dzulib1 import clicktab
 
 
 from pygame.locals import *
@@ -17,7 +19,7 @@ import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-print "Desutezeoid arbitrary point and click engine v1.5.2"
+print "Desutezeoid arbitrary point and click engine v1.6.0"
 print "parsing ENGSYSTEM.xml"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
@@ -45,20 +47,21 @@ except IOError:
 	
 print "main.sav loaded"
 
-pygame.event.set_allowed([QUIT, MOUSEBUTTONDOWN])
+pygame.event.set_allowed([QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP])
 
 filedict={}
 textdict={}
-
+imagepath='img'
+sfxpath='sfx'
 def filelookup(filename):
 	global filedict
 	if filename in filedict:
 		return filedict[filename]
 	else:
 		if (filename.lower()).endswith(".jpg") or (filename.lower()).endswith(".jpeg") or (filename.lower()).startswith("no-tr"):
-			imgret=pygame.image.load(filename).convert()
+			imgret=pygame.image.load(os.path.join(imagepath, filename)).convert()
 		else:
-			imgret=pygame.image.load(filename).convert_alpha()
+			imgret=pygame.image.load(os.path.join(imagepath, filename)).convert_alpha()
 		filedict[filename]=imgret
 		return imgret
 
@@ -109,21 +112,12 @@ globalcoretag=confroot.find("globalcore")
 globalforkstag=confroot.find("globalforks")
 icontag=titletag.attrib.get("icon", "NULL")
 if icontag!="NULL":
-	windowicon=pygame.image.load(icontag)
+	windowicon=pygame.image.load(os.path.join(imagepath, icontag))
 	pygame.display.set_icon(windowicon)
 	
 print "config parsed."
 titlebase=titletag.attrib.get("base", "Desutezeoid: ")
-class clicktab:
-	def __init__(self, box, reftype, ref, keyid, takekey, sfxclick, sound, quitab=0):
-		self.box=box
-		self.ref=ref
-		self.keyid=keyid
-		self.takekey=takekey
-		self.reftype=reftype
-		self.sfxclick=sfxclick
-		self.sound=sound
-		self.quitab=quitab
+
 class timeouttab:
 	def __init__(self, seconds, keyid, postkey):
 		self.keyid=keyid
@@ -284,8 +278,10 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 		return(retclicks, quyn)
 
 	
-	
-
+pluglistactive=[]
+for pluginst in dzupluglib.pluglist:
+	print "loading: " + pluginst.plugname
+	pluglistactive.extend([pluginst.plugclass(screensurf, keylist)])
 timeoutlist=list()
 keybak=list(keylist)
 forksanitycheck=0
@@ -295,11 +291,13 @@ print "done. begin mainloop."
 uiquit=0
 qpopflg=0
 qmenuflg=0
+engtimer=pygame.time.Clock()
 while quitflag==0:
 	huris=0
 	clicklist=list()
 	#Engine Speed
-	time.sleep(0.05)
+	#time.sleep(0.05)
+	engtimer.tick(30)
 	pos = pygame.mouse.get_pos()
 	#print "tic"
 	if curpage!=prevpage:
@@ -308,6 +306,9 @@ while quitflag==0:
 		filedict={}
 		del textdict
 		textdict={}
+		print "notify plugins of page change"
+		for pluginst in pluglistactive:
+			pluginst.pageclear()
 		print "preparsing page"
 		tree = ET.parse(curpage)
 		root = tree.getroot()
@@ -339,208 +340,213 @@ while quitflag==0:
 		BGMon=int(pageconf.attrib.get("BGM", "0"))
 		if BGMon==1:
 			BGMtrack=(pageconf.find('BGM')).text
-			pygame.mixer.music.load(BGMtrack)
+			pygame.mixer.music.load(os.path.join(sfxpath, BGMtrack))
 			pygame.mixer.music.play(-1)
 		pygame.display.set_caption((titlebase + pagetitle), (titlebase + pagetitle))
 		print ("Page title: '" + pagetitle + "'")
 		if BGon==1:
 			BGfile=(pageconf.find('BG')).text
-			BG=pygame.image.load(BGfile).convert()
+			BG=pygame.image.load(os.path.join(imagepath, BGfile)).convert()
 		screensurf.fill((170, 170, 170))
 		print "done. begin mainloop"
 	if BGon==1:
 		screensurf.blit(BG, (0, 0))
-	for fork in forktag.findall("ortrig"):
-		#print "batchtrig"
-		masterkey=fork.attrib.get("keyid")
-		orflg=0
-		for keyif in fork.findall("k"):
-			ifpol=keyif.attrib.get("if")
-			subkey=keyif.attrib.get("keyid")
-			if subkey in keylist:
-				if ifpol=="1":
-					orflg=1
-			elif not subkey in keylist:
-				if ifpol=="0":
-					orflg=1
-		if orflg == 1:
-			if not masterkey in keylist:
-				keylist.extend([masterkey])
-				#print keylist
-				keyprint()
-				forksanity=1
-		else:
+	for fork in forktag.findall("*"):
+		if fork.tag==("ortrig"):
+			#print "batchtrig"
+			masterkey=fork.attrib.get("keyid")
+			orflg=0
+			for keyif in fork.findall("k"):
+				ifpol=keyif.attrib.get("if")
+				subkey=keyif.attrib.get("keyid")
+				if subkey in keylist:
+					if ifpol=="1":
+						orflg=1
+				elif not subkey in keylist:
+					if ifpol=="0":
+						orflg=1
+			if orflg == 1:
+				if not masterkey in keylist:
+					keylist.extend([masterkey])
+					#print keylist
+					keyprint()
+					forksanity=1
+			else:
+				if masterkey in keylist:
+					keylist.remove(masterkey)
+					#print keylist
+					keyprint()
+					forksanity=1
+		if fork.tag==("batchtrig"):
+			#print "batchtrig"
+			masterkey=fork.attrib.get("keyid")
+			complist=[1] 
+			for keyif in fork.findall("k"):
+				ifpol=keyif.attrib.get("if")
+				subkey=keyif.attrib.get("keyid")
+				if subkey in keylist:
+					if ifpol=="1":
+						complist.extend([1])
+					else:
+						complist.extend([0])
+				elif not subkey in keylist:
+					if ifpol=="0":
+						complist.extend([1])
+					else:
+						complist.extend([0])
+			if len(set(complist)) == 1:
+				if not masterkey in keylist:
+					keylist.extend([masterkey])
+					#print keylist
+					keyprint()
+					forksanity=1
+			else:
+				if masterkey in keylist:
+					keylist.remove(masterkey)
+					#print keylist
+					keyprint()
+					forksanity=1
+		if fork.tag==("batchset"):
+			#print "batch"
+			#print fork
+			masterkey=fork.attrib.get("keyid")
+			toggpol=fork.attrib.get("set")
 			if masterkey in keylist:
 				keylist.remove(masterkey)
-				#print keylist
-				keyprint()
-				forksanity=1
-	for fork in forktag.findall("batchtrig"):
-		#print "batchtrig"
-		masterkey=fork.attrib.get("keyid")
-		complist=[1] 
-		for keyif in fork.findall("k"):
-			ifpol=keyif.attrib.get("if")
-			subkey=keyif.attrib.get("keyid")
-			if subkey in keylist:
-				if ifpol=="1":
-					complist.extend([1])
+				if toggpol=="1":
+					for subkey in fork.findall("k"):
+						subkeyid=subkey.attrib.get("keyid")
+						if not subkeyid in keylist:
+							keylist.extend([subkeyid])
+							#print keylist
+							keyprint()
+					forksanity=1
+				elif toggpol=="2":
+					for subkey in fork.findall("k"):
+						subkeyid=subkey.attrib.get("keyid")
+						if not subkeyid in keylist:
+							keylist.extend([subkeyid])
+							#print keylist
+							keyprint()
+						elif subkeyid in keylist:
+							keylist.remove(subkeyid)
+							#print keylist
+							keyprint()
 				else:
-					complist.extend([0])
-			elif not subkey in keylist:
-				if ifpol=="0":
-					complist.extend([1])
-				else:
-					complist.extend([0])
-		if len(set(complist)) == 1:
-			if not masterkey in keylist:
-				keylist.extend([masterkey])
-				#print keylist
-				keyprint()
-				forksanity=1
-		else:
+					for subkey in fork.findall("k"):
+						subkeyid=subkey.attrib.get("keyid")
+						if subkeyid in keylist:
+							keylist.remove(subkeyid)
+							#print keylist
+							keyprint()
+					forksanity=1
+		pagejumpflag=0
+		if fork.tag==("pagejump"):
+			masterkey=fork.attrib.get("keyid")
 			if masterkey in keylist:
 				keylist.remove(masterkey)
-				#print keylist
-				keyprint()
-				forksanity=1
-	for fork in forktag.findall("batchset"):
-		#print "batch"
-		#print fork
-		masterkey=fork.attrib.get("keyid")
-		toggpol=fork.attrib.get("set")
-		if masterkey in keylist:
-			keylist.remove(masterkey)
-			if toggpol=="1":
-				for subkey in fork.findall("k"):
-					subkeyid=subkey.attrib.get("keyid")
-					if not subkeyid in keylist:
-						keylist.extend([subkeyid])
-						#print keylist
-						keyprint()
-				forksanity=1
-			elif toggpol=="2":
-				for subkey in fork.findall("k"):
-					subkeyid=subkey.attrib.get("keyid")
-					if not subkeyid in keylist:
-						keylist.extend([subkeyid])
-						#print keylist
-						keyprint()
-					elif subkeyid in keylist:
-						keylist.remove(subkeyid)
-						#print keylist
-						keyprint()
-			else:
-				for subkey in fork.findall("k"):
-					subkeyid=subkey.attrib.get("keyid")
-					if subkeyid in keylist:
-						keylist.remove(subkeyid)
-						#print keylist
-						keyprint()
-				forksanity=1
-	pagejumpflag=0
-	for fork in forktag.findall("pagejump"):
-		masterkey=fork.attrib.get("keyid")
-		if masterkey in keylist:
-			keylist.remove(masterkey)
-			useprvpge=int(fork.attrib.get('useprev', '0'))
-			curpage=fork.attrib.get("page")
-			if useprvpge==1 and cachepage!="NULL":
-				curpage=cachepage
+				useprvpge=int(fork.attrib.get('useprev', '0'))
+				curpage=fork.attrib.get("page")
+				if useprvpge==1 and cachepage!="NULL":
+					curpage=cachepage
+					
 				
-			
-			print ("iref: loading page '" + curpage + "'")
-			pagejumpflag=1
-			break
-	for fork in forktag.findall("music"):
-		masterkey=fork.attrib.get("keyid")
-		if masterkey in keylist:
-			keylist.remove(masterkey)
-			xmusstop=int(fork.attrib.get('stop', '0'))
-			xmusplay=int(fork.attrib.get('play', '0'))
-			if xmusstop==1:
-				pygame.mixer.music.stop()
-			elif xmusplay==1:
-				pygame.mixer.music.play(-1)
-			else:
-				mustrack=fork.attrib.get("track")
-				pygame.mixer.music.load(mustrack)
-				pygame.mixer.music.play(-1)
-			
-	for fork in forktag.findall("uipop"):
-		masterkey=fork.attrib.get("keyid")
-		msg=fork.attrib.get("msg")
-		qpopx=int(fork.attrib.get("x",(screensurf.get_rect().centerx)))
-		qpopy=int(fork.attrib.get("y",(screensurf.get_rect().centery)))
-		#FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", uifgcolorstr))
-		#BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", uibgcolorstr))
-		FGCOL=fork.attrib.get("FGCOLOR", uifgcolorstr)
-		BGCOL=fork.attrib.get("BGCOLOR", uibgcolorstr)
-		QFNTSIZE=int(fork.attrib.get("textsize", uitextsize))
-		uiimg=fork.attrib.get("img", "none")
-
-		if masterkey in keylist:
-			keylist.remove(masterkey)
-			ynflag=int(fork.attrib.get("ynflag", "0"))
-			if ynflag==1:
-				yeskey=fork.attrib.get("yeskey", "0")
-				nokey=fork.attrib.get("nokey", "0")
-				#poppost=qpop(msg, qpopx, qpopy, keyid=yeskey, nokey=nokey, quyn=1)
-				qpopdat=(msg, qpopx, qpopy, yeskey, nokey, 1, FGCOL, BGCOL, QFNTSIZE, uiimg)
-				qpopflg=1
-			else:
-				okkey=fork.attrib.get("okkey", "0")
-				#poppost=qpop(msg, qpopx, qpopy, keyid=okkey, quyn=0)
-				qpopdat=(msg, qpopx, qpopy, okkey, "0", 0, FGCOL, BGCOL, QFNTSIZE, uiimg)
-				qpopflg=1
+				print ("iref: loading page '" + curpage + "'")
+				pagejumpflag=1
+				break
+		if fork.tag==("music"):
+			masterkey=fork.attrib.get("keyid")
+			if masterkey in keylist:
+				keylist.remove(masterkey)
+				xmusstop=int(fork.attrib.get('stop', '0'))
+				xmusplay=int(fork.attrib.get('play', '0'))
+				if xmusstop==1:
+					pygame.mixer.music.stop()
+				elif xmusplay==1:
+					pygame.mixer.music.play(-1)
+				else:
+					mustrack=fork.attrib.get("track")
+					pygame.mixer.music.load(os.path.join(sfxpath, mustrack))
+					pygame.mixer.music.play(-1)
 				
-	for fork in forktag.findall("uimenu"):
-		masterkey=fork.attrib.get("keyid")
-		qpopx=int(fork.attrib.get("x",(screensurf.get_rect().centerx)))
-		qpopy=int(fork.attrib.get("y",(screensurf.get_rect().centery)))
-		#FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", uifgcolorstr))
-		#BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", uibgcolorstr))
-		FGCOL=fork.attrib.get("FGCOLOR", uifgcolorstr)
-		BGCOL=fork.attrib.get("BGCOLOR", uibgcolorstr)
-		QFNTSIZE=int(fork.attrib.get("textsize", uitextsize))
-		if masterkey in keylist:
-			keylist.remove(masterkey)
-			itemlist=list()
-			for itmf in fork.findall("item"):
-				itmftab=uimenutab(itmf.attrib.get("con"), itmf.attrib.get("keyid", "0"), stay=int(itmf.attrib.get("stay", "0")), noact=int(itmf.attrib.get("noact", "0")))
-				itemlist.extend([itmftab])
-			qmenudat=(qpopx, qpopy, itemlist, FGCOL, BGCOL, QFNTSIZE)
-			qmenuflg=1
-	for fork in forktag.findall("timeout"):
-		masterkey=fork.attrib.get("keyid")
-		if masterkey in keylist:
-			notinlist=1
-			for tif in timeoutlist:
-				if tif.keyid==masterkey:
-					notinlist=0
-			if notinlist==1:
-				seconds=float(fork.attrib.get("seconds"))
-				postkey=fork.attrib.get("post", "0")
-				timeoutlist.extend([timeouttab(seconds, masterkey, postkey)])
-	for fork in forktag.findall("triggerlock"):
-		masterkey=fork.attrib.get("keyid")
-		triggerkey=fork.attrib.get("trigger")
-		lockkey=fork.attrib.get("lock")
-		if masterkey in keylist:
-			#keylist.remove(masterkey)
-			if lockkey not in keylist:
-				if triggerkey not in keylist:
-					keylist.extend([triggerkey])
-					keylist.extend([lockkey])
+		if fork.tag==("uipop"):
+			masterkey=fork.attrib.get("keyid")
+			msg=fork.attrib.get("msg")
+			qpopx=int(fork.attrib.get("x",(screensurf.get_rect().centerx)))
+			qpopy=int(fork.attrib.get("y",(screensurf.get_rect().centery)))
+			#FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", uifgcolorstr))
+			#BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", uibgcolorstr))
+			FGCOL=fork.attrib.get("FGCOLOR", uifgcolorstr)
+			BGCOL=fork.attrib.get("BGCOLOR", uibgcolorstr)
+			QFNTSIZE=int(fork.attrib.get("textsize", uitextsize))
+			uiimg=fork.attrib.get("img", "none")
 	
-				
-	for fork in forktag.findall("sound"):
-		masterkey=fork.attrib.get("keyid")
-		soundname=fork.attrib.get("sound")
-		if masterkey in keylist:
-			keylist.remove(masterkey)
-			soundobj=pygame.mixer.Sound(soundname)
-			soundobj.play()
+			if masterkey in keylist:
+				keylist.remove(masterkey)
+				ynflag=int(fork.attrib.get("ynflag", "0"))
+				if ynflag==1:
+					yeskey=fork.attrib.get("yeskey", "0")
+					nokey=fork.attrib.get("nokey", "0")
+					#poppost=qpop(msg, qpopx, qpopy, keyid=yeskey, nokey=nokey, quyn=1)
+					qpopdat=(msg, qpopx, qpopy, yeskey, nokey, 1, FGCOL, BGCOL, QFNTSIZE, uiimg)
+					qpopflg=1
+				else:
+					okkey=fork.attrib.get("okkey", "0")
+					#poppost=qpop(msg, qpopx, qpopy, keyid=okkey, quyn=0)
+					qpopdat=(msg, qpopx, qpopy, okkey, "0", 0, FGCOL, BGCOL, QFNTSIZE, uiimg)
+					qpopflg=1
+					
+		if fork.tag==("uimenu"):
+			masterkey=fork.attrib.get("keyid")
+			qpopx=int(fork.attrib.get("x",(screensurf.get_rect().centerx)))
+			qpopy=int(fork.attrib.get("y",(screensurf.get_rect().centery)))
+			#FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", uifgcolorstr))
+			#BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", uibgcolorstr))
+			FGCOL=fork.attrib.get("FGCOLOR", uifgcolorstr)
+			BGCOL=fork.attrib.get("BGCOLOR", uibgcolorstr)
+			QFNTSIZE=int(fork.attrib.get("textsize", uitextsize))
+			if masterkey in keylist:
+				keylist.remove(masterkey)
+				itemlist=list()
+				for itmf in fork.findall("item"):
+					itmftab=uimenutab(itmf.attrib.get("con"), itmf.attrib.get("keyid", "0"), stay=int(itmf.attrib.get("stay", "0")), noact=int(itmf.attrib.get("noact", "0")))
+					itemlist.extend([itmftab])
+				qmenudat=(qpopx, qpopy, itemlist, FGCOL, BGCOL, QFNTSIZE)
+				qmenuflg=1
+		if fork.tag==("timeout"):
+			masterkey=fork.attrib.get("keyid")
+			if masterkey in keylist:
+				notinlist=1
+				for tif in timeoutlist:
+					if tif.keyid==masterkey:
+						notinlist=0
+				if notinlist==1:
+					seconds=float(fork.attrib.get("seconds"))
+					postkey=fork.attrib.get("post", "0")
+					timeoutlist.extend([timeouttab(seconds, masterkey, postkey)])
+		if fork.tag==("triggerlock"):
+			masterkey=fork.attrib.get("keyid")
+			triggerkey=fork.attrib.get("trigger")
+			lockkey=fork.attrib.get("lock")
+			if masterkey in keylist:
+				#keylist.remove(masterkey)
+				if lockkey not in keylist:
+					if triggerkey not in keylist:
+						keylist.extend([triggerkey])
+						keylist.extend([lockkey])
+		
+					
+		if fork.tag==("sound"):
+			masterkey=fork.attrib.get("keyid")
+			soundname=fork.attrib.get("sound")
+			if masterkey in keylist:
+				keylist.remove(masterkey)
+				soundobj=pygame.mixer.Sound(os.path.join(sfxpath, soundname))
+				soundobj.play()
+		#plugin parser
+		for pluginst in pluglistactive:
+			pluginst.fork(fork)
+	
 	if forksanity==1:
 		forksanitycheck=1
 		forksanity=0
@@ -822,6 +828,51 @@ while quitflag==0:
 					ref=act.attrib.get("ref")
 					datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
 					clicklist.extend([datstr])
+		#plugin parser
+		for pluginst in pluglistactive:
+			keyid=labref.attrib.get('keyid', "0")
+			takekey=labref.attrib.get('takekey', "0")
+			onkey=labref.attrib.get('onkey', "0")
+			offkey=labref.attrib.get('offkey', "0")
+			clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
+			soundname=(labref.attrib.get('sound', "0"))
+			hoverkey=labref.attrib.get('hoverkey', "0")
+			if ((onkey=="0" and offkey=="0") or (onkey=="0" and offkey not in keylist) or (onkey in keylist and offkey=="0") or (onkey in keylist and offkey not in keylist)):
+					
+				#textrender
+				clickref=pluginst.core(labref)
+				if clickref!=None:
+					if hoverkey!="0":
+						if clickref.collidepoint(pos)==1:
+							if not hoverkey in keylist:
+								keylist.extend([hoverkey])
+						else:
+							if hoverkey in keylist:
+								keylist.remove(hoverkey)
+					act=labref.find("act")
+					acttype=act.attrib.get("type", "none")
+					if acttype!="none":
+						pos = pygame.mouse.get_pos()
+					if acttype=="iref":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "iref", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+					if acttype=="prev":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "prev", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+					if acttype=="quit":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "quit", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+					if acttype=="key":
+						ref=act.attrib.get("ref")
+						datstr=clicktab(clickref, "key", ref, keyid, takekey, clicksoundflg, soundname)
+						clicklist.extend([datstr])
+	for pluginst in pluglistactive:
+		plugret=pluginst.pump()
+		if plugret!=None:
+			clicklist.extend(plugret)
 	
 	if qmenuflg==1:
 		#qmenudat=(qpopx, qpopy, itemlist, FGCOL, BGCOL, QFNTSIZE)
@@ -847,13 +898,19 @@ while quitflag==0:
 		if event.type == QUIT:
 			uiquit=1
 			break
+		if event.type==MOUSEBUTTONUP:
+			for pluginst in pluglistactive:
+				pluginst.clickup(event)
 		if event.type==MOUSEBUTTONDOWN:
+			for pluginst in pluglistactive:
+				pluginst.click(event)
+			
 			#print "nominal2"
 			for f in clicklist:
 				#print "nominal3"
 				if f.box.collidepoint(event.pos)==1 and event.button==1:
 					if f.sfxclick==1:
-						clicksound=pygame.mixer.Sound(f.sound)
+						clicksound=pygame.mixer.Sound(os.path.join(sfxpath, f.sound))
 						clicksound.play()
 					if f.keyid!="0":
 						if not f.keyid in keylist:

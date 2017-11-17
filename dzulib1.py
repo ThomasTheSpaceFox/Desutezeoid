@@ -48,3 +48,14 @@ def hscroll(scrollval, image):
 		newimage.blit(image, ((scrollval - offs), 0))
 	return newimage
 
+
+class clicktab:
+	def __init__(self, box, reftype, ref, keyid, takekey, sfxclick, sound, quitab=0):
+		self.box=box
+		self.ref=ref
+		self.keyid=keyid
+		self.takekey=takekey
+		self.reftype=reftype
+		self.sfxclick=sfxclick
+		self.sound=sound
+		self.quitab=quitab

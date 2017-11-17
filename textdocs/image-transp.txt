@@ -1,3 +1,0 @@
-prefix an image file's name with "no-tr"
-(i.e. rename "example.png" to "no-tr-example.png")
-to disable alphas. also jpeg images are treated without alphas regardless.
