@@ -40,7 +40,7 @@ last timeout in the sequence trigger one of these.-->
 			<con>no-tr-animtest1a.png</con>
 			<act type="none"/>
 		</img>
-		<img x="500" y="100" vscroll='-2' hscroll="4">
+		<img x="500" y="100" vscroll='-0.2' hscroll="0.4">
 			<con>no-tr-animtest1a.png</con>
 			<act type="none"/>
 		</img>

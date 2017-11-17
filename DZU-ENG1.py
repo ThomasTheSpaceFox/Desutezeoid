@@ -579,8 +579,8 @@ while quitflag==0:
 			hoverkey=labref.attrib.get('hoverkey', "0")
 			clicksoundflg=int(labref.attrib.get('sfxclick', "0"))
 			soundname=(labref.attrib.get('sound', "0"))
-			vscrollval=int(labref.attrib.get('vscroll', "0"))
-			hscrollval=int(labref.attrib.get('hscroll', "0"))
+			vscrollval=float(labref.attrib.get('vscroll', "0"))
+			hscrollval=float(labref.attrib.get('hscroll', "0"))
 			vscfl=int(labref.attrib.get('vscINT', "0"))
 			hscfl=int(labref.attrib.get('hscINT', "0"))
 			folmousehflg=int(labref.attrib.get('mouseh', "0"))
@@ -602,8 +602,8 @@ while quitflag==0:
 					hscfl=1
 					labref.set('hscINT', "1")
 					labref.set('hscINTOF', str(hscrollval))
-				vscoffset=int(labref.attrib.get('vscINTOF', "0"))
-				hscoffset=int(labref.attrib.get('hscINTOF', "0"))
+				vscoffset=float(labref.attrib.get('vscINTOF', "0"))
+				hscoffset=float(labref.attrib.get('hscINTOF', "0"))
 				imggfx=filelookup(imgcon)
 				if folmousehflg==1:
 					imgx=pos[0]
@@ -638,9 +638,9 @@ while quitflag==0:
 				#imggfx=pygame.image.load(imgcon)
 				
 				if hscfl==1:
-					imggfx=dzulib.hscroll(hscoffset, imggfx)
+					imggfx=dzulib.hscroll(int(hscoffset), imggfx)
 				if vscfl==1:
-					imggfx=dzulib.vscroll(vscoffset, imggfx)
+					imggfx=dzulib.vscroll(int(vscoffset), imggfx)
 				clickref=screensurf.blit(imggfx, (imgx, imgy))
 				if hoverkey!="0":
 					if clickref.collidepoint(pos)==1:
