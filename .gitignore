@@ -2,3 +2,4 @@
 main.sav
 *.pyc
 *.pyo
+.~lock*
