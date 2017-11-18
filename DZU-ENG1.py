@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-print "Desutezeoid arbitrary point and click engine v1.6.0"
+print "Desutezeoid arbitrary point and click engine v1.6.1"
 print "parsing ENGSYSTEM.xml"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
