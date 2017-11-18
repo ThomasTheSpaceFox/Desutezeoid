@@ -12,7 +12,8 @@ import copy
 import dzulib1 as dzulib
 import dzupluglib
 from dzulib1 import clicktab
-
+from dzulib1 import textrender
+from dzulib1 import filelookup
 
 from pygame.locals import *
 import xml.etree.ElementTree as ET
@@ -49,37 +50,12 @@ print "main.sav loaded"
 
 pygame.event.set_allowed([QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP])
 
-filedict={}
-textdict={}
-imagepath='img'
-sfxpath='sfx'
-def filelookup(filename):
-	global filedict
-	if filename in filedict:
-		return filedict[filename]
-	else:
-		if (filename.lower()).endswith(".jpg") or (filename.lower()).endswith(".jpeg") or (filename.lower()).startswith("no-tr"):
-			imgret=pygame.image.load(os.path.join(imagepath, filename)).convert()
-		else:
-			imgret=pygame.image.load(os.path.join(imagepath, filename)).convert_alpha()
-		filedict[filename]=imgret
-		return imgret
 
-def textrender(text, size, fgcolor, bgcolor, transp):
-	global textdict
-	keyx=(text + str(size) + fgcolor + bgcolor + str(transp))
-	if keyx in textdict:
-		return textdict[keyx]
-	else:
-		fgcolor=pygame.Color(fgcolor)
-		bgcolor=pygame.Color(bgcolor)
-		texfnt=pygame.font.SysFont(None, size)
-		if transp==0:
-			texgfx=texfnt.render(text, True, fgcolor, bgcolor)
-		else:
-			texgfx=texfnt.render(text, True, fgcolor)
-		textdict[keyx]=texgfx
-		return texgfx
+
+sfxpath='sfx'
+
+imagepath='img'
+
 			
 	
 
@@ -302,10 +278,10 @@ while quitflag==0:
 	#print "tic"
 	if curpage!=prevpage:
 		print "flushing image cache"
-		del filedict
-		filedict={}
-		del textdict
-		textdict={}
+		del dzulib.filedict
+		dzulib.filedict={}
+		del dzulib.textdict
+		dzulib.textdict={}
 		print "notify plugins of page change"
 		for pluginst in pluglistactive:
 			pluginst.pageclear()
