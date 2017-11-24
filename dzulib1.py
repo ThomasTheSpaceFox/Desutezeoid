@@ -8,6 +8,7 @@ import pygame
 import sys
 import time
 import os
+
 pygame.display.init()
 #this library should contain any functions and data needed by dezutezeoid
 #that don't need to be in the actual engine executable
@@ -19,6 +20,8 @@ savtree='''<?xml version="1.0" encoding="UTF-8"?>
 <sav>
 	<keysav>
 	</keysav>
+	<plugsav>
+	</plugsav>
 </sav>
 '''
 #main.sav init.
@@ -55,26 +58,51 @@ imagepath='img'
 
 filedict={}
 textdict={}
+
+
+def imagealphaoff(filename):
+	if (filename.lower()).endswith(".jpg") or (filename.lower()).endswith(".jpeg") or (filename.lower()).startswith("no-tr"):
+		return 1
+	else:
+		return 0
+
 def filelookup(filename):
 	global filedict
 	if filename in filedict:
 		return filedict[filename]
 	else:
-		if (filename.lower()).endswith(".jpg") or (filename.lower()).endswith(".jpeg") or (filename.lower()).startswith("no-tr"):
+		if imagealphaoff(filename):
 			imgret=pygame.image.load(os.path.join(imagepath, filename)).convert()
+			#print "noalpha"
 		else:
 			imgret=pygame.image.load(os.path.join(imagepath, filename)).convert_alpha()
+			#print "alpha"
 		filedict[filename]=imgret
 		return imgret
 
+#convienence function.
+#give it a color, be it a rgb touple,
+# html hex, or pygame color object, and it will always spit out a pygame color object.
+def colorify(colorobj):
+	if type(colorobj) is pygame.Color:
+		return colorobj
+	else:
+		return pygame.Color(colorobj)
+
+
 def textrender(text, size, fgcolor, bgcolor, transp):
+	#ensure colors are pygame.Color objects
+	fgcolor=colorify(fgcolor)
+	bgcolor=colorify(bgcolor)
+	#generate string forms of fg and bg colors for key.
+	kfgcolor=str(fgcolor.r)+str(fgcolor.g)+str(fgcolor.b)
+	kbgcolor=str(bgcolor.r)+str(bgcolor.g)+str(bgcolor.b)
 	global textdict
-	keyx=(text + str(size) + fgcolor + bgcolor + str(transp))
+	keyx=(text + str(size) + kfgcolor + kbgcolor + str(transp))
 	if keyx in textdict:
 		return textdict[keyx]
 	else:
-		fgcolor=pygame.Color(fgcolor)
-		bgcolor=pygame.Color(bgcolor)
+		
 		texfnt=pygame.font.SysFont(None, size)
 		if transp==0:
 			texgfx=texfnt.render(text, True, fgcolor, bgcolor)
@@ -84,7 +112,7 @@ def textrender(text, size, fgcolor, bgcolor, transp):
 		return texgfx
 
 class clicktab:
-	def __init__(self, box, reftype, ref, keyid, takekey, sfxclick, sound, quitab=0):
+	def __init__(self, box, reftype, ref, keyid, takekey, sfxclick, sound, quitab=0, data=None):
 		self.box=box
 		self.ref=ref
 		self.keyid=keyid
@@ -93,3 +121,39 @@ class clicktab:
 		self.sfxclick=sfxclick
 		self.sound=sound
 		self.quitab=quitab
+		self.data=data
+
+
+def ctreport(box, selfref, dataval):
+	return clicktab(box, 'report', selfref, '0', '0', 0, None, quitab=0, data=dataval)
+	
+
+def colorboost(colorobj, amnt):
+	colorobj=colorify(colorobj)
+	rcol=colorobj.r
+	gcol=colorobj.g
+	bcol=colorobj.b
+	rcol+=amnt
+	gcol+=amnt
+	bcol+=amnt
+	if rcol>255:
+		rcol=255
+	if rcol<0:
+		rcol=0
+	if gcol>255:
+		gcol=255
+	if gcol<0:
+		gcol=0
+	if bcol>255:
+		bcol=255
+	if bcol<0:
+		bcol=0
+	return pygame.Color(rcol, gcol, bcol)
+
+def trace3dbox(surface, basecolor, rect, linewidth=1):
+	basetint=colorboost(basecolor, 40)
+	baseshad=colorboost(basecolor, -40)
+	pygame.draw.line(surface, basetint, rect.topleft, rect.topright, linewidth)
+	pygame.draw.line(surface, basetint, rect.topleft, rect.bottomleft, linewidth)
+	pygame.draw.line(surface, baseshad, rect.bottomleft, rect.bottomright, linewidth)
+	pygame.draw.line(surface, baseshad, rect.topright, rect.bottomright, linewidth)

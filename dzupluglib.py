@@ -10,8 +10,9 @@ import time
 import os
 import dzulib1 as dzulib
 pygame.display.init()
-
-
+import traceback
+import random
+import xml.etree.ElementTree as ET
 pluglist=[]
 
 class plugobj:

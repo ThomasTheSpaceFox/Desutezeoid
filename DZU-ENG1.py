@@ -8,6 +8,8 @@ import pygame
 import time
 import os
 import copy
+
+
 # load dzulib1 Desutezeoid support library
 import dzulib1 as dzulib
 import dzupluglib
@@ -20,12 +22,14 @@ import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-print "Desutezeoid arbitrary point and click engine v1.6.1"
+engversion="v1.7.0"
+print "Desutezeoid arbitrary point and click engine " + engversion
 print "parsing ENGSYSTEM.xml"
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
 
 screentag=confroot.find("screen")
+plugcnftag=confroot.find("plugcnf")
 uitag=confroot.find("ui")
 uicolorstag=uitag.find("main")
 uifgcolor=pygame.Color(uicolorstag.attrib.get("FGCOLOR", "#000000"))
@@ -130,26 +134,30 @@ screensurf.set_alpha(None)
 quitflag=0
 clicklist=list()
 
+
+
+
 #menu dialog function
 def qmenu(xpos, ypos, itemlist, fgcol=uifgcolorstr, bgcol=uibgcolorstr, uipoptextsize=uitextsize):
 	#qfnt=pygame.font.SysFont(None, uipoptextsize)
 	texty=3
 	textx=100
-	fgc=pygame.Color(fgcol)
-	bgc=pygame.Color(bgcol)
+	fgc=dzulib.colorify(fgcol)
+	bgc=dzulib.colorify(bgcol)
+	bgbtn=dzulib.colorboost(bgcol, 40)
 	itemlistB=list()
 	for itm in itemlist:
-		texty += uipoptextsize
+		texty += uipoptextsize+3
 		if itm.noact==1:
 			#qtext1=qfnt.render(itm.con, True, fgcol, bgcol)
 			qtext1=textrender(itm.con, uipoptextsize, fgcol, bgcol, 0)
 		else:
 			#qtext1=qfnt.render(itm.con, True, bgcol, fgcol)
-			qtext1=textrender(itm.con, uipoptextsize, bgcol, fgcol, 0)
+			qtext1=textrender(itm.con, uipoptextsize, fgcol, bgbtn, 0)
 		#print itm.con
 		itmB=uimenutab(itm.con, itm.keyid, itm.stay, itm.noact, qtext1)
-		if (qtext1.get_width())>textx:
-			textx=qtext1.get_width()
+		if (qtext1.get_width()+4)>textx:
+			textx=qtext1.get_width()+4
 		itemlistB.extend([itmB])
 	
 	xpos=((xpos - int(textx / 2)) - 3)
@@ -167,16 +175,32 @@ def qmenu(xpos, ypos, itemlist, fgcol=uifgcolorstr, bgcol=uibgcolorstr, uipoptex
 	texrenx=(xpos + 3)
 	retlist=list()
 	for itm in itemlistB:
-		itmclick=screensurf.blit(itm.surfrender, (texrenx, (texreny)))
-		texreny += uipoptextsize
+		texrenx=(xpos + (qboxwidth // 2) - (itm.surfrender.get_width()//2))
+		
+		#itmclick=screensurf.blit(itm.surfrender, (texrenx, (texreny)))
+		itmclick=itm.surfrender.get_rect()
+		itmclick.x = texrenx - 2
+		itmclick.y = texreny - 2
+		itmclick.w += 4
+		itmclick.h += 4
+		
+		
 		if itm.noact==0:
+			pygame.draw.rect(screensurf, bgbtn, itmclick, 0)
+			#pygame.draw.rect(screensurf, fgc, itmclick, 1)
+			dzulib.trace3dbox(screensurf, bgc, itmclick, 1)
+			screensurf.blit(itm.surfrender, (texrenx, (texreny)))
 			if itm.stay==0:
 				itmclicktab=clicktab(itmclick, "key", "none", itm.keyid, "0", 0, "none", quitab=3)
 			else:
 				itmclicktab=clicktab(itmclick, "key", "none", itm.keyid, "0", 0, "none")
 			retlist.extend([itmclicktab])
+		else:
+			screensurf.blit(itm.surfrender, (texrenx, (texreny)))
+		texreny += uipoptextsize+3
 	#screensurf.blit(qtext1, ((xpos + 3), (ypos + 3)))
-	pygame.draw.rect(screensurf, fgc, boxtrace, 3)
+	#pygame.draw.rect(screensurf, fgc, boxtrace, 3)
+	dzulib.trace3dbox(screensurf, bgc, boxtrace, 3)
 	return(retlist)
 
 	
@@ -185,8 +209,9 @@ def qmenu(xpos, ypos, itemlist, fgcol=uifgcolorstr, bgcol=uibgcolorstr, uipoptex
 #simple dialog popup generator. used by uipop forks and the engine quit dialogs.
 def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=uifgcolorstr, bgcol=uibgcolorstr, uipoptextsize=uitextsize, img="none"):
 	#qfnt=pygame.font.SysFont(None, uipoptextsize)
-	fgc=pygame.Color(fgcol)
-	bgc=pygame.Color(bgcol)
+	fgc=dzulib.colorify(fgcol)
+	bgc=dzulib.colorify(bgcol)
+	bgbtn=dzulib.colorboost(bgcol, 40)
 	if img!="none":
 		qimg=filelookup(img)
 		qimgflg=1
@@ -217,14 +242,31 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 	if qimgflg==1:
 		screensurf.blit(qimg, ((xpos + 3), (ypos + 3)))
 	screensurf.blit(qtext1, ((xpos + 3), (ypos + qimgy + 3)))
-	pygame.draw.rect(screensurf, fgc, boxtrace, 3)
+	#pygame.draw.rect(screensurf, fgc, boxtrace, 3)
+	dzulib.trace3dbox(screensurf, bgc, boxtrace, 3)
 	if quyn==1:
 		#qytext=qfnt.render("Yes", True, bgcol, fgcol)
 		#qntext=qfnt.render("No", True, bgcol, fgcol)
-		qytext=textrender("Yes", uipoptextsize, bgcol, fgcol, 0)
-		qntext=textrender("No", uipoptextsize, bgcol, fgcol, 0)
-		yesclick=screensurf.blit(qytext, ((xpos + 10), (ypos + qimgy + 10 + uipoptextsize)))
-		noclick=screensurf.blit(qntext, ((xpos + 50), (ypos + qimgy + 10 + uipoptextsize)))
+		qytext=textrender("Yes", uipoptextsize, fgcol, bgbtn, 0)
+		qntext=textrender("No", uipoptextsize, fgcol, bgbtn, 0)
+		yesclick=qytext.get_rect()
+		noclick=qntext.get_rect()
+		yesclick.x =(xpos + 10 - 2)
+		yesclick.y =(ypos + qimgy + 10 - 2 + uipoptextsize)
+		yesclick.w += 4
+		yesclick.h += 4
+		noclick.x =(xpos + 50 - 2)
+		noclick.y =(ypos + qimgy + 10 - 2 + uipoptextsize)
+		noclick.w += 4
+		noclick.h += 4
+		pygame.draw.rect(screensurf, bgbtn, noclick, 0)
+		dzulib.trace3dbox(screensurf, bgc, noclick, 1)
+		screensurf.blit(qntext, (noclick.x+2, noclick.y+2))
+		pygame.draw.rect(screensurf, bgbtn, yesclick, 0)
+		dzulib.trace3dbox(screensurf, bgc, yesclick, 1)
+		screensurf.blit(qytext, (yesclick.x+2, yesclick.y+2))
+		#yesclick=screensurf.blit(qytext, ((xpos + 10), (ypos + qimgy + 10 + uipoptextsize)))
+		#noclick=screensurf.blit(qntext, ((xpos + 50), (ypos + qimgy + 10 + uipoptextsize)))
 		ref="none"
 		takekey="0"
 		clicksoundflg=0
@@ -242,8 +284,17 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 		return(retclicks, quyn)
 	else:
 		#qytext=qfnt.render("Ok", True, bgcol, fgcol)
-		qytext=textrender("Ok", uipoptextsize, bgcol, fgcol, 0)
-		yesclick=screensurf.blit(qytext, ((xpos + 10), (ypos + qimgy + 10 + uipoptextsize)))
+		qytext=textrender("Ok", uipoptextsize, fgcol, bgbtn, 0)
+		yesclick=qytext.get_rect()
+		yesclick.x =(xpos + 10 - 2)
+		yesclick.y =(ypos + qimgy + 10 - 2 + uipoptextsize)
+		yesclick.w += 4
+		yesclick.h += 4
+		pygame.draw.rect(screensurf, bgbtn, yesclick, 0)
+		dzulib.trace3dbox(screensurf, bgc, yesclick, 1)
+		screensurf.blit(qytext, (yesclick.x+2, yesclick.y+2))
+		
+		#yesclick=screensurf.blit(qytext, ((xpos + 10), (ypos + qimgy + 10 + uipoptextsize)))
 		ref="none"
 		takekey="0"
 		clicksoundflg=0
@@ -253,11 +304,34 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 		retclicks.extend([yesdat])
 		return(retclicks, quyn)
 
-	
+class vartreeclass:
+	def __init__(self):
+		self.curpage=curpage
+		self.uifgcolorstr=uifgcolorstr
+		self.uibgcolorstr=uibgcolorstr
+		self.uitextsize=uitextsize
+		self.engversion=engversion
+
+vartree=vartreeclass()
 pluglistactive=[]
 for pluginst in dzupluglib.pluglist:
 	print "loading: " + pluginst.plugname
-	pluglistactive.extend([pluginst.plugclass(screensurf, keylist)])
+	pluglistactive.extend([pluginst.plugclass(screensurf, keylist, vartree)])
+for cnfplug in plugcnftag.findall("*"):
+	for pluginst in pluglistactive:
+		try:
+			pluginst.cnfload(cnfplug)
+		except AttributeError:
+			continue
+
+plugsavtag=mainsavroot.find('plugsav')
+
+for pluginst in pluglistactive:
+	try:
+		pluginst.savload(plugsavtag)
+	except AttributeError:
+		continue
+
 timeoutlist=list()
 keybak=list(keylist)
 forksanitycheck=0
@@ -276,7 +350,7 @@ while quitflag==0:
 	engtimer.tick(30)
 	pos = pygame.mouse.get_pos()
 	#print "tic"
-	if curpage!=prevpage:
+	if vartree.curpage!=prevpage:
 		print "flushing image cache"
 		del dzulib.filedict
 		dzulib.filedict={}
@@ -286,10 +360,10 @@ while quitflag==0:
 		for pluginst in pluglistactive:
 			pluginst.pageclear()
 		print "preparsing page"
-		tree = ET.parse(curpage)
+		tree = ET.parse(vartree.curpage)
 		root = tree.getroot()
 		cachepage=prevpage
-		prevpage=curpage
+		prevpage=vartree.curpage
 		coretag=root.find('core')
 		forktag=root.find('forks')
 		print "parsing global core objects into page structure..."
@@ -422,12 +496,12 @@ while quitflag==0:
 			if masterkey in keylist:
 				keylist.remove(masterkey)
 				useprvpge=int(fork.attrib.get('useprev', '0'))
-				curpage=fork.attrib.get("page")
+				vartree.curpage=fork.attrib.get("page")
 				if useprvpge==1 and cachepage!="NULL":
-					curpage=cachepage
+					vartree.curpage=cachepage
 					
 				
-				print ("iref: loading page '" + curpage + "'")
+				print ("iref: loading page '" + vartree.curpage + "'")
 				pagejumpflag=1
 				break
 		if fork.tag==("music"):
@@ -450,11 +524,11 @@ while quitflag==0:
 			msg=fork.attrib.get("msg")
 			qpopx=int(fork.attrib.get("x",(screensurf.get_rect().centerx)))
 			qpopy=int(fork.attrib.get("y",(screensurf.get_rect().centery)))
-			#FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", uifgcolorstr))
-			#BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", uibgcolorstr))
-			FGCOL=fork.attrib.get("FGCOLOR", uifgcolorstr)
-			BGCOL=fork.attrib.get("BGCOLOR", uibgcolorstr)
-			QFNTSIZE=int(fork.attrib.get("textsize", uitextsize))
+			#FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", vartree.uifgcolorstr))
+			#BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", vartree.uibgcolorstr))
+			FGCOL=fork.attrib.get("FGCOLOR", vartree.uifgcolorstr)
+			BGCOL=fork.attrib.get("BGCOLOR", vartree.uibgcolorstr)
+			QFNTSIZE=int(fork.attrib.get("textsize", vartree.uitextsize))
 			uiimg=fork.attrib.get("img", "none")
 	
 			if masterkey in keylist:
@@ -476,11 +550,11 @@ while quitflag==0:
 			masterkey=fork.attrib.get("keyid")
 			qpopx=int(fork.attrib.get("x",(screensurf.get_rect().centerx)))
 			qpopy=int(fork.attrib.get("y",(screensurf.get_rect().centery)))
-			#FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", uifgcolorstr))
-			#BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", uibgcolorstr))
-			FGCOL=fork.attrib.get("FGCOLOR", uifgcolorstr)
-			BGCOL=fork.attrib.get("BGCOLOR", uibgcolorstr)
-			QFNTSIZE=int(fork.attrib.get("textsize", uitextsize))
+			#FGCOL=pygame.Color(fork.attrib.get("FGCOLOR", vartree.uifgcolorstr))
+			#BGCOL=pygame.Color(fork.attrib.get("BGCOLOR", vartree.uibgcolorstr))
+			FGCOL=fork.attrib.get("FGCOLOR", vartree.uifgcolorstr)
+			BGCOL=fork.attrib.get("BGCOLOR", vartree.uibgcolorstr)
+			QFNTSIZE=int(fork.attrib.get("textsize", vartree.uitextsize))
 			if masterkey in keylist:
 				keylist.remove(masterkey)
 				itemlist=list()
@@ -617,7 +691,10 @@ while quitflag==0:
 					imggfx=dzulib.hscroll(int(hscoffset), imggfx)
 				if vscfl==1:
 					imggfx=dzulib.vscroll(int(vscoffset), imggfx)
-				clickref=screensurf.blit(imggfx, (imgx, imgy))
+				#clickref=screensurf.blit(imggfx, (imgx, imgy))
+				clickref=imggfx.get_rect()
+				clickref.x=imgx
+				clickref.y=imgy
 				if hoverkey!="0":
 					if clickref.collidepoint(pos)==1:
 						if not hoverkey in keylist:
@@ -630,7 +707,10 @@ while quitflag==0:
 					hovgfx=filelookup(hovcon)
 					if clickref.collidepoint(pos)==1:
 						clickref=screensurf.blit(hovgfx, (imgx, imgy))
-			
+					else:
+						clickref=screensurf.blit(imggfx, (imgx, imgy))
+				else:
+					clickref=screensurf.blit(imggfx, (imgx, imgy))
 				if acttype!="none":
 					pos = pygame.mouse.get_pos()
 					if acttype=="iref":
@@ -901,16 +981,21 @@ while quitflag==0:
 					
 						
 					if f.reftype=="iref":
-						curpage=f.ref
+						vartree.curpage=f.ref
 						print ("iref: loading page '" + f.ref + "'")
 						break
 					if f.reftype=="prev" and cachepage!="NULL":
-						curpage=cachepage
+						vartree.curpage=cachepage
 						print ("prev: go to previous page")
 						break
 					if f.reftype=="quit":
 						uiquit=1
 						break
+					if f.reftype=="report":
+						try:
+							f.ref.clickreport(f)
+						except AttributeError:
+							print "Error: report reftype missing refrence to plugin instance,\n or plugin instance missing clickreport method."
 					if f.reftype=="quitx":
 						print ("quit: onclick quit")
 						quitflag=1
@@ -938,5 +1023,11 @@ for ksav in savkeystag:
 	if keyid!='0':
 		if keyid in keylist:
 			keysav.append(copy.deepcopy(ksav))
+
+for pluginst in pluglistactive:
+	try:
+		pluginst.savwrite(plugsavtag)
+	except AttributeError:
+		continue
 mainsavtree.write('main.sav')
 print "Done."

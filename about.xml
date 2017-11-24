@@ -8,12 +8,13 @@
 	<forks>
 	</forks>
 	<core>
+		
 		<label x="0" y="10" size="30" transp="1" FGCOLOR="#000000">
 			<con>Desutezeoid</con>
 			<act type="none"/>
 		</label>
 		<!--notice how the "text" object has similar attributes to the label tag, but lacking click and hover related, attribues. It still has onkey and offkey though. do note this can take longer to process than other core objects.-->
-		<text x="10" y="30" size="20" transp="1" FGCOLOR="#000000">v1.6.1
+		<text x="10" y="30" size="20" transp="1" FGCOLOR="#000000">v1.7.0
 an arbitrary point and click engine.       
 Copyright (c) 2015-2017 Thomas Leathers      
 

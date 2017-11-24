@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
-	<pageconf BGimg="1" BGM="1">
+	<pageconf BGimg="1" BGM="0">
 		<title>Welcome To Desutezeoid!</title>
 		<BG>BGseaside.jpg</BG>
 		<BGM>BGM1.ogg</BGM>

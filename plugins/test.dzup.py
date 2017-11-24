@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 class PLUGIN_test_test:
-	def __init__(self, screensurf, keylist):
+	def __init__(self, screensurf, keylist, vartree):
 		self.screensurf=screensurf
 		self.keylist=keylist
 		#best practice to init keyid variables during init, and default them to "0" (the null keyid)
@@ -45,6 +45,15 @@ class PLUGIN_test_test:
 	#called upon page load.
 	def pageclear(self):
 		self.coreprocessed=0
+	#optional config load tag. queries all plugins with each tag in the plugcnf section
+	def cnfload(self, plugcnf):
+		return
+	#savload and savwrite return the plugin section of the save tree. this is to let plugins search, create, and modify any data they wish to add.
+	#knoledge of Python ElementTree is reccomended.
+	def savload(self, savtag):
+		return
+	def savwrite(self, savtag):
+		return
 
 
 
@@ -56,4 +65,4 @@ class PLUGIN_test_test:
 
 plugname="test plugin"
 plugclass=PLUGIN_test_test
-plugpath="test.dzup"
+plugpath=None
