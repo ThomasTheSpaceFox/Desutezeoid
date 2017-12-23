@@ -43,24 +43,23 @@
 			<item con="Main Menu" noact="1"/>
 			<item con="Test Page 0" keyid="pagejumppage1" stay="1"/>
 			<item con="Test Page 1" keyid="pagejumppage2" stay="1"/>
-			<!--<item con="About" keyid="pagejumppage3" stay="1"/>-->
 			<item con="warp things..." keyid="pagejumppage4" stay="1"/>
 			<item con="Telescopic" keyid="pagejumppage5" stay="1"/>
 			<item con="3D prerendered panoramic" keyid="pagejumppage6" stay="1"/>
 			<item con="Flashlight effect." keyid="pagejumppage7" stay="1"/>
-			<!--<item con="Rain effect." keyid="pagejumppage8" stay="1"/>-->
 			<item con="SnowFx plugin demo." keyid="pagejumppage9" stay="1"/>
 			<item con="RainFx plugin demo." keyid="pagejumppage10" stay="1"/>
 			<item con="Inventory Manager demo." keyid="pagejumppage11" stay="1"/>
 			<item con="-------------------" noact="1"/>
-			<!--<item con="more..." keyid="mainmenu2" stay="0"/>-->
+			<item con="next..." keyid="mainmenu2" stay="0"/>
 			<!--REMEMBER TO ADD A "CLOSE MENU" item to the menu!!!!!!!-->
 			<item con="close menu"/>
 		</uimenu>
 		<uimenu keyid="mainmenu2" textsize="25">
-			<item con="Main Menu | page 2" noact="1"/>
+			<item con="main menu | page 2" noact="1"/>
+			<item con="Shaders demo 1" keyid="pagejumppage12" stay="1"/>
 			<item con="-------------------" noact="1"/>
-			<item con="more..." keyid="mainmenu1" stay="0"/>
+			<item con="back..." keyid="mainmenu1" stay="0"/>
 			<item con="close menu"/>
 		</uimenu>
 		<!--Since uimenu can't pagejump itself, we have some keyids that trigger pagejumps-->
@@ -75,6 +74,7 @@
 		<pagejump keyid="pagejumppage9" page="snowfxdemo.xml"/>
 		<pagejump keyid="pagejumppage10" page="rainfxdemo.xml"/>
 		<pagejump keyid="pagejumppage11" page="invdemo.xml"/>
+		<pagejump keyid="pagejumppage12" page="shaders.xml"/>
 		
 		<!--Pereodic hud text gleam timing-->
 		<timeout keyid="gleamloop1" seconds="10" post="gleamloop2"/>

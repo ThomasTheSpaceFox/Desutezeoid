@@ -15,6 +15,22 @@ last timeout in the sequence trigger one of these.-->
 
 	</forks>
 	<core>
+		<!--Conventional usage of the gradient plugin:-->
+		<gradient x="0" y="0" sizex="50" sizey="50" rot="0" COLOR1="#0017BD" COLOR2="#FFFFFF"/>
+		<gradient x="50" y="0" sizex="50" sizey="50" rot="45" COLOR1="#0017BD" COLOR2="#FFFFFF"/>
+		<gradient x="100" y="0" sizex="50" sizey="50" rot="90" COLOR1="#0017BD" COLOR2="#FFFFFF"/>
+		<gradient x="150" y="0" sizex="50" sizey="50" rot="180" COLOR1="#0017BD" COLOR2="#FFFFFF"/>
+		<gradient x="200" y="0" sizex="50" sizey="50" rot="270" COLOR1="#0017BD" COLOR2="#FFFFFF"/>
+		<!--Advanced fileloader usage of the gradient plugin:
+		this image object is using the fileloader syntax of the gradient plugin.
+		the first number is x size,
+		the second is y size
+		the third is rotation degrees
+		then we have the two colors of the gradient.-->
+		<img x="0" y="50" vscroll="2">
+			<con>gradient--50--60--0--#FFFFFF--#000000</con>
+			<act type="none"/>
+		</img>
 		<label x="0" y="400" size="40">
 			<con>This is another page! :o</con>
 			<act type="none"/>
@@ -54,5 +70,6 @@ last timeout in the sequence trigger one of these.-->
 			<con>foly.png</con>
 			<act type="none"/>
 		</img>
+		
 	</core>
 </main>

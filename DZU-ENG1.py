@@ -317,6 +317,7 @@ pluglistactive=[]
 for pluginst in dzupluglib.pluglist:
 	print "loading: " + pluginst.plugname
 	pluglistactive.extend([pluginst.plugclass(screensurf, keylist, vartree)])
+dzulib.definepluginlist(pluglistactive)
 for cnfplug in plugcnftag.findall("*"):
 	for pluginst in pluglistactive:
 		try:
@@ -513,7 +514,10 @@ while quitflag==0:
 				if xmusstop==1:
 					pygame.mixer.music.stop()
 				elif xmusplay==1:
-					pygame.mixer.music.play(-1)
+					try:
+						pygame.mixer.music.play(-1)
+					except pygame.error:
+						debugmsg("ERROR: music fork play syntax used, but no music tracks were loaded. \n perhaps use the music track change syntax?")
 				else:
 					mustrack=fork.attrib.get("track")
 					pygame.mixer.music.load(os.path.join(sfxpath, mustrack))

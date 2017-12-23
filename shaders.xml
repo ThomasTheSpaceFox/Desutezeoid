@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+	<!--setting BGMstop to "0" keeps any music from the previous page playing (unless the page has defined Background music.) BGMstop falls back to "1" if not specified.-->
+	<pageconf BGimg="0" BGMstop="0" pagekeys="1">
+		<title>Realtime shader plugin demo 1</title>
+		<BG>DZU-Pano-3D-1.jpg</BG>
+	</pageconf>
+	<pagekeys>
+		<k keyid="crtgreen"/>
+	</pagekeys>
+	<forks>
+	</forks>
+	<core>
+		<img x="0" y="0" mouseh="3" mousev="3">
+			<con>DZU-Pano-3D-1.jpg</con>
+			<act type="none"/>
+		</img>
+		<label x="40" y="300" size="28" FGCOLOR="#FFFFFF" BGCOLOR="#000000" offkey="crtgreen" keyid="crtgreen">
+			<con>CRT - green (on)</con>
+			<act type="key"/>
+		</label>
+		<label x="40" y="300" size="28" FGCOLOR="#FFFFFF" BGCOLOR="#000000" onkey="crtgreen" takekey="crtgreen">
+			<con>CRT - green (off)</con>
+			<act type="key"/>
+		</label>
+		<label x="40" y="325" size="28" FGCOLOR="#FFFFFF" BGCOLOR="#000000" offkey="crtcolor" keyid="crtcolor">
+			<con>CRT - color (on)</con>
+			<act type="key"/>
+		</label>
+		<label x="40" y="325" size="28" FGCOLOR="#FFFFFF" BGCOLOR="#000000" onkey="crtcolor" takekey="crtcolor">
+			<con>CRT - color (off)</con>
+			<act type="key"/>
+		</label>
+		<label x="40" y="350" size="28" FGCOLOR="#FFFFFF" BGCOLOR="#000000" offkey="glitch1" keyid="glitch1">
+			<con>Glitch 1 (on)</con>
+			<act type="key"/>
+		</label>
+		<label x="40" y="350" size="28" FGCOLOR="#FFFFFF" BGCOLOR="#000000" onkey="glitch1" takekey="glitch1">
+			<con>Glitch 1 (off)</con>
+			<act type="key"/>
+		</label>
+		<label x="40" y="375" size="28" FGCOLOR="#FFFFFF" BGCOLOR="#000000" offkey="colorfade" keyid="colorfade">
+			<con>tonefx - colorfade (on)</con>
+			<act type="key"/>
+		</label>
+		<label x="40" y="375" size="28" FGCOLOR="#FFFFFF" BGCOLOR="#000000" onkey="colorfade" takekey="colorfade">
+			<con>tonefx - colorfade (off)</con>
+			<act type="key"/>
+		</label>
+		<label x="40" y="400" size="28" FGCOLOR="#FFFFFF" BGCOLOR="#000000" offkey="valueboost" keyid="valueboost">
+			<con>tonefx - valueboost (on)</con>
+			<act type="key"/>
+		</label>
+		<label x="40" y="400" size="28" FGCOLOR="#FFFFFF" BGCOLOR="#000000" onkey="valueboost" takekey="valueboost">
+			<con>tonefx - valueboost (off)</con>
+			<act type="key"/>
+		</label>
+		<shadglitch1 offkey="glitch1"/>
+		<shadcolorfade offkey="colorfade"/>
+		<shadcrtgreen offkey="crtgreen"/>
+		<shadcrtcolor offkey="crtcolor"/>
+		<shadvalueboost offkey="valueboost"/>
+		<img x="0" y="0">
+			<con>crtoverlay.png</con>
+			<act type="none"/>
+		</img>
+	</core>
+</main>

@@ -31,6 +31,10 @@ def initmainsave():
 	mainsavfile.write(savtree)
 	mainsavfile.close()
 
+def definepluginlist(pluglist):
+	global pluglistactive
+	pluglistactive=pluglist
+
 #image scrollers
 def vscroll(scrollval, image):
 	offs=image.get_height()
@@ -66,19 +70,34 @@ def imagealphaoff(filename):
 	else:
 		return 0
 
+dummyimage=pygame.Surface((48, 48))
+dummyimage.fill((255, 0, 255))
+
 def filelookup(filename):
 	global filedict
 	if filename in filedict:
 		return filedict[filename]
 	else:
-		if imagealphaoff(filename):
-			imgret=pygame.image.load(os.path.join(imagepath, filename)).convert()
-			#print "noalpha"
-		else:
-			imgret=pygame.image.load(os.path.join(imagepath, filename)).convert_alpha()
-			#print "alpha"
-		filedict[filename]=imgret
-		return imgret
+		try:
+			if imagealphaoff(filename):
+				imgret=pygame.image.load(os.path.join(imagepath, filename)).convert()
+				#print "noalpha"
+			else:
+				imgret=pygame.image.load(os.path.join(imagepath, filename)).convert_alpha()
+				#print "alpha"
+			filedict[filename]=imgret
+			return imgret
+		except pygame.error:
+			for plug in pluglistactive:
+				try:
+					imgret=plug.imageloader(filename)
+					if imgret!=None:
+						return imgret
+				except AttributeError:
+					continue
+	print "IMAGE FILENAME ERROR: nonvalid image filename. returning dummy image..."
+	return dummyimage
+		
 
 #convienence function.
 #give it a color, be it a rgb touple,
@@ -157,3 +176,45 @@ def trace3dbox(surface, basecolor, rect, linewidth=1):
 	pygame.draw.line(surface, basetint, rect.topleft, rect.bottomleft, linewidth)
 	pygame.draw.line(surface, baseshad, rect.bottomleft, rect.bottomright, linewidth)
 	pygame.draw.line(surface, baseshad, rect.topright, rect.bottomright, linewidth)
+
+def colorchanlimit(color):
+		if color>255:
+			return 255
+		elif color<0:
+			return 0
+		else:
+			return color
+#non-alpha 2-color gradient function. outputs a 200x200 surface, use rotval 0 for no rotation.
+#rotation values of non-90-degree increments will cause the returned surface to be LARGER than 200x200.
+def makegradient(startcolor, endcolor, rotval):
+	#print startcolor
+	#print endcolor
+	gradsurf = pygame.Surface((200, 200))
+	startcolor = colorify(startcolor)
+	endcolor = colorify(endcolor)
+	#calculate float increment values for each color channel
+	inccolorR = (startcolor.r - endcolor.r) / 200.0
+	inccolorG = (startcolor.g - endcolor.g) / 200.0
+	inccolorB = (startcolor.b - endcolor.b) / 200.0
+	#initalize float color data storage values
+	startcolorR = startcolor.r
+	startcolorG = startcolor.g
+	startcolorB = startcolor.b
+	colcnt = 0
+	#draw gradient
+	while colcnt < 200:
+		#draw horizontal line
+		pygame.draw.line(gradsurf, startcolor, (0, colcnt), (200, colcnt))
+		startcolorR -= inccolorR
+		startcolorG -= inccolorG
+		startcolorB -= inccolorB
+		#update color channels
+		startcolor.r = colorchanlimit(int(startcolorR))
+		startcolor.g = colorchanlimit(int(startcolorG))
+		startcolor.b = colorchanlimit(int(startcolorB))
+		colcnt += 1
+	if rotval==0:
+		return gradsurf
+	else:
+		return pygame.transform.rotate(gradsurf, rotval)
+			

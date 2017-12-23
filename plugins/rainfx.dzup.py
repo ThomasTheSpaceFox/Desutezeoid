@@ -73,7 +73,7 @@ class PLUGIN_rainfx:
 			#turn off rain active flag, (if a rainfx tag is present and active in core, it will reenable it.)
 			#this lets onkey/offkey masking pause the rain processing when no rainfx tag is active and present.
 			self.rainon=0
-			print len(self.rainlist)
+			#print len(self.rainlist)
 			if self.rainreflow==0:
 				break
 			

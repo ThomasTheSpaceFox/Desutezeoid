@@ -16,6 +16,7 @@
 		<rainreset keyid="rainreset" vector="0"/>
 		<rainreset keyid="rainreset2" vector="12"/>
 		<rainreset keyid="rainreset3" vector="-20"/>
+		<rainreset keyid="rainreset4" vector="-40"/>
 		<batchset keyid="cleartimer" set="0">
 			<k keyid="rainloop1"/>
 			<k keyid="rainloop2"/>
@@ -53,6 +54,10 @@
 		</label>
 		<label x="0" y="340" size="20" FGCOLOR="#FFFFFF" BGCOLOR="#000000" keyid="rainreset3">
 			<con>Reset rain (vector=-20)</con>
+			<act type="key"/>
+		</label>
+		<label x="0" y="360" size="20" FGCOLOR="#FFFFFF" BGCOLOR="#000000" keyid="rainreset4">
+			<con>Reset rain (vector=-40)</con>
 			<act type="key"/>
 		</label>
 	</core>

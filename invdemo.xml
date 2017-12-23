@@ -17,9 +17,24 @@
 		<takeitem keyid="item1take" itemid="item1"/>
 		
 		<sound keyid="soundplay" sound="mip.ogg"/>
+		
+		<!--Takeallitems does exactly that. removes all the player's items.
+		an optional postkey keyid can be made active after this if desired.-->
+		<takeallitems keyid="allitemtake" postkey="soundplay"/>
+		
+		<!--ifhasitem and ifselitem are active boolean forks, meaning they will
+		keep keyid active when true, and keep keyid inactive when false.
+		ifhasitem is true for an itemid when the player has it.
+		ifselitem is true for an itemid when the player is holding it.-->
+		<ifhasitem itemid="item1" keyid="playerhasitem1"/>
+		<ifselitem itemid="item1" keyid="playerholdingitem1"/>
 	</forks>
 	<core>
-		<actionrect x="309" y="156" sizex="107" sizey="146" itemid="item0" keyid="soundplay"/>
+		<!--if selected itemid is the specified itemid, and the click is inside the specified area,
+		the keyid specified as keyid is added, else, if the click is inside the specified area, 
+		and wrongkey is specified, it is added.-->
+		<actionrect x="309" y="156" sizex="107" sizey="146" itemid="item0" keyid="soundplay" wrongkey="testwrongitemidkey"/>
+		
 		<label x="0" y="280" size="20" FGCOLOR="#FFFFFF" BGCOLOR="#550055" keyid="item1give">
 			<con>give purple item</con>
 			<act type="key"/>
@@ -28,12 +43,25 @@
 			<con>take purple item</con>
 			<act type="key"/>
 		</label>
+		<label x="0" y="320" size="20" FGCOLOR="#FFFFFF" BGCOLOR="#550055" onkey="playerhasitem1">
+			<con>has purple item</con>
+			<act type="none"/>
+		</label>
+		<label x="0" y="340" size="20" FGCOLOR="#FFFFFF" BGCOLOR="#550055" onkey="playerholdingitem1">
+			<con>holding purple item</con>
+			<act type="none"/>
+		</label>
+		
 		<label x="140" y="280" size="20" FGCOLOR="#FFFFFF" BGCOLOR="#000000" keyid="item0give">
 			<con>give black item</con>
 			<act type="key"/>
 		</label>
 		<label x="140" y="300" size="20" FGCOLOR="#FFFFFF" BGCOLOR="#000000" keyid="item0take">
 			<con>take black item</con>
+			<act type="key"/>
+		</label>
+		<label x="140" y="380" size="20" FGCOLOR="#FFFFFF" BGCOLOR="#000000" keyid="allitemtake">
+			<con>take all items</con>
 			<act type="key"/>
 		</label>
 		<itemhud x="0" y="500"/>

@@ -51,17 +51,52 @@ class PLUGIN_invman:
 						if self.itemx[0]==self.itemid:
 							self.playitems.remove(self.itemx)
 							break
+		if tagobj.tag=="takeallitems":
+			
+			self.keyid=tagobj.attrib.get("keyid")
+			if self.keyid in self.keylist:
+				self.keylist.remove(self.keyid)
+				self.postkey=tagobj.attrib.get("postkey", "0")
+				if self.postkey not in self.keylist:
+					self.keylist.extend([self.postkey])
+				self.selitem=None
+				self.playitems=[]
+				self.knownids=[]
+		if tagobj.tag=="ifhasitem":
+			self.itemid=tagobj.attrib.get("itemid")
+			self.keyid=tagobj.attrib.get("keyid")
+			if self.itemid not in self.knownids:
+				if self.keyid in self.keylist:
+					self.keylist.remove(self.keyid)
+			else:
+				if self.keyid not in self.keylist:
+					self.keylist.extend([self.keyid])
+		if tagobj.tag=="ifselitem":
+			self.itemid=tagobj.attrib.get("itemid")
+			self.keyid=tagobj.attrib.get("keyid")
+			if self.selitem!=None:
+				if self.itemid !=self.selitem[0]:
+					if self.keyid in self.keylist:
+						self.keylist.remove(self.keyid)
+				else:
+					if self.keyid not in self.keylist:
+						self.keylist.extend([self.keyid])
+			else:
+				if self.keyid in self.keylist:
+					self.keylist.remove(self.keyid)
+				
 		return
 	def core(self, tagobj):
 		#action rectangle core object
 		if tagobj.tag=="actionrect":
 			self.keyid=tagobj.attrib.get("keyid")
+			self.wrongkey=tagobj.attrib.get("wrongkey", "0")
 			self.cx=int(tagobj.attrib.get("x"))
 			self.cy=int(tagobj.attrib.get("y"))
 			self.csx=int(tagobj.attrib.get("sizex"))
 			self.csy=int(tagobj.attrib.get("sizey"))
 			self.itemid=tagobj.attrib.get("itemid")
-			self.rectlist.extend([dzulib.ctreport(pygame.Rect(self.cx, self.cy, self.csx, self.csy), self, ["act", self.itemid, self.keyid])])
+			self.rectlist.extend([dzulib.ctreport(pygame.Rect(self.cx, self.cy, self.csx, self.csy), self, ["act", self.itemid, self.keyid, self.wrongkey])])
 		#item hud core object. (only one of these should be used per page!)
 		if tagobj.tag=="itemhud":
 			self.cx=int(tagobj.attrib.get("x"))
@@ -113,6 +148,9 @@ class PLUGIN_invman:
 				if self.datarep[1] == self.selitem[0]:
 					if self.datarep[2] not in self.keylist:
 						self.keylist.extend([self.datarep[2]])
+				else:
+					if self.datarep[3] not in self.keylist:
+						self.keylist.extend([self.datarep[3]])
 		if self.datarep[0]=="hud":
 			self.selitem=self.datarep[1]
 	def cnfload(self, plugcnf):
