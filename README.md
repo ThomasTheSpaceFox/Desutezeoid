@@ -1,7 +1,7 @@
 #   Desutezeoid
 v1.7.0  
 an arbitrary point and click engine.       
-Copyright (c) 2015-2017 Thomas Leathers and Contributors       
+Copyright (c) 2015-2018 Thomas Leathers and Contributors       
 
 Notice: the API and usage manual, (desutezeoid_manual.odt) is under a different license:
 the GNU Free Documentation License. See said manual for more information.
