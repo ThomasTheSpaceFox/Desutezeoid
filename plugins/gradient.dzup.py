@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+#wrapper plugin for dzulib's makegradient function.
 class PLUGIN_gradient_gradient:
 	def __init__(self, screensurf, keylist, vartree):
 		self.screensurf=screensurf
@@ -19,6 +20,7 @@ class PLUGIN_gradient_gradient:
 			self.COL2=dzulib.colorify(tagobj.attrib.get("COLOR2", "#000000"))
 			#notice how this generates a filename key and passes it to dzulib.filelookup.
 			#see imageloader method below for an explanation of this plugin API feature.
+			#essentially this plugin's core object uses its own fileloader API syntax.
 			self.screensurf.blit(dzulib.filelookup("gradient--" + str(self.csx) + "--" + str(self.csy) + "--" + str(self.rot) + "--" + tagobj.attrib.get("COLOR1", "#FFFFFF") + "--" + tagobj.attrib.get("COLOR2", "#000000")), (self.xpos, self.ypos))
 		return
 	def pump(self):
@@ -43,6 +45,10 @@ class PLUGIN_gradient_gradient:
 	#the second is y size
 	#the third is rotation degrees
 	#then we have the two colors of the gradient.
+	
+	#for plugin writers you can use imageloader_nocache(self, filename) instead for animated generated images. this like it says, bypasses the image cache.
+	#for static generated images, like this gradient plugin, use the normal imageloader(self, filename). Note that this will cache the image.
+	#if you use both, ensure they have dfferent syntax. as images existing in cache means the image loader just returns the cahced version.
 	def imageloader(self, filename):
 		filenlist=filename.split("--")
 		if filenlist[0]=="gradient":

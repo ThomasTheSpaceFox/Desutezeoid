@@ -64,7 +64,7 @@ imagepath='img'
 filedict={}
 textdict={}
 
-
+#image alpha optimization detection.
 def imagealphaoff(filename):
 	if (filename.lower()).endswith(".jpg") or (filename.lower()).endswith(".jpeg") or (filename.lower()).startswith("no-tr"):
 		return 1
@@ -89,13 +89,26 @@ def filelookup(filename):
 			filedict[filename]=imgret
 			return imgret
 		except pygame.error:
+			#if error, check if any plugin's imageloader API functions understand it.
 			for plug in pluglistactive:
+				#plugin imageloader API.
 				try:
 					imgret=plug.imageloader(filename)
+					if imgret!=None:
+						#cache result of imageloader call.
+						filedict[filename]=imgret
+						return imgret
+				except AttributeError:
+					continue
+				#nocache variant.
+				try:
+					#nocache version of imageloader.
+					imgret=plug.imageloader_nocache(filename)
 					if imgret!=None:
 						return imgret
 				except AttributeError:
 					continue
+	#if all else fails print error message and return dummy image.
 	print("IMAGE FILENAME ERROR: nonvalid image filename. returning dummy image...")
 	return dummyimage
 		
