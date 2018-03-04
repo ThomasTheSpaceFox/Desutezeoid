@@ -74,9 +74,9 @@ def imagealphaoff(filename):
 dummyimage=pygame.Surface((48, 48))
 dummyimage.fill((255, 0, 255))
 
-def filelookup(filename):
+def filelookup(filename, bypasscache=False,):
 	global filedict
-	if filename in filedict:
+	if filename in filedict and bypasscache==False:
 		return filedict[filename]
 	else:
 		try:

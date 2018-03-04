@@ -40,7 +40,7 @@
 		<!--HUGE text :) -->
 		<uipop keyid="uidialog4" msg="This Dialog is BIG." BGCOLOR="#00AA00" FGCOLOR="#FFFFFF" textsize="70" />
 		<!--dialog with image specified by the "img" attribute.-->
-		<uipop keyid="uidialog5" msg="This Dialog has an image." BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25" img="testimage300.png" />
+		<uipop keyid="uidialog5" msg="This Dialog has an image." BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25" img="opaque--testimage300.png" />
 
 		
 		<!--yes/no dialog-->
@@ -236,6 +236,19 @@ plese use either "iref" or "key"-->
 			<altcon>no-tr-testimg1.png</altcon>
 			<act type="quit" ref="test1.xml"/>
 		</img>
+		<!--New fileloader opaque syntax. use in place of no-tr-* also works with other fileloader syntax schemes.-->
+		<img x="490" y="80">
+			<con>opaque--folx.png</con>
+			<act type="none" ref="test1.xml"/>
+		</img>
+		<img x="390" y="80">
+			<con>folx.png</con>
+			<act type="none" ref="test1.xml"/>
+		</img>
+		<label x="390" y="180" size="16">
+			<con>folx.png, (right is with opaque--* syntax)</con>
+			<act type="none"/>
+		</label>
 		<!--lets animate a test animation with that timeout loop in "globalcore"! See engine config file (ENGSYSTEM.xml) comments for further explanation.-->
 		<img x="300" y="100" onkey="timeloop1">
 			<con>no-tr-animtest1a.png</con>
