@@ -62,7 +62,11 @@ class BUILTIN_opaque:
 		if filenlist[0]=="opaque":
 			imagename="--".join(filenlist[1:])
 			#load image directly as raw image is needed to properly convert. The result of this function is cached anyways.
-			imagex=pygame.image.load(os.path.join(dzulib.imagepath, imagename))
+			try:
+				imagex=pygame.image.load(os.path.join(dzulib.imagepath, imagename))
+			except pygame.error:
+				print("Opaque BUILTIN: IMAGE FILENAME ERROR: nonvalid image filename. returning dummy image...")
+				imagex=dzulib.dummyimage
 			return imagex.convert(self.screensurf)
 
 class plugobj:
