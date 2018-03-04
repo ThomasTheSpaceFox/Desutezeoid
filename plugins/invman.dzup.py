@@ -24,7 +24,7 @@ class PLUGIN_invman:
 				self.itemname=tagobj.attrib.get("name")
 				self.postkey=tagobj.attrib.get("postkey", "0")
 				self.iconname=tagobj.attrib.get("icon")
-				print self.iconname
+				print(self.iconname)
 				if self.itemid not in self.knownids:
 					if self.postkey not in self.keylist:
 						self.keylist.extend([self.postkey])

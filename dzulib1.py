@@ -95,7 +95,7 @@ def filelookup(filename):
 						return imgret
 				except AttributeError:
 					continue
-	print "IMAGE FILENAME ERROR: nonvalid image filename. returning dummy image..."
+	print("IMAGE FILENAME ERROR: nonvalid image filename. returning dummy image...")
 	return dummyimage
 		
 

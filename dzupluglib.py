@@ -30,8 +30,8 @@ for plugcodefile in os.listdir(Plugpath):
 			exec(PLUGEXEC)
 			pluginst=plugobj(plugname, plugclass, plugpath)
 			pluglist.extend([pluginst])
-			print ("Load plugin: " + plugname + " (" + plugcodefile + ")")
+			print(("Load plugin: " + plugname + " (" + plugcodefile + ")"))
 		except SyntaxError as err:
-			print ("Plugin failure: SyntaxError on " + plugcodefile)
-			print(traceback.format_exc())
+			print(("Plugin failure: SyntaxError on " + plugcodefile))
+			print((traceback.format_exc()))
 

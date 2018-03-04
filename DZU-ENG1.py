@@ -23,8 +23,8 @@ pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
 engversion="v1.7.0"
-print "Desutezeoid arbitrary point and click engine " + engversion
-print "parsing ENGSYSTEM.xml"
+print("Desutezeoid arbitrary point and click engine " + engversion)
+print("parsing ENGSYSTEM.xml")
 conftree = ET.parse("ENGSYSTEM.xml")
 confroot = conftree.getroot()
 
@@ -50,7 +50,7 @@ except IOError:
 	mainsavtree = ET.parse("main.sav")
 	mainsavroot = mainsavtree.getroot()
 	
-print "main.sav loaded"
+print("main.sav loaded")
 
 pygame.event.set_allowed([QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP])
 
@@ -63,7 +63,7 @@ imagepath='img'
 			
 	
 
-print "populate keylist with null keyid, add any keys in initkeys."
+print("populate keylist with null keyid, add any keys in initkeys.")
 initkeystag=confroot.find("initkeys")
 savkeystag=confroot.find("savkeys")
 
@@ -71,7 +71,7 @@ keylist=list(["0"])
 for initk in initkeystag.findall("k"):
 	if (initk.attrib.get("keyid"))!="0":
 		keylist.extend([initk.attrib.get("keyid")])
-print "add any keyids from main.sav"
+print("add any keyids from main.sav")
 keysav=mainsavroot.find('keysav')
 for savk in keysav.findall("k"):
 	if (savk.attrib.get("keyid"))!="0":
@@ -95,7 +95,7 @@ if icontag!="NULL":
 	windowicon=pygame.image.load(os.path.join(imagepath, icontag))
 	pygame.display.set_icon(windowicon)
 	
-print "config parsed."
+print("config parsed.")
 titlebase=titletag.attrib.get("base", "Desutezeoid: ")
 
 class timeouttab:
@@ -121,10 +121,10 @@ class uimenutab:
 #		self=keyid
 def debugmsg(msg):
 	if DEBUG==1:
-		print msg
+		print(msg)
 def keyprint():
 	if printkeys==1:
-		print keylist
+		print(keylist)
 keyprint()
 prevpage="NULL"
 curpage=beginref
@@ -315,7 +315,7 @@ class vartreeclass:
 vartree=vartreeclass()
 pluglistactive=[]
 for pluginst in dzupluglib.pluglist:
-	print "loading: " + pluginst.plugname
+	print("loading: " + pluginst.plugname)
 	pluglistactive.extend([pluginst.plugclass(screensurf, keylist, vartree)])
 dzulib.definepluginlist(pluglistactive)
 for cnfplug in plugcnftag.findall("*"):
@@ -338,7 +338,7 @@ keybak=list(keylist)
 forksanitycheck=0
 forksanity=0
 cachepage=prevpage
-print "done. begin mainloop."
+print("done. begin mainloop.")
 uiquit=0
 qpopflg=0
 qmenuflg=0
@@ -352,25 +352,25 @@ while quitflag==0:
 	pos = pygame.mouse.get_pos()
 	#print "tic"
 	if vartree.curpage!=prevpage:
-		print "flushing image cache"
+		print("flushing image cache")
 		del dzulib.filedict
 		dzulib.filedict={}
 		del dzulib.textdict
 		dzulib.textdict={}
-		print "notify plugins of page change"
+		print("notify plugins of page change")
 		for pluginst in pluglistactive:
 			pluginst.pageclear()
-		print "preparsing page"
+		print("preparsing page")
 		tree = ET.parse(vartree.curpage)
 		root = tree.getroot()
 		cachepage=prevpage
 		prevpage=vartree.curpage
 		coretag=root.find('core')
 		forktag=root.find('forks')
-		print "parsing global core objects into page structure..."
+		print("parsing global core objects into page structure...")
 		for glb in globalcoretag:
 			coretag.append(copy.deepcopy(glb))
-		print "parsing global fork objects into page structure..."
+		print("parsing global fork objects into page structure...")
 		for glb in globalforkstag:
 			forktag.append(copy.deepcopy(glb))
 		pageconf=root.find('pageconf')
@@ -394,12 +394,12 @@ while quitflag==0:
 			pygame.mixer.music.load(os.path.join(sfxpath, BGMtrack))
 			pygame.mixer.music.play(-1)
 		pygame.display.set_caption((titlebase + pagetitle), (titlebase + pagetitle))
-		print ("Page title: '" + pagetitle + "'")
+		print(("Page title: '" + pagetitle + "'"))
 		if BGon==1:
 			BGfile=(pageconf.find('BG')).text
 			BG=pygame.image.load(os.path.join(imagepath, BGfile)).convert()
 		screensurf.fill((170, 170, 170))
-		print "done. begin mainloop"
+		print("done. begin mainloop")
 	if BGon==1:
 		screensurf.blit(BG, (0, 0))
 	for fork in forktag.findall("*"):
@@ -502,7 +502,7 @@ while quitflag==0:
 					vartree.curpage=cachepage
 					
 				
-				print ("iref: loading page '" + vartree.curpage + "'")
+				print(("iref: loading page '" + vartree.curpage + "'"))
 				pagejumpflag=1
 				break
 		if fork.tag==("music"):
@@ -986,7 +986,7 @@ while quitflag==0:
 						
 					if f.reftype=="iref":
 						vartree.curpage=f.ref
-						print ("iref: loading page '" + f.ref + "'")
+						print(("iref: loading page '" + f.ref + "'"))
 						break
 					if f.reftype=="prev" and cachepage!="NULL":
 						vartree.curpage=cachepage
@@ -999,7 +999,7 @@ while quitflag==0:
 						try:
 							f.ref.clickreport(f)
 						except AttributeError:
-							print "Error: report reftype missing refrence to plugin instance,\n or plugin instance missing clickreport method."
+							print("Error: report reftype missing refrence to plugin instance,\n or plugin instance missing clickreport method.")
 					if f.reftype=="quitx":
 						print ("quit: onclick quit")
 						quitflag=1
@@ -1017,7 +1017,7 @@ while quitflag==0:
 	pygame.display.flip()
 	pygame.event.pump()
 
-print "updating main.sav Please Wait."
+print("updating main.sav Please Wait.")
 #clear keysav section.
 for savk in keysav:
 	keysav.remove(savk)
@@ -1034,4 +1034,4 @@ for pluginst in pluglistactive:
 	except AttributeError:
 		continue
 mainsavtree.write('main.sav')
-print "Done."
+print("Done.")

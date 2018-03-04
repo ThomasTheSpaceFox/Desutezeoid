@@ -43,7 +43,7 @@ class PLUGIN_test_test2:
 	#this is only needed when the "report" reftype is used. 
 	#(note: if using clicktab directly, ref should be defined as self!)
 	def clickreport(self, clickinst):
-		print clickinst.data
+		print(clickinst.data)
 
 
 
