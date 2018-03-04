@@ -156,6 +156,11 @@ class PLUGIN_invman:
 	def cnfload(self, plugcnf):
 		return
 	def savload(self, savtag):
+		#reset self upon load.
+		self.selitem=None
+		self.knownids=[]
+		self.playitems=[]
+		self.rectlist=[]
 		for self.savitem in savtag.findall("invitem"):
 			self.itemid=self.savitem.attrib.get("itemid")
 			self.itemname=self.savitem.attrib.get("itemname")

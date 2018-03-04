@@ -22,12 +22,13 @@ savtree='''<?xml version="1.0" encoding="UTF-8"?>
 	</keysav>
 	<plugsav>
 	</plugsav>
+	<pagelink/>
 </sav>
 '''
 #main.sav init.
 def initmainsave():
 	print ('Initalize main.sav')
-	mainsavfile = open('main.sav', 'w')
+	mainsavfile = open(os.path.join("save", 'autosave.sav'), 'w')
 	mainsavfile.write(savtree)
 	mainsavfile.close()
 

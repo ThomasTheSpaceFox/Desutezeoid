@@ -40,17 +40,7 @@ uitextsize=int(uicolorstag.attrib.get("textsize", "24"))
 
 uiquittag=uitag.find("quit")
 uiquitmsg=uiquittag.attrib.get("MSG", "Are you sure you want to quit?")
-#load main.sav. if IOError, Attempt to initalize main.sav, then try to load main.sav again.
-try:
-	mainsavtree = ET.parse("main.sav")
-	mainsavroot = mainsavtree.getroot()
-except IOError:
-	print ('main.sav not found.')
-	dzulib.initmainsave()
-	mainsavtree = ET.parse("main.sav")
-	mainsavroot = mainsavtree.getroot()
-	
-print("main.sav loaded")
+
 
 pygame.event.set_allowed([QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP])
 
@@ -61,7 +51,7 @@ sfxpath='sfx'
 imagepath='img'
 
 			
-	
+savepath='save'
 
 print("populate keylist with null keyid, add any keys in initkeys.")
 initkeystag=confroot.find("initkeys")
@@ -71,11 +61,7 @@ keylist=list(["0"])
 for initk in initkeystag.findall("k"):
 	if (initk.attrib.get("keyid"))!="0":
 		keylist.extend([initk.attrib.get("keyid")])
-print("add any keyids from main.sav")
-keysav=mainsavroot.find('keysav')
-for savk in keysav.findall("k"):
-	if (savk.attrib.get("keyid"))!="0":
-		keylist.extend([savk.attrib.get("keyid")])
+
 
 scrnx=int(screentag.attrib.get("x", "800"))
 scrny=int(screentag.attrib.get("y", "600"))
@@ -312,8 +298,10 @@ class vartreeclass:
 		self.uitextsize=uitextsize
 		self.engversion=engversion
 
+
 vartree=vartreeclass()
 pluglistactive=[]
+
 for pluginst in dzupluglib.pluglist:
 	print("loading: " + pluginst.plugname)
 	pluglistactive.extend([pluginst.plugclass(screensurf, keylist, vartree)])
@@ -325,13 +313,108 @@ for cnfplug in plugcnftag.findall("*"):
 		except AttributeError:
 			continue
 
-plugsavtag=mainsavroot.find('plugsav')
+def saver(savefile="autosave.sav"):
+	global keysav
+	print("saving... Please Wait.")
+	#clear keysav section.
+	for savk in keysav.findall("*"):
+		keysav.remove(savk)
+	#print(ET.tostring(mainsavroot).decode())
+	for savk in list(set(keylist)):
+		#keysav.append(copy.deepcopy(savk))
+		savelem=ET.SubElement(keysav, 'k')
+		savelem.set("keyid", savk)
+	
+	for pluginst in pluglistactive:
+		try:
+			pluginst.savwrite(plugsavtag)
+		except AttributeError:
+			continue
+	#save page refrence
+	mainsavroot.find('pagelink').set("page", vartree.curpage)
+	mainsavtree.write(os.path.join(savepath, savefile))
 
-for pluginst in pluglistactive:
+#load main.sav. if IOError, Attempt to initalize main.sav, then try to load main.sav again.
+def loader(savefile="autosave.sav", returnonerror=0):
+	global mainsavtree
+	global mainsavroot
+	global plugsavtag
+	global keysav
+	global keylist
 	try:
-		pluginst.savload(plugsavtag)
-	except AttributeError:
-		continue
+		mainsavtree = ET.parse(os.path.join(savepath, savefile))
+		mainsavroot = mainsavtree.getroot()
+		del keylist[:]
+		print(".sav loaded")
+		pagelink=mainsavroot.find('pagelink').attrib.get("page")
+		if pagelink!=None:
+			vartree.curpage=pagelink
+		plugsavtag=mainsavroot.find('plugsav')
+		for pluginst in pluglistactive:
+			try:
+				pluginst.savload(plugsavtag)
+			except AttributeError:
+				continue
+		print("add any keyids from .sav")
+		keysav=mainsavroot.find('keysav')
+		for savk in keysav.findall("k"):
+			if (savk.attrib.get("keyid"))!="0":
+				if savk.attrib.get("keyid") not in keylist:
+					keylist.extend([savk.attrib.get("keyid")])
+		for initk in initkeystag.findall("k"):
+			if (initk.attrib.get("keyid"))!="0":
+				if initk.attrib.get("keyid") not in keylist:
+					keylist.extend([initk.attrib.get("keyid")])
+	except IOError:
+		if returnonerror==1:
+			return
+		print ('.sav not found.')
+		dzulib.initmainsave()
+		mainsavtree = ET.parse(os.path.join(savepath, savefile))
+		mainsavroot = mainsavtree.getroot()
+		keysav=mainsavroot.find('keysav')
+		print(".sav loaded")
+		plugsavtag=mainsavroot.find('plugsav')
+		
+		for pluginst in pluglistactive:
+			try:
+				pluginst.savload(plugsavtag)
+			except AttributeError:
+				continue
+		del keylist[:]
+		for initk in initkeystag.findall("k"):
+			if (initk.attrib.get("keyid"))!="0":
+				keylist.extend([initk.attrib.get("keyid")])
+
+def newgame():
+	print("starting new game... please wait...")
+	global mainsavtree
+	global mainsavroot
+	global plugsavtag
+	global keysav
+	global keylist
+	global prevpage
+	dzulib.initmainsave()
+	mainsavtree = ET.parse(os.path.join(savepath, "autosave.sav"))
+	mainsavroot = mainsavtree.getroot()
+	#return to beginref
+	vartree.curpage=beginref
+	prevpage="NULL"
+	keysav=mainsavroot.find('keysav')
+	print(".sav loaded")
+	plugsavtag=mainsavroot.find('plugsav')
+	
+	for pluginst in pluglistactive:
+		try:
+			pluginst.savload(plugsavtag)
+		except AttributeError:
+			continue
+	del keylist[:]
+	for initk in initkeystag.findall("k"):
+		if (initk.attrib.get("keyid"))!="0":
+			keylist.extend([initk.attrib.get("keyid")])
+loader()
+	
 
 timeoutlist=list()
 keybak=list(keylist)
@@ -403,6 +486,13 @@ while quitflag==0:
 	if BGon==1:
 		screensurf.blit(BG, (0, 0))
 	for fork in forktag.findall("*"):
+		#new game
+		if fork.tag==("newgame"):
+			masterkey=fork.attrib.get("keyid")
+			if masterkey in keylist:
+				keylist.remove(masterkey)
+				#dzulib.initmainsave()
+				newgame()
 		if fork.tag==("ortrig"):
 			#print "batchtrig"
 			masterkey=fork.attrib.get("keyid")
@@ -428,6 +518,7 @@ while quitflag==0:
 					#print keylist
 					keyprint()
 					forksanity=1
+		
 		if fork.tag==("batchtrig"):
 			#print "batchtrig"
 			masterkey=fork.attrib.get("keyid")
@@ -1017,21 +1108,5 @@ while quitflag==0:
 	pygame.display.flip()
 	pygame.event.pump()
 
-print("updating main.sav Please Wait.")
-#clear keysav section.
-for savk in keysav:
-	keysav.remove(savk)
-#add existing tracked keyids as specified in savkeys in ENGSYSTEM.xml
-for ksav in savkeystag:
-	keyid=ksav.attrib.get('keyid')
-	if keyid!='0':
-		if keyid in keylist:
-			keysav.append(copy.deepcopy(ksav))
-
-for pluginst in pluglistactive:
-	try:
-		pluginst.savwrite(plugsavtag)
-	except AttributeError:
-		continue
-mainsavtree.write('main.sav')
+saver()
 print("Done.")

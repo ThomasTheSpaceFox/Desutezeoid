@@ -24,11 +24,7 @@
 		<k keyid="testkey1"/>
 		<!--<k keyid="welcome"/>-->
 	</initkeys>
-	<!--keyids that should persist in main.sav to be added on next engine load, if they were present on engine quit. main.sav should be in a game's .gitignore or equiv. as this is meant as a way to make user progress persist. notice how the two example switches are tracked, making their state persist.-->
-	<savkeys>
-		<k keyid="switch1"/>
-		<k keyid="switch2"/>
-	</savkeys>
+	
 	<!--Explanation of "globalforks" and "globalcore": these corrispond to the "forks" and "core" sections of page xml files. these are populated into corresponding areas of the page structure in memory. This is why "forks" and "core objects" here act as if they are in every page's xml file.-->
 	
 	<!--These forks are present on each page-->
@@ -83,7 +79,8 @@
 		<timeout keyid="gleamloop4" seconds="0.03" post="gleamloop5"/>
 		<timeout keyid="gleamloop5" seconds="0.03" post="gleamloop6"/>
 		<timeout keyid="gleamloop6" seconds="0.03" post="gleamloop1"/>
-		
+		<!--Start a new game (handled by engine.)-->
+		<newgame keyid="newgame"/>
 	</globalforks>
 	<!--these core objects are present on each page-->
 	<globalcore>
@@ -144,5 +141,10 @@
 			<altcon>no-tr-prevbutton-hov.png</altcon>
 			<act type="prev"/>
 		</img>
+		<!--Be sure to provide a way to start a new game!-->
+		<label x="480" y="577" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="newgame">
+			<con>New Game</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
 	</globalcore>
 </conf>
