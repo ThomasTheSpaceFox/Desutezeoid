@@ -365,6 +365,8 @@ def loader(savefile="autosave.sav", returnonerror=0):
 			if (initk.attrib.get("keyid"))!="0":
 				if initk.attrib.get("keyid") not in keylist:
 					keylist.extend([initk.attrib.get("keyid")])
+		if "0" not in keylist:
+			keylist.extend(["0"])
 	except IOError:
 		if returnonerror==1:
 			return
@@ -385,6 +387,8 @@ def loader(savefile="autosave.sav", returnonerror=0):
 		for initk in initkeystag.findall("k"):
 			if (initk.attrib.get("keyid"))!="0":
 				keylist.extend([initk.attrib.get("keyid")])
+		if "0" not in keylist:
+			keylist.extend(["0"])
 
 def newgame():
 	print("starting new game... please wait...")
@@ -413,6 +417,8 @@ def newgame():
 	for initk in initkeystag.findall("k"):
 		if (initk.attrib.get("keyid"))!="0":
 			keylist.extend([initk.attrib.get("keyid")])
+	if "0" not in keylist:
+		keylist.extend(["0"])
 loader()
 	
 
