@@ -1,7 +1,0 @@
-<sav>
-	<keysav>
-	<k keyid="gleamloop1" /><k keyid="testkey1" /><k keyid="item0givepost" /><k keyid="timeloop1" /></keysav>
-	<plugsav>
-	<invitem iconname="testitem.png" itemid="item0" itemname="black item" /></plugsav>
-	<pagelink page="invdemo.xml" />
-</sav>
