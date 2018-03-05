@@ -54,6 +54,7 @@
 		<uimenu keyid="mainmenu2" textsize="25">
 			<item con="main menu | page 2" noact="1"/>
 			<item con="Shaders demo 1" keyid="pagejumppage12" stay="1"/>
+			<item con="Rainbow Bubbles" keyid="pagejumppage14" stay="1"/>
 			<item con="-------------------" noact="1"/>
 			<item con="back..." keyid="mainmenu1" stay="0"/>
 			<item con="close menu"/>
@@ -71,6 +72,7 @@
 		<pagejump keyid="pagejumppage10" page="rainfxdemo.xml"/>
 		<pagejump keyid="pagejumppage11" page="invdemo.xml"/>
 		<pagejump keyid="pagejumppage12" page="shaders.xml"/>
+		<pagejump keyid="pagejumppage14" page="bubbles.xml"/>
 		
 		<!--Pereodic hud text gleam timing-->
 		<timeout keyid="gleamloop1" seconds="10" post="gleamloop2"/>
