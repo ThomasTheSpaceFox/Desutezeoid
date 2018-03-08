@@ -122,6 +122,8 @@ clicklist=list()
 
 
 
+pmenukey="0"
+popkey="0"
 
 #menu dialog function
 def qmenu(xpos, ypos, itemlist, fgcol=uifgcolorstr, bgcol=uibgcolorstr, uipoptextsize=uitextsize):
@@ -177,7 +179,7 @@ def qmenu(xpos, ypos, itemlist, fgcol=uifgcolorstr, bgcol=uibgcolorstr, uipoptex
 			dzulib.trace3dbox(screensurf, bgc, itmclick, 1)
 			screensurf.blit(itm.surfrender, (texrenx, (texreny)))
 			if itm.stay==0:
-				itmclicktab=clicktab(itmclick, "key", "none", itm.keyid, "0", 0, "none", quitab=3)
+				itmclicktab=clicktab(itmclick, "keym", "none", itm.keyid, "0", 0, "none", quitab=3)
 			else:
 				itmclicktab=clicktab(itmclick, "key", "none", itm.keyid, "0", 0, "none")
 			retlist.extend([itmclicktab])
@@ -261,8 +263,8 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 			yesdat=clicktab(yesclick, "quitx", ref, keyid, takekey, clicksoundflg, soundname)
 			nodat=clicktab(noclick, "key", ref, nokey, takekey, clicksoundflg, soundname, quitab=1)
 		else:
-			yesdat=clicktab(yesclick, "key", ref, keyid, takekey, clicksoundflg, soundname, quitab=2)
-			nodat=clicktab(noclick, "key", ref, nokey, takekey, clicksoundflg, soundname, quitab=2)
+			yesdat=clicktab(yesclick, "keyx", ref, keyid, takekey, clicksoundflg, soundname, quitab=2)
+			nodat=clicktab(noclick, "keyx", ref, nokey, takekey, clicksoundflg, soundname, quitab=2)
 		retclicks=([])
 		retclicks.extend([yesdat])
 		retclicks.extend([nodat])
@@ -285,7 +287,7 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 		takekey="0"
 		clicksoundflg=0
 		soundname=0
-		yesdat=clicktab(yesclick, "key", ref, keyid, takekey, clicksoundflg, soundname, quitab=2)
+		yesdat=clicktab(yesclick, "keyx", ref, keyid, takekey, clicksoundflg, soundname, quitab=2)
 		retclicks=([])
 		retclicks.extend([yesdat])
 		return(retclicks, quyn)
@@ -324,7 +326,12 @@ def saver(savefile="autosave.sav"):
 		#keysav.append(copy.deepcopy(savk))
 		savelem=ET.SubElement(keysav, 'k')
 		savelem.set("keyid", savk)
-	
+	if pmenukey!="0":
+		savelem=ET.SubElement(keysav, 'k')
+		savelem.set("keyid", pmenukey)
+	if popkey!="0":
+		savelem=ET.SubElement(keysav, 'k')
+		savelem.set("keyid", popkey)
 	for pluginst in pluglistactive:
 		try:
 			pluginst.savwrite(plugsavtag)
@@ -333,7 +340,7 @@ def saver(savefile="autosave.sav"):
 	#save page refrence
 	mainsavroot.find('pagelink').set("page", vartree.curpage)
 	mainsavtree.write(os.path.join(savepath, savefile))
-
+saveload=0
 #load main.sav. if IOError, Attempt to initalize main.sav, then try to load main.sav again.
 def loader(savefile="autosave.sav", returnonerror=0):
 	global mainsavtree
@@ -341,6 +348,7 @@ def loader(savefile="autosave.sav", returnonerror=0):
 	global plugsavtag
 	global keysav
 	global keylist
+	global saveload
 	try:
 		mainsavtree = ET.parse(os.path.join(savepath, savefile))
 		mainsavroot = mainsavtree.getroot()
@@ -348,8 +356,10 @@ def loader(savefile="autosave.sav", returnonerror=0):
 		print(".sav loaded")
 		pagelink=mainsavroot.find('pagelink').attrib.get("page")
 		if pagelink!=None:
+			prevpage="NULL"
 			vartree.curpage=pagelink
 		plugsavtag=mainsavroot.find('plugsav')
+		saveload=1
 		for pluginst in pluglistactive:
 			try:
 				pluginst.savload(plugsavtag)
@@ -361,10 +371,10 @@ def loader(savefile="autosave.sav", returnonerror=0):
 			if (savk.attrib.get("keyid"))!="0":
 				if savk.attrib.get("keyid") not in keylist:
 					keylist.extend([savk.attrib.get("keyid")])
-		for initk in initkeystag.findall("k"):
-			if (initk.attrib.get("keyid"))!="0":
-				if initk.attrib.get("keyid") not in keylist:
-					keylist.extend([initk.attrib.get("keyid")])
+		#for initk in initkeystag.findall("k"):
+		#	if (initk.attrib.get("keyid"))!="0":
+		#		if initk.attrib.get("keyid") not in keylist:
+		#			keylist.extend([initk.attrib.get("keyid")])
 		if "0" not in keylist:
 			keylist.extend(["0"])
 	except IOError:
@@ -466,7 +476,7 @@ while quitflag==0:
 		pagetitle=(pageconf.find('title')).text
 		BGMstop=int(pageconf.attrib.get("BGMstop", "1"))
 		pagekeysflg=int(pageconf.attrib.get("pagekeys", "0"))
-		if pagekeysflg==1:
+		if pagekeysflg==1 and saveload==0:
 			pagekeytag=root.find("pagekeys")
 			for pagekey in pagekeytag.findall("k"):
 				pagekeyid=pagekey.attrib.get("keyid")
@@ -488,6 +498,7 @@ while quitflag==0:
 			BGfile=(pageconf.find('BG')).text
 			BG=pygame.image.load(os.path.join(imagepath, BGfile)).convert()
 		screensurf.fill((170, 170, 170))
+		saveload=0
 		print("done. begin mainloop")
 	if BGon==1:
 		screensurf.blit(BG, (0, 0))
@@ -634,6 +645,7 @@ while quitflag==0:
 	
 			if masterkey in keylist:
 				keylist.remove(masterkey)
+				popkey=masterkey
 				ynflag=int(fork.attrib.get("ynflag", "0"))
 				if ynflag==1:
 					yeskey=fork.attrib.get("yeskey", "0")
@@ -657,6 +669,7 @@ while quitflag==0:
 			BGCOL=fork.attrib.get("BGCOLOR", vartree.uibgcolorstr)
 			QFNTSIZE=int(fork.attrib.get("textsize", vartree.uitextsize))
 			if masterkey in keylist:
+				pmenukey=masterkey
 				keylist.remove(masterkey)
 				itemlist=list()
 				for itmf in fork.findall("item"):
@@ -1079,8 +1092,10 @@ while quitflag==0:
 							keylist.remove(f.takekey)
 							#print keylist
 							keyprint()
-					
-						
+					if f.reftype=="keyx":
+						popkey="0"
+					if f.reftype=="keym":
+						pmenukey="0"
 					if f.reftype=="iref":
 						vartree.curpage=f.ref
 						print(("iref: loading page '" + f.ref + "'"))
