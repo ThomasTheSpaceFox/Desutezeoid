@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <main>
-	<pageconf BGimg="1" BGM="0">
+	<pageconf BGimg="1" BGM="0" pagekeys="1">
 		<title>Welcome To Desutezeoid!</title>
 		<BG>BGseaside.jpg</BG>
 		<BGM>BGM1.ogg</BGM>
 	</pageconf>
+	<pagekeys>
+		<k keyid="fallcat"/>
+	</pagekeys>
 	<forks>
+		<anim keyid="fallcat" anim="catanim1.dza" layer="1"/>
+		<uipop keyid="aboutdiag" msg="A Point and Click Adventure game Engine. - V1.7.0" img="dzu_logo1.png" okkey="0"/>
 	</forks>
 	<core>
 		<label x="0" y="10" size="30" transp="1" FGCOLOR="#000000">
@@ -20,9 +25,14 @@ the usage and API manual to learn more.  also see the various test screens
 and demos and special effects examples in action.
 
 Click on the menu button to begin.</text>
-		<img x="0" y="202" hscroll="-2">
+		<img x="0" y="202" offkey="scrollbg">
 			<con>BGscroll.jpg</con>
 			<act type="none"/>
 		</img>
+		<img x="0" y="202" onkey="scrollbg" hscroll="-2.5">
+			<con>BGscroll.jpg</con>
+			<act type="none"/>
+		</img>
+		<animsurf layer="1"/>
 	</core>
 </main>

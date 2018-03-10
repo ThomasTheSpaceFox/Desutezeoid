@@ -218,8 +218,8 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 		ypos=((ypos - int(qimgy / 2)))
 	qboxwidth=(6 + (qtext1.get_width()))
 	qboxhight=(uipoptextsize + qimgy + uipoptextsize + 20)
-	if qboxwidth<100:
-		qboxwidth=100
+	if qboxwidth<200:
+		qboxwidth=200
 	if qboxwidth<qimgx:
 		qboxwidth=(qimgx + 6)
 		#if image is wider than text, center xpos on image
@@ -228,8 +228,8 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 	qbox.fill((bgc))
 	boxtrace=screensurf.blit(qbox, (xpos, ypos))
 	if qimgflg==1:
-		screensurf.blit(qimg, ((xpos + 3), (ypos + 3)))
-	screensurf.blit(qtext1, ((xpos + 3), (ypos + qimgy + 3)))
+		screensurf.blit(qimg, ((xpos + qboxwidth//2-qimg.get_width()//2), (ypos + 3)))
+	screensurf.blit(qtext1, ((xpos + qboxwidth//2-qtext1.get_width()//2), (ypos + qimgy + 3)))
 	#pygame.draw.rect(screensurf, fgc, boxtrace, 3)
 	dzulib.trace3dbox(screensurf, bgc, boxtrace, 3)
 	if quyn==1:
@@ -239,20 +239,26 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 		qntext=textrender("No", uipoptextsize, fgcol, bgbtn, 0)
 		yesclick=qytext.get_rect()
 		noclick=qntext.get_rect()
-		yesclick.x =(xpos + 10 - 2)
-		yesclick.y =(ypos + qimgy + 10 - 2 + uipoptextsize)
 		yesclick.w += 4
 		yesclick.h += 4
-		noclick.x =(xpos + 50 - 2)
-		noclick.y =(ypos + qimgy + 10 - 2 + uipoptextsize)
+		if yesclick.w<80:
+			yesclick.w=80
+		yesclick.x =(xpos + qboxwidth//2 - yesclick.w//2 - 60)
+		yesclick.y =(ypos + qimgy + 10 - 2 + uipoptextsize)
+		
 		noclick.w += 4
 		noclick.h += 4
+		if noclick.w<80:
+			noclick.w=80
+		noclick.x =(xpos + qboxwidth//2 - noclick.w//2 + 60)
+		noclick.y =(ypos + qimgy + 10 - 2 + uipoptextsize)
+		
 		pygame.draw.rect(screensurf, bgbtn, noclick, 0)
 		dzulib.trace3dbox(screensurf, bgc, noclick, 1)
-		screensurf.blit(qntext, (noclick.x+2, noclick.y+2))
+		screensurf.blit(qntext, (noclick.x+noclick.w//2-qntext.get_width()//2, noclick.y+2))
 		pygame.draw.rect(screensurf, bgbtn, yesclick, 0)
 		dzulib.trace3dbox(screensurf, bgc, yesclick, 1)
-		screensurf.blit(qytext, (yesclick.x+2, yesclick.y+2))
+		screensurf.blit(qytext, (yesclick.x+yesclick.w//2-qytext.get_width()//2, yesclick.y+2))
 		#yesclick=screensurf.blit(qytext, ((xpos + 10), (ypos + qimgy + 10 + uipoptextsize)))
 		#noclick=screensurf.blit(qntext, ((xpos + 50), (ypos + qimgy + 10 + uipoptextsize)))
 		ref="none"
@@ -274,13 +280,16 @@ def qpop(qmsg, xpos, ypos, keyid="0", nokey="0", quyn=0, specialquit=0, fgcol=ui
 		#qytext=qfnt.render("Ok", True, bgcol, fgcol)
 		qytext=textrender("Ok", uipoptextsize, fgcol, bgbtn, 0)
 		yesclick=qytext.get_rect()
-		yesclick.x =(xpos + 10 - 2)
-		yesclick.y =(ypos + qimgy + 10 - 2 + uipoptextsize)
 		yesclick.w += 4
 		yesclick.h += 4
+		if yesclick.w<80:
+			yesclick.w=80
+		yesclick.x =(xpos + qboxwidth//2 - yesclick.w//2)
+		yesclick.y =(ypos + qimgy + 10 - 2 + uipoptextsize)
+		
 		pygame.draw.rect(screensurf, bgbtn, yesclick, 0)
 		dzulib.trace3dbox(screensurf, bgc, yesclick, 1)
-		screensurf.blit(qytext, (yesclick.x+2, yesclick.y+2))
+		screensurf.blit(qytext, (yesclick.x+yesclick.w//2-qytext.get_width()//2, yesclick.y+2))
 		
 		#yesclick=screensurf.blit(qytext, ((xpos + 10), (ypos + qimgy + 10 + uipoptextsize)))
 		ref="none"
