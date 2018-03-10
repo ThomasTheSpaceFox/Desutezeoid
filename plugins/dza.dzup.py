@@ -12,6 +12,7 @@ class PLUGIN_dza_dza:
 		if tagobj.tag=="anim":
 			self.keyid=tagobj.attrib.get("keyid", "0")
 			self.globflg=int(tagobj.attrib.get("global", "0"))
+			self.layer=int(tagobj.attrib.get("layer", "0"))
 			self.stopkey=tagobj.attrib.get("stopkey", "0")
 			if self.keyid in self.keylist and self.keyid!="0":
 				self.keylist.remove(self.keyid)
@@ -20,10 +21,16 @@ class PLUGIN_dza_dza:
 					self.animfile=open(os.path.join("anim", self.anim), "r")
 				except IOError:
 					return
-				self.animlist.extend([[self._animload_(self.animfile), 0, None, None, 0, 0, self.stopkey, self.anim, "none", self.globflg]])
+				self.animlist.extend([[self._animload_(self.animfile), 0, None, None, 0, 0, self.stopkey, self.anim, "none", self.globflg, self.layer]])
 		
 		return
 	def core(self, tagobj):
+		if tagobj.tag=="animsurf":
+			self.layer=int(tagobj.attrib.get("layer", "0"))
+			for anim in self.animlist:
+				animsurf=anim[3]
+				if animsurf!=None and anim[10]==self.layer:
+					self.screensurf.blit(animsurf, (anim[4], anim[5]))
 		return
 	def pump(self):
 		
@@ -106,9 +113,7 @@ class PLUGIN_dza_dza:
 							framepassed=1
 					else:
 						framepassed=1
-					animsurf=anim[3]
-					if animsurf!=None:
-						self.screensurf.blit(animsurf, (anim[4], anim[5]))
+					
 	#called on pygame mousebuttondown events
 	def click(self, event):
 		return
@@ -153,6 +158,7 @@ class PLUGIN_dza_dza:
 				framecountdown=self.savitem.attrib.get("framecountdown")
 				point=int(self.savitem.attrib.get("point"))
 				x=int(self.savitem.attrib.get("x"))
+				layer=int(self.savitem.attrib.get("layer"))
 				self.globflg=int(self.savitem.attrib.get("global"))
 				y=int(self.savitem.attrib.get("y"))
 				if framecountdown=="none":
@@ -165,7 +171,7 @@ class PLUGIN_dza_dza:
 					image=dzulib.filelookup(self.savitem.attrib.get("image"))
 				stopkey=(self.savitem.attrib.get("stopkey"))
 				anim=(self.savitem.attrib.get("anim"))
-				self.animlist.extend([[self._animload_(open(os.path.join("anim", anim), "r")), point, framecountdown, image, x, y, stopkey, anim, "none", self.globflg]])
+				self.animlist.extend([[self._animload_(open(os.path.join("anim", anim), "r")), point, framecountdown, image, x, y, stopkey, anim, "none", self.globflg, layer]])
 			except AttributeError as e:
 				print(e)
 				print("fault")
@@ -183,6 +189,7 @@ class PLUGIN_dza_dza:
 			self.scriptelem.set("anim", str(self.scriptitem[7]))
 			self.scriptelem.set("image", str(self.scriptitem[8]))
 			self.scriptelem.set("global", str(self.scriptitem[9]))
+			self.scriptelem.set("layer", str(self.scriptitem[10]))
 
 
 

@@ -13,10 +13,13 @@ last timeout in the sequence trigger one of these.-->
 		<pagejump keyid="pagejumptest" page="test0.xml"/>
 		<pagejump keyid="pagejumptestB" useprev="1" page="test0.xml"/>
 		<anim keyid="startanim1" stopkey="stopanim1" anim="sample.dza"/>
-		<anim keyid="startanim2" stopkey="stopanim2" anim="sample.dza" global="1"/>
+		<anim keyid="startanim3" stopkey="stopanim3" anim="sample.dza" global="1"/>
+		<anim keyid="startanim2" stopkey="stopanim2" anim="sample.dza" layer="1"/>
 
 	</forks>
 	<core>
+		<!--to use layers, you must specify the "layer" attributes of the anim forks you want on the layer, as well as the animsurf core object itself. you can use as as many as you wish.-->
+		<animsurf layer="1"/>
 		<!--Conventional usage of the gradient plugin:-->
 		<gradient x="0" y="0" sizex="50" sizey="50" rot="0" COLOR1="#0017BD" COLOR2="#FFFFFF"/>
 		<gradient x="50" y="0" sizex="50" sizey="50" rot="45" COLOR1="#0017BD" COLOR2="#FFFFFF"/>
@@ -29,6 +32,10 @@ last timeout in the sequence trigger one of these.-->
 		the second is y size
 		the third is rotation degrees
 		then we have the two colors of the gradient.-->
+		
+		<!--Place this where you want the animations in the rendering order. 
+		if you don't have this in core, NO ANIMATIONS WILL ACTUALLY RENDER-->
+		<animsurf/>
 		<img x="0" y="50" vscroll="2">
 			<con>gradient--50--60--0--#FFFFFF--#000000</con>
 			<act type="none"/>
@@ -58,11 +65,11 @@ last timeout in the sequence trigger one of these.-->
 			<act type="key"/>
 		</label>
 		<label x="200" y="240" size="24" keyid="startanim2">
-			<con>start animation 2 (global)</con>
+			<con>start animation 2 (backdrop)</con>
 			<act type="key"/>
 		</label>
 		<label x="200" y="260" size="24" keyid="stopanim2">
-			<con>stop animation 2 (global)</con>
+			<con>stop animation 2 (backdrop)</con>
 			<act type="key"/>
 		</label>
 		<label x="0" y="300" size="24" onkey="pagejumpdelay">
