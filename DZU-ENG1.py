@@ -42,7 +42,7 @@ uiquittag=uitag.find("quit")
 uiquitmsg=uiquittag.attrib.get("MSG", "Are you sure you want to quit?")
 
 
-pygame.event.set_allowed([QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP])
+pygame.event.set_allowed([QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP, KEYDOWN, KEYUP])
 
 
 
@@ -314,6 +314,32 @@ for cnfplug in plugcnftag.findall("*"):
 			pluginst.cnfload(cnfplug)
 		except AttributeError:
 			continue
+
+def pause():
+	pausestart=time.time()
+	for plug in pluglistactive:
+		try:
+			plug.pause(pausestart)
+		except AttributeError:
+			continue
+	noexit=1
+	while noexit:
+		time.sleep(0.1)
+		for event in pygame.event.get():
+			if event.type==KEYDOWN:
+				if event.key == K_ESCAPE:
+					noexit=0
+					break
+	
+	pausestop=time.time()-pausestart
+	for f in timeoutlist:
+		f.seconds+=pausestop
+	for plug in pluglistactive:
+		try:
+			plug.resume(pausestop)
+		except AttributeError:
+			continue
+	
 
 def saver(savefile="autosave.sav"):
 	global keysav
@@ -1068,6 +1094,9 @@ while quitflag==0:
 		if event.type == QUIT:
 			uiquit=1
 			break
+		if event.type == KEYDOWN:
+			if event.key == K_ESCAPE:
+				pause()
 		if event.type==MOUSEBUTTONUP:
 			for pluginst in pluglistactive:
 				pluginst.clickup(event)

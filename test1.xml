@@ -12,6 +12,8 @@ such as in a page that acts as a story sequence for example, you would have the
 last timeout in the sequence trigger one of these.-->
 		<pagejump keyid="pagejumptest" page="test0.xml"/>
 		<pagejump keyid="pagejumptestB" useprev="1" page="test0.xml"/>
+		<anim keyid="startanim1" stopkey="stopanim1" anim="sample.dza"/>
+		<anim keyid="startanim2" stopkey="stopanim2" anim="sample.dza" global="1"/>
 
 	</forks>
 	<core>
@@ -45,6 +47,22 @@ last timeout in the sequence trigger one of these.-->
 		</label>
 		<label x="0" y="340" size="24" keyid="pagejumptestB">
 			<con>test pagejump prevpage feature</con>
+			<act type="key"/>
+		</label>
+		<label x="0" y="240" size="24" keyid="startanim1">
+			<con>start animation 1</con>
+			<act type="key"/>
+		</label>
+		<label x="0" y="260" size="24" keyid="stopanim1">
+			<con>stop animation 1</con>
+			<act type="key"/>
+		</label>
+		<label x="200" y="240" size="24" keyid="startanim2">
+			<con>start animation 2 (global)</con>
+			<act type="key"/>
+		</label>
+		<label x="200" y="260" size="24" keyid="stopanim2">
+			<con>stop animation 2 (global)</con>
 			<act type="key"/>
 		</label>
 		<label x="0" y="300" size="24" onkey="pagejumpdelay">

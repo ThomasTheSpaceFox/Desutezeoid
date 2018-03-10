@@ -1,0 +1,15 @@
+f;no-tr-animtest1a.png;12;200;10#standard frame: f;imagefilename;time-as-frames;xpos;ypos
+f;no-tr-animtest1b.png;12;200;10
+s;mip.ogg
+f;no-tr-animtest1c.png;12;200;10
+g;1;i#goto line 1. g;linenumber;loops use "i" for the loops for infinate.
+x#exit. (automatically added by parser to prevent crashes. if infinate loops is needed add a g command to goto line 1.)
+
+#below are some more functions:
+w;12#same as an invisible frame being "shown" for 12 frames.
+k;keyid#add a keyid to the keylist.
+r;keyid#remove a keyid from the keylist.
+
+
+#This file explained:
+#this is a DZA script. meant to be parsed as an animation by dza.dzup.py

@@ -34,6 +34,14 @@ class PLUGIN_test_test2:
 	#called upon page load
 	def pageclear(self):
 		return
+	#pause & resume can be useful for various things. such as properly extending timers. for that, its reccomended using the calculated seconds.
+	def pause(self, time):
+		print("plugin test2.dzup.py receved pause call.")
+		print(time)
+	#seconds referrs to a calculated seconds paused as a float.
+	def resume(self, seconds):
+		print("plugin test2.dzup.py receved resume call.")
+		print(seconds)
 
 
 
