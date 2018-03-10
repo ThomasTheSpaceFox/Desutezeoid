@@ -100,6 +100,20 @@ class PLUGIN_dza_dza:
 									anim[2]=None
 									if goloop==-1:
 										animblock[2]=goloop-1
+						if animcmd=="cg":
+							congokey=animblock[3]
+							if congokey in self.keylist:
+								goloopstr=animblock[2]
+								if goloopstr=="i":
+									anim[1]=int(animblock[1])-1
+									anim[2]=None
+								else:
+									goloop=int(goloopstr)
+									if goloop>0:
+										anim[1]=int(animblock[1])-1
+										anim[2]=None
+										if goloop==-1:
+											animblock[2]=goloop-1
 						if animcmd=="w":
 							anim[2]=int(animblock[1])
 							anim[3]=None

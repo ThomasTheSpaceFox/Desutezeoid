@@ -60,8 +60,19 @@ last timeout in the sequence trigger one of these.-->
 			<con>start animation 1</con>
 			<act type="key"/>
 		</label>
+		
 		<label x="0" y="260" size="24" keyid="stopanim1">
 			<con>stop animation 1</con>
+			<act type="key"/>
+		</label>
+		
+		<label x="460" y="240" size="24" keyid="jumpanim" offkey="jumpanim">
+			<con>enable conidtional jump.</con>
+			<act type="key"/>
+		</label>
+		
+		<label x="460" y="240" size="24" takekey="jumpanim" onkey="jumpanim">
+			<con>disable conditional jump</con>
 			<act type="key"/>
 		</label>
 		<label x="200" y="240" size="24" keyid="startanim2">

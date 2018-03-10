@@ -2,8 +2,11 @@ f;no-tr-animtest1a.png;12;200;10#standard frame: f;imagefilename;time-as-frames;
 f;no-tr-animtest1b.png;12;200;10
 s;mip.ogg
 f;no-tr-animtest1c.png;12;200;10
+cg;8;i;jumpanim#conditional jump. extra param is keyid.
 g;1;i#goto line 1. g;linenumber;loops use "i" for the loops for infinate.
 x#exit. (automatically added by parser to prevent crashes. if infinate loops is needed add a g command to goto line 1.)
+f;no-tr-animtest1b.png;12;200;10
+g;1;i
 
 #below are some more functions:
 w;12#same as an invisible frame being "shown" for 12 frames.
