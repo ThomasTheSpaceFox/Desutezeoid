@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+	<!--setting BGMstop to "0" keeps any music from the previous page playing (unless the page has defined Background music.) BGMstop falls back to "1" if not specified.-->
+	<pageconf BGimg="1" BGMstop="0">
+		<title> flashlight, follow mouse effect.</title>
+		<BG>BG2.jpg</BG>
+	</pageconf>
+	<forks>
+	</forks>
+	<core>
+		<img x="0" y="0" mouseh="2" mousev="2">
+			<con>flashlight.png</con>
+			<act type="none" ref="test0.xml"/>
+		</img>
+		
+	</core>
+</main>

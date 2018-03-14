@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+	<pageconf BGimg="1" BGM="1" pagekeys="1">
+		<title>Welcome To Desutezeoid!</title>
+		<BG>BGseaside.jpg</BG>
+		<BGM>BGM_new.ogg</BGM>
+	</pageconf>
+	<pagekeys>
+		<k keyid="fallcat"/>
+	</pagekeys>
+	<forks>
+		<anim keyid="fallcat" anim="catanim1.dza" layer="1"/>
+		<uipop keyid="aboutdiag" msg="A Point and Click Adventure game Engine. - V1.7.0" img="dzu_logo1.png" okkey="0"/>
+	</forks>
+	<core>
+		<label x="0" y="10" size="30" transp="1" FGCOLOR="#000000">
+			<con>Welcome To Desutezeoid!</con>
+			<act type="none"/>
+		</label>
+		<!--notice how the "text" object has similar attributes to the label tag, but lacking click and hover related, attribues. It still has onkey and offkey though. do note this can take longer to process than other core objects.-->
+		<text x="10" y="30" size="20" transp="1" FGCOLOR="#000000">Desutezeoid is an aribitrary, XML based,
+point and click engine that is programmed in python using pygame.
+It has many features and a plugin system. Check the comments in the xml files and
+the usage and API manual to learn more.  also see the various test screens
+and demos and special effects examples in action.
+
+Click on the menu button to begin.</text>
+		<img x="0" y="202" offkey="scrollbg">
+			<con>BGscroll.jpg</con>
+			<act type="none"/>
+		</img>
+		<img x="0" y="202" onkey="scrollbg" hscroll="-2.5">
+			<con>BGscroll.jpg</con>
+			<act type="none"/>
+		</img>
+		<animsurf layer="1"/>
+	</core>
+</main>

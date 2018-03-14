@@ -24,7 +24,7 @@ def OKpop(info, extra=None, extra2=None):
 	bgrect.centerx=(screensurf.get_width()//2)
 	bgrect.centery=(screensurf.get_height()//2)
 	pygame.draw.rect(screensurf, uibgcolor, bgrect)
-	dzulib.trace3dbox(screensurf, uibgcolor, bgrect)
+	dzulib.trace3dbox(screensurf, uibgcolor, bgrect, 2)
 	
 	yoff=bgrect.y+2
 	yjump=uitextsize
@@ -63,7 +63,7 @@ def YNpop(info):
 	bgrect.centerx=(screensurf.get_width()//2)
 	bgrect.centery=(screensurf.get_height()//2)
 	pygame.draw.rect(screensurf, uibgcolor, bgrect)
-	dzulib.trace3dbox(screensurf, uibgcolor, bgrect)
+	dzulib.trace3dbox(screensurf, uibgcolor, bgrect, 2)
 	yoff=bgrect.y+2
 	yjump=uitextsize
 	#lineren=simplefont.render(info, True, (255, 255, 255), (30, 30, 30))
@@ -125,7 +125,7 @@ def fileselect(title):
 			bgrect.centery=(screensurf.get_height()//2)
 			yoff=bgrect.y+2
 			pygame.draw.rect(screensurf, uibgcolor, bgrect)
-			dzulib.trace3dbox(screensurf, uibgcolor, bgrect)
+			dzulib.trace3dbox(screensurf, uibgcolor, bgrect, 2)
 			#pygame.draw.rect(screensurf, (255, 255, 255), bgrect, 1)
 			#lineren=simplefont.render(title, True, (255, 255, 255), (30, 30, 30))
 			lineren=textrender(title, uitextsize, uifgcolor, uibgcolor, 0)

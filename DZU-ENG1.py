@@ -26,7 +26,7 @@ pygame.mixer.init()
 engversion="v1.7.0"
 print("Desutezeoid arbitrary point and click engine " + engversion)
 print("parsing ENGSYSTEM.xml")
-conftree = ET.parse("ENGSYSTEM.xml")
+conftree = ET.parse(os.path.join("xml", "ENGSYSTEM.xml"))
 confroot = conftree.getroot()
 
 screentag=confroot.find("screen")
@@ -73,6 +73,7 @@ scrny=int(screentag.attrib.get("y", "600"))
 titletag=confroot.find("title")
 debugtag=confroot.find("debug")
 DEBUG=int(debugtag.attrib.get("debug", "1"))
+skipautoload=int(debugtag.attrib.get("skipautoload", "0"))
 printkeys=int(debugtag.attrib.get("printkeys", "1"))
 clickfields=int(debugtag.attrib.get("clickfields", "0"))
 cfcolor=pygame.Color(debugtag.attrib.get("cfcolor", "#888888"))
@@ -341,6 +342,8 @@ def pause(crash=False):
 		except AttributeError:
 			continue
 	noexit=1
+	pygame.mixer.pause()
+	pygame.mixer.music.pause()
 	scbak=screensurf.copy()
 	halfwidth=screensurf.get_width()//2
 	halfheight=screensurf.get_height()//2
@@ -357,13 +360,17 @@ def pause(crash=False):
 		btnsurf.blit(rentext, (buttonwidth//2-rentext.get_width()//2, buttonheight//2-rentext.get_height()//2))
 		dzulib.trace3dbox(btnsurf, uibgcolor, pygame.Rect(0, 0, buttonwidth-1, buttonheight-1))
 		renmenu.extend([btnsurf])
-	pausetext=textrender("Game Paused: Desutezeoid " + str(vartree.engversion), uitextsize, uifgcolor, uibgcolor, 0)
+	pausetext=textrender("Game Paused.", uitextsize, uifgcolor, uibgcolor, 0)
+	pausetext2=textrender("Powered By: Desutezeoid " + str(vartree.engversion), uitextsize, uifgcolor, uibgcolor, 0)
+	pausetext3=textrender("A point and click adventure game engine. See DZU_README.md", uitextsize, uifgcolor, uibgcolor, 0)
 	retact=None
 	while noexit:
 		if dispu:
 			dispu=0
 			screensurf.fill(uibgcolor)
-			screensurf.blit(pausetext, (0, 0))
+			screensurf.blit(pausetext, (10, 10))
+			screensurf.blit(pausetext2, (10, screensurf.get_height()-uitextsize*2))
+			screensurf.blit(pausetext3, (10, screensurf.get_height()-uitextsize))
 			menuy=buttonheight+4
 			rectmenu=[]
 			for mnu in renmenu:
@@ -402,6 +409,7 @@ def pause(crash=False):
 							noexit=0
 							break
 				if rectmenu[3].collidepoint(event.pos):
+					dispu=1
 					if dzuinter.YNpop("Start a new game? Unsaved Progress will be lost!"):
 						noexit=0
 						retact=["newgame"]
@@ -414,7 +422,8 @@ def pause(crash=False):
 				if event.key == K_ESCAPE:
 					noexit=0
 					break
-	
+	pygame.mixer.unpause()
+	pygame.mixer.music.unpause()
 	pausestop=time.time()-pausestart
 	for f in timeoutlist:
 		f.seconds+=pausestop
@@ -447,6 +456,11 @@ def saver(savefile="autosave.sav"):
 			pluginst.savwrite(plugsavtag)
 		except AttributeError:
 			continue
+	if pygame.mixer.music.get_busy() and BGMtrack!=None:
+		
+		mainsavroot.find('pagelink').set("musictrack", BGMtrack)
+	else:
+		mainsavroot.find('pagelink').set("musictrack", "??none??")
 	#save page refrence
 	mainsavroot.find('pagelink').set("page", vartree.curpage)
 	mainsavtree.write(os.path.join(savepath, savefile))
@@ -459,12 +473,20 @@ def loader(savefile="autosave.sav", returnonerror=0):
 	global keysav
 	global keylist
 	global saveload
+	global BGMtrack
 	try:
 		mainsavtree = ET.parse(os.path.join(savepath, savefile))
 		mainsavroot = mainsavtree.getroot()
 		del keylist[:]
 		print(".sav loaded")
 		pagelink=mainsavroot.find('pagelink').attrib.get("page")
+		BGMtrack=mainsavroot.find('pagelink').attrib.get("musictrack")
+		if BGMtrack=="??none??":
+			BGMtrack=None
+		if BGMtrack!=None:
+			pygame.mixer.music.load(os.path.join(sfxpath, BGMtrack))
+			pygame.mixer.music.play(-1)
+		
 		if pagelink!=None:
 			prevpage="NULL"
 			vartree.curpage=pagelink
@@ -497,7 +519,7 @@ def loader(savefile="autosave.sav", returnonerror=0):
 		keysav=mainsavroot.find('keysav')
 		print(".sav loaded")
 		plugsavtag=mainsavroot.find('plugsav')
-		
+		BGMtrack=None
 		for pluginst in pluglistactive:
 			try:
 				pluginst.savload(plugsavtag)
@@ -518,6 +540,9 @@ def newgame():
 	global keysav
 	global keylist
 	global prevpage
+	global BGMtrack
+	pygame.mixer.music.stop()
+	BGMtrack=None
 	dzulib.initmainsave()
 	mainsavtree = ET.parse(os.path.join(savepath, "autosave.sav"))
 	mainsavroot = mainsavtree.getroot()
@@ -539,7 +564,8 @@ def newgame():
 			keylist.extend([initk.attrib.get("keyid")])
 	if "0" not in keylist:
 		keylist.extend(["0"])
-loader()
+if not skipautoload:
+	loader()
 	
 
 timeoutlist=list()
@@ -551,6 +577,7 @@ print("done. begin mainloop.")
 uiquit=0
 qpopflg=0
 qmenuflg=0
+
 engtimer=pygame.time.Clock()
 while quitflag==0:
 	huris=0
@@ -570,7 +597,7 @@ while quitflag==0:
 		for pluginst in pluglistactive:
 			pluginst.pageclear()
 		print("preparsing page")
-		tree = ET.parse(vartree.curpage)
+		tree = ET.parse(os.path.join("xml", vartree.curpage))
 		root = tree.getroot()
 		cachepage=prevpage
 		prevpage=vartree.curpage
@@ -594,11 +621,11 @@ while quitflag==0:
 					keylist.extend([pagekeyid])
 					#print keylist
 					keyprint()
-		if BGMstop==1:
+		if BGMstop==1 and saveload==0:
 			pygame.mixer.music.stop()
 		BGon=int(pageconf.attrib.get("BGimg", "0"))
 		BGMon=int(pageconf.attrib.get("BGM", "0"))
-		if BGMon==1:
+		if BGMon==1 and saveload==0:
 			BGMtrack=(pageconf.find('BGM')).text
 			pygame.mixer.music.load(os.path.join(sfxpath, BGMtrack))
 			pygame.mixer.music.play(-1)
@@ -1195,6 +1222,8 @@ while quitflag==0:
 						saver(pausereturn[1])
 						break
 					if pausereturn[0]=="newgame":
+						qmenuflg=0
+						qpopflg=0
 						newgame()
 						break
 		if event.type==MOUSEBUTTONUP:

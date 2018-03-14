@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<main>
+	<pageconf BGimg="1" BGM="0" BGMstop="0" pagekeys="1">
+		<title>Test Page 0</title>
+		<BG>BGseaside.jpg</BG>
+		<BGM>BGM1.ogg</BGM>
+	</pageconf>
+	<pagekeys>
+		<k keyid="testpagekeys"/>
+		<!--Start the timer. (see below in forks section)-->
+		<k keyid="cleartimer"/>
+		<k keyid="startloop"/>
+	</pagekeys>
+	<forks>
+		<batchtrig keyid="alpha">
+			<k if="1" keyid="switch1"/>
+			<k if="0" keyid="switch2"/>
+		</batchtrig>
+		<batchtrig keyid="alpha2">
+			<k if="0" keyid="switch1"/>
+			<k if="1" keyid="switch2"/>
+		</batchtrig>
+		<batchtrig keyid="alpha3">
+			<k if="1" keyid="switch1"/>
+			<k if="1" keyid="switch2"/>
+		</batchtrig>
+		<ortrig keyid="alpha4">
+			<k if="1" keyid="switch1"/>
+			<k if="1" keyid="switch2"/>
+		</ortrig>
+		<!--These generate normal and yes/no dialogs respectively. both modes have appropiate selection
+		 keyid attributes.  to use yes/no mode, set ynflag="1", and use yesflag and noflag for respective
+		  "post" keyids, in normal mode, use the "okkey" attribute.  these use the internal engine ui
+		   parameters, you can specifiy ui parameters like colors and text size in the "ui" section of ENGSYSTEM.xml
+		   
+		   Special note: only one uipop dialog can be active at any one time!-->
+		<uipop keyid="uidialog1" msg="Hello, this is a normal dialog." okkey="normaldialogok"/>
+		<!--now lets use some custom visual parameters! :D-->
+		<uipop keyid="uidialog3" msg="This Dialog is red." BGCOLOR="#AA0000" FGCOLOR="#FFFFFF" />
+		<!--HUGE text :) -->
+		<uipop keyid="uidialog4" msg="This Dialog is BIG." BGCOLOR="#00AA00" FGCOLOR="#FFFFFF" textsize="70" />
+		<!--dialog with image specified by the "img" attribute.-->
+		<uipop keyid="uidialog5" msg="This Dialog has an image." BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25" img="opaque--testimage300.png" />
+
+		
+		<!--yes/no dialog-->
+		
+
+		<uipop keyid="uidialog2" msg="Hello, this is a yes or no dialog." ynflag="1" nokey="nokeyyndiag" yeskey="yeskeyyndiag" />
+		
+		<pagejump keyid="pagejumpmenu1" page="about.xml"/>
+		<uimenu keyid="uimenu1" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25">
+			<item con="This is a menu." noact="1"/>
+			<item con="-------------------" noact="1"/>
+			
+			<item con="play sound" keyid="soundfx1" stay="1"/>
+			<item con="run test 1" keyid="pagejumpmenu1" stay="1"/>
+			<item con="test dialog with image" keyid="uidialog5" stay="1"/>
+			<item con="play music" keyid="mustrkplay" stay="1"/>
+			<item con="stop music" keyid="mustrkstop" stay="1"/>
+			<item con="close menu"/>
+		</uimenu>
+		<!--Background Music control-->
+		<music keyid="mustrkload" track="BGM1.ogg" />
+		<music keyid="mustrkstop" stop="1"/>
+		<music keyid="mustrkplay" play="1"/>
+		
+		<uimenu keyid="dialogtests" BGCOLOR="#0000AA" FGCOLOR="#FFFFFF" textsize="25">
+			<item con="Desutezeoid dialog system tests." noact="1"/>
+			<item con="-------------------" noact="1"/>
+			<item con="test normal dialog" keyid="uidialog1" stay="1"/>
+			<item con="test yes/no dialog" keyid="uidialog2" stay="1"/>
+			<item con="test custom color dialog" keyid="uidialog3" stay="1"/>
+			<item con="test custom text size dialog" keyid="uidialog4" stay="1"/>
+			<item con="test dialog with image" keyid="uidialog5" stay="1"/>
+			<item con="close menu"/>
+		</uimenu>
+		
+		
+		
+		<!--notice how this trigger lock triggers a sound event. note how the 
+lock keyid prevents the trigger keyid from re-triggering, thus the sound
+triggered by the two toggle switches being on plays only once, and only the 
+first time those toggle switches are in that state.-->
+		<triggerlock keyid="alpha3" lock="soundfx1lock1" trigger="soundfx1"/>
+		<sound keyid="soundfx1" sound="mip.ogg"/>
+		<batchset keyid="predelta" set="1">
+			<k keyid="thisisatest1"/>
+			<k keyid="thisisatest2"/>
+			<k keyid="thisisatest3"/>
+			<k keyid="delta"/>
+		</batchset>
+		<!--SPecial mode 2 batchset. this inverts the keyid's state when triggered. in this example, the two example "switches", are inverted.-->
+		<batchset keyid="switchinvert" set="2">
+			<k keyid="switch1"/>
+			<k keyid="switch2"/>
+		</batchset>
+		<!-- did you notice that label that says "timer" triggers a label that has a dissapearing act?
+here is how that works. after the seconds specified in "seconds" lapses, the keyid specified is removed.
+but only after the keyid is present will the countdown begin. it is safe to remove a keyid when it has a
+timeout fork associated with it. as the timeout instance in question will be removed automatically. 
+The timeout instance is also removed after the specified time lapses. also if the optional post keyid atribbute is set, a keyid will be passively added after timeout.-->
+		<timeout keyid="prototime" seconds="3.5" post="soundfx1"/>
+		<!--Explanation of timer: add cleartimer and startloop to pagekeys,
+		cleartimer sets timer keyids to 0, startloop starts the loop. NOTE:
+		THE "cleartimer" batchset MUST BE PLACED BEFORE the "startloop" batchset!!!-->
+		<batchset keyid="cleartimer" set="0">
+			<k keyid="timeloop1"/>
+			<k keyid="timeloop2"/>
+			<k keyid="timeloop3"/>
+		</batchset>
+		<!--AFTER the cleartimer batset has reset the timer keys, start the timer.-->
+		<batchset keyid="startloop" set="1">
+			<k keyid="timeloop1"/>
+		</batchset>
+		<!--the timeout loop itself. timeouts are an important part of keyid forking logic.-->
+		<timeout keyid="timeloop1" seconds="0.1" post="timeloop2"/>
+		<timeout keyid="timeloop2" seconds="0.1" post="timeloop3"/>
+		<timeout keyid="timeloop3" seconds="0.1" post="timeloop1"/>
+		<!--this is part of the plugin 'test.dzup.py'-->
+		<testfork keyid="switch1"/>
+	</forks>
+	<core>
+		<!--these are part of the plugin 'test.dzup.py'-->
+		<test x="200" y="200"/>
+		<test x="200" y="280"/>
+		<!--this is part of the plugin 'test2.dzup.py'-->
+		<test2 x="200" y="280" keyid="plugintest2acttest">
+			<act type="key"/>
+		</test2>
+		<test3 x="400" y="280" testval="hello"/>
+		<test3 x="400" y="380" testval="hello2"/>
+		<!--note the "hoverkey" attribute. this toggles in and out of the keyidlist based on wether the curser is over the label/img instance. this one triggers a label further down.-->
+		<label x="300" y="400" size="40" transp="1" FGCOLOR="#FFFFFF" hoverkey="onhov2">
+			<con>Hello world! :D</con>
+			<act type="none"/>
+		</label>
+		<!--This is the box object. it generates a solid color box of the specified size. like img, and label, it is clickable, has separate hover visual attributes, and so on. "COLOR" is an html #RRGGBB format color. as is "HOVCOLOR". hovcolor is used when the mouse is over the box, and "onhov" is specified as "1". otherwise "COLOR" is used. also you can overwride the default alpha values using "alpha" and "hovalpha" both alpha values should be a number from 0 to 255.
+		
+		Box Tip: use the selection tool in gimp on your backgorund and copy the position and size from the tool options tab.--> 
+		<box x="300" y="200" sizex="40" sizey="60" COLOR="#FF0000" alpha="60" hovalpha="150" onhov="1" HOVCOLOR="#FF0000">
+			<act type="none"/>
+		</box>
+				
+		<!--note on label colors: if you only specify "FGCOLOR" and set "transp" as "1", the label will have a transparent background.-->
+		<label x="80" y="130" size="24" transp="1" FGCOLOR="#000000" onkey="onhov1">
+			<con>Hey... an on-hover event. :o</con>
+			<act type="none"/>
+		</label>
+		
+		<!--here we have the label thats triggered in the hoverkey example above.-->
+		<label x="300" y="450" size="24" transp="1" FGCOLOR="#000000" onkey="onhov2">
+			<con>Hey... an on-hover event. :o</con>
+			<act type="none"/>
+		</label>
+		<!--basic page linking example.-->
+		<label x="0" y="200" size="24" FGCOLOR="#000088" BGCOLOR="#FFFFFF">
+			<con>click here!</con>
+			<act type="iref" ref="test1.xml"/>
+		</label>
+		<!--this is triggered by the batchset mentioned below.-->
+		<label x="300" y="200" size="24" transp="1" FGCOLOR="#FFFFFF" onkey="delta">
+			<con>:o Where did this come from? :)</con>
+			<act type="none"/>
+		</label>
+		<!--notice how this adds a keyid that triggers a batch set.-->
+		<label x="0" y="230" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="predelta">
+			<con>or here!</con>
+			<act type="iref" ref="test1.xml"/>
+		</label>
+		<!--this is the label that triggeres that timeout fork.--> 
+		<label x="0" y="180" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="prototime">
+			<con>timer (click me!)</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		
+		<label x="0" y="515" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="dialogtests">
+			<con>ui dialogs test/example menu.</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="0" y="535" size="24" BGCOLOR="#000088" FGCOLOR="#FFFFFF" keyid="uimenu1">
+			<con>test uimenu</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		
+		<!--take note how these toggle switches work. 
+see how, in each toggle switch, the "keyid" and "offkey" atributes in the "(off)" labels
+and the "takekey" and "onkey" in the "(on)" labels all have the same keyid.
+thats why only one label per switch, is visible at a time.-->
+		<label x="100" y="230" size="24" BGCOLOR="#880000" FGCOLOR="#FFFFFF" keyid="switch1" offkey="switch1">
+			<con>(off)</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="100" y="230" size="24" BGCOLOR="#008800" FGCOLOR="#FFFFFF" takekey="switch1" onkey="switch1">
+			<con>(on)</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="150" y="230" size="24" BGCOLOR="#880000" FGCOLOR="#FFFFFF" keyid="switch2" offkey="switch2">
+			<con>(off)</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="150" y="230" size="24" BGCOLOR="#008800" FGCOLOR="#FFFFFF" takekey="switch2" onkey="switch2">
+			<con>(on)</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<!--this label triggers a special "mode 2" batchset. thus inverting the switch states.-->
+		<label x="150" y="280" size="24" BGCOLOR="#880088" FGCOLOR="#FFFFFF"  keyid="switchinvert">
+			<con>(invert)</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="125" y="210" size="24" BGCOLOR="#000000" FGCOLOR="#FFFFFF" onkey="alpha">
+			<con>HI!</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="125" y="210" size="24" BGCOLOR="#000000" FGCOLOR="#FFFFFF" onkey="alpha2">
+			<con>Hello!</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="125" y="210" size="24" BGCOLOR="#000000" FGCOLOR="#FFFFFF" onkey="alpha3">
+			<con>Greetings!</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<label x="10" y="252" size="24" BGCOLOR="#000000" FGCOLOR="#FFFFFF" onkey="alpha4">
+			<con>Welcome To Desutezeoid!</con>
+			<act type="key" ref="test1.xml"/>
+		</label>
+		<!--this next label instance uses an "onclick" sound fx. img instances can also do this
+do note that setting the act type to "none" will cause the sound to not play.
+plese use either "iref" or "key"-->
+		<label x="0" y="0" size="16" sfxclick="1" sound="mip.ogg">
+			<con>click me for a sound fx!</con>
+			<act type="key"/>
+		</label>
+		<img x="80" y="80" hovpic="1" hoverkey="onhov1">
+			<con>no-tr-testimg0.png</con>
+			<altcon>no-tr-testimg1.png</altcon>
+			<act type="quit" ref="test1.xml"/>
+		</img>
+		<!--New fileloader opaque syntax. use in place of no-tr-* also works with other fileloader syntax schemes.-->
+		<img x="490" y="80">
+			<con>opaque--folx.png</con>
+			<act type="none" ref="test1.xml"/>
+		</img>
+		<img x="390" y="80">
+			<con>folx.png</con>
+			<act type="none" ref="test1.xml"/>
+		</img>
+		<label x="390" y="180" size="16">
+			<con>folx.png, (right is with opaque--* syntax)</con>
+			<act type="none"/>
+		</label>
+		<!--lets animate a test animation with that timeout loop in "globalcore"! See engine config file (ENGSYSTEM.xml) comments for further explanation.-->
+		<img x="300" y="100" onkey="timeloop1">
+			<con>no-tr-animtest1a.png</con>
+			<act type="none"/>
+		</img>
+		
+		<img x="300" y="100" onkey="timeloop2">
+			<con>no-tr-animtest1b.png</con>
+			<act type="none"/>
+		</img>
+		<img x="300" y="100" onkey="timeloop3">
+			<con>no-tr-animtest1c.png</con>
+			<act type="none"/>
+		</img>
+		<!--this is the label thats triggered by that timeout fork. why is it here? its here because it needs to be rendered after the test animation.-->
+		<label x="80" y="150" size="24" transp="1" FGCOLOR="#000000" onkey="prototime">
+			<con>this should dissapear in 3.5 seconds</con>
+			<act type="none"/>
+		</label>
+		<img x="0" y="0" mouseh="2" mousev="2" onkey="warptest1" takekey="warptest1">
+			<con>warptest1.jpg</con>
+			<act type="key"/>
+		</img>
+	</core>
+</main>
