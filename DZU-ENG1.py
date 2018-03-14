@@ -362,15 +362,17 @@ def pause(crash=False):
 		renmenu.extend([btnsurf])
 	pausetext=textrender("Game Paused.", uitextsize, uifgcolor, uibgcolor, 0)
 	pausetext2=textrender("Powered By: Desutezeoid " + str(vartree.engversion), uitextsize, uifgcolor, uibgcolor, 0)
-	pausetext3=textrender("A point and click adventure game engine. See DZU_README.md", uitextsize, uifgcolor, uibgcolor, 0)
+	pausetext3=textrender("Copyright (c) 2015-2018 Thomas Leathers and Contributors", uitextsize, uifgcolor, uibgcolor, 0)
+	pausetext4=textrender("A point and click adventure game engine. See DZU_README.md", uitextsize, uifgcolor, uibgcolor, 0)
 	retact=None
 	while noexit:
 		if dispu:
 			dispu=0
 			screensurf.fill(uibgcolor)
 			screensurf.blit(pausetext, (10, 10))
-			screensurf.blit(pausetext2, (10, screensurf.get_height()-uitextsize*2))
-			screensurf.blit(pausetext3, (10, screensurf.get_height()-uitextsize))
+			screensurf.blit(pausetext2, (10, screensurf.get_height()-uitextsize*3))
+			screensurf.blit(pausetext3, (10, screensurf.get_height()-uitextsize*2))
+			screensurf.blit(pausetext4, (10, screensurf.get_height()-uitextsize))
 			menuy=buttonheight+4
 			rectmenu=[]
 			for mnu in renmenu:
