@@ -16,6 +16,7 @@ import dzupluglib
 from dzulib1 import clicktab
 from dzulib1 import textrender
 from dzulib1 import filelookup
+import dzuinter
 
 from pygame.locals import *
 import xml.etree.ElementTree as ET
@@ -38,6 +39,10 @@ uifgcolorstr=uicolorstag.attrib.get("FGCOLOR", "#000000")
 uibgcolorstr=uicolorstag.attrib.get("BGCOLOR", "#FFFFFF")
 uitextsize=int(uicolorstag.attrib.get("textsize", "24"))
 
+
+dzuinter.uifgcolor=uifgcolor
+dzuinter.uibgcolor=uibgcolor
+dzuinter.uitextsize=uitextsize
 uiquittag=uitag.find("quit")
 uiquitmsg=uiquittag.attrib.get("MSG", "Are you sure you want to quit?")
 
@@ -324,7 +329,11 @@ for cnfplug in plugcnftag.findall("*"):
 		except AttributeError:
 			continue
 
-def pause():
+
+
+
+
+def pause(crash=False):
 	pausestart=time.time()
 	for plug in pluglistactive:
 		try:
@@ -332,9 +341,75 @@ def pause():
 		except AttributeError:
 			continue
 	noexit=1
+	scbak=screensurf.copy()
+	halfwidth=screensurf.get_width()//2
+	halfheight=screensurf.get_height()//2
+	subback=pygame.transform.scale(scbak, (halfwidth, halfheight))
+	buttonwidth=halfwidth//1.2
+	buttonheight=uitextsize+6
+	dispu=1
+	menulist=["Resume", "Load...", "Save...", "New Game", "Quit"]
+	renmenu=[]
+	for mnu in menulist:
+		rentext=textrender(mnu, uitextsize, uifgcolor, dzulib.colorboost(uibgcolor, 40), 0)
+		btnsurf=pygame.Surface((buttonwidth, buttonheight))
+		btnsurf.fill(dzulib.colorboost(uibgcolor, 40))
+		btnsurf.blit(rentext, (buttonwidth//2-rentext.get_width()//2, buttonheight//2-rentext.get_height()//2))
+		dzulib.trace3dbox(btnsurf, uibgcolor, pygame.Rect(0, 0, buttonwidth-1, buttonheight-1))
+		renmenu.extend([btnsurf])
+	pausetext=textrender("Game Paused: Desutezeoid " + str(vartree.engversion), uitextsize, uifgcolor, uibgcolor, 0)
+	retact=None
 	while noexit:
+		if dispu:
+			dispu=0
+			screensurf.fill(uibgcolor)
+			screensurf.blit(pausetext, (0, 0))
+			menuy=buttonheight+4
+			rectmenu=[]
+			for mnu in renmenu:
+				rectmenu.extend([screensurf.blit(mnu, (10, menuy))])
+				menuy+=buttonheight+4
+			
+			subbackrect=screensurf.blit(subback, (halfwidth-3, 3))
+			dzulib.trace3dbox(screensurf, uibgcolor, subbackrect, 2)
+		pygame.display.update()
 		time.sleep(0.1)
 		for event in pygame.event.get():
+			if event.type==MOUSEBUTTONDOWN:
+				if rectmenu[0].collidepoint(event.pos):
+					noexit=0
+					break
+				if rectmenu[1].collidepoint(event.pos):
+					dispu=1
+					selret=dzuinter.fileselect("load...")
+					if selret!=None:
+						retact=["load", selret]
+						noexit=0
+						break
+				if rectmenu[2].collidepoint(event.pos):
+					dispu=1
+					selret=dzuinter.fileselect("save...")
+					if selret!=None:
+						if selret=="autosave.sav":
+							dzuinter.OKpop("file \"autosave.sav\" is used for autosave.")
+						elif os.path.isfile(os.path.join(savepath, selret)):
+							if dzuinter.YNpop("file \"" + selret + "\" exists. overwrite?"):
+								retact=["save", selret]
+								noexit=0
+								break
+						else:
+							retact=["save", selret]
+							noexit=0
+							break
+				if rectmenu[3].collidepoint(event.pos):
+					if dzuinter.YNpop("Start a new game? Unsaved Progress will be lost!"):
+						noexit=0
+						retact=["newgame"]
+						break
+				if rectmenu[4].collidepoint(event.pos):
+					noexit=0
+					retact=["quit"]
+					break
 			if event.type==KEYDOWN:
 				if event.key == K_ESCAPE:
 					noexit=0
@@ -348,7 +423,7 @@ def pause():
 			plug.resume(pausestop)
 		except AttributeError:
 			continue
-	
+	return retact
 
 def saver(savefile="autosave.sav"):
 	global keysav
@@ -1105,7 +1180,23 @@ while quitflag==0:
 			break
 		if event.type == KEYDOWN:
 			if event.key == K_ESCAPE:
-				pause()
+				pausereturn=pause()
+				if pausereturn!=None:
+					if pausereturn[0]=="quit":
+						uiquit=1
+						break
+					if pausereturn[0]=="load":
+						loader(pausereturn[1], 1)
+						#reset dialogs
+						qmenuflg=0
+						qpopflg=0
+						break
+					if pausereturn[0]=="save":
+						saver(pausereturn[1])
+						break
+					if pausereturn[0]=="newgame":
+						newgame()
+						break
 		if event.type==MOUSEBUTTONUP:
 			for pluginst in pluglistactive:
 				pluginst.clickup(event)

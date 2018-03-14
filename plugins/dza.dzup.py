@@ -20,6 +20,7 @@ class PLUGIN_dza_dza:
 				try:
 					self.animfile=open(os.path.join("anim", self.anim), "r")
 				except IOError:
+					print("WARNING: Failed to load DZA script: \"" + self.anim + "\"")
 					return
 				self.animlist.extend([[self._animload_(self.animfile), 0, None, None, 0, 0, self.stopkey, self.anim, "none", self.globflg, self.layer]])
 		
@@ -33,13 +34,14 @@ class PLUGIN_dza_dza:
 					self.screensurf.blit(animsurf, (anim[4], anim[5]))
 		return
 	def pump(self):
-		
+		#DZA script parser core
 		for anim in self.animlist:
 			#print(anim)
 			framepassed=0
 			#loop until any non-frame function lines are parsed.
 			while framepassed==0:
 				animset=anim[0]
+				#stopkey check
 				if anim[6] in self.keylist and anim[6]!="0":
 					self.animlist.remove(anim)
 					self.keylist.remove(anim[6])
@@ -81,6 +83,7 @@ class PLUGIN_dza_dza:
 							kkey=animblock[1]
 							if kkey in self.keylist and kkey!="0":
 								self.keylist.remove(kkey)
+						#sound
 						if animcmd=="s":
 							try:
 								sound=animblock[1]
@@ -88,6 +91,7 @@ class PLUGIN_dza_dza:
 									sound.play()
 							except pygame.error:
 								continue
+						#unconditional goto
 						if animcmd=="g":
 							goloopstr=animblock[2]
 							if goloopstr=="i":
@@ -100,6 +104,7 @@ class PLUGIN_dza_dza:
 									anim[2]=None
 									if goloop==-1:
 										animblock[2]=goloop-1
+						#conditional goto
 						if animcmd=="cg":
 							congokey=animblock[3]
 							if congokey in self.keylist:
@@ -114,10 +119,13 @@ class PLUGIN_dza_dza:
 										anim[2]=None
 										if goloop==-1:
 											animblock[2]=goloop-1
+						#the wait and frame commands are the only commands that trigger framepassed.
+						#this and the acompanying while loop cause non-frame commands to be parsed quickly "between frames"
 						if animcmd=="w":
 							anim[2]=int(animblock[1])
 							anim[3]=None
 							anim[8]="none"
+							framepassed=1
 						if animcmd=="f":
 							anim[8]=animblock[1]
 							anim[3]=dzulib.filelookup(animblock[1])
@@ -127,32 +135,30 @@ class PLUGIN_dza_dza:
 							framepassed=1
 					else:
 						framepassed=1
-					
-	#called on pygame mousebuttondown events
 	def click(self, event):
 		return
-	#called on pygame mousebuttonup events
 	def clickup(self, event):
 		return
-	#called upon page load.
 	def pageclear(self):
+		#ignore pageclear if a save-state was just loaded
 		if self.loadflag==1:
 			self.loadflag=0
 		else:
+			#terminate non-global DZA script instances.
 			for anim in self.animlist:
 				if anim[9]==0:
 					self.animlist.remove(anim)
 		return
-	#optional config load tag. queries all plugins with each tag in the plugcnf section
 	def cnfload(self, plugcnf):
 		return
 	def _animload_(self, animfile):
 		animset=list()
 		for line in animfile.readlines():
+			#remove newline chars and ignore comments.
 			linex=((line.replace("\n", "")).split("#"))[0]
 			if not linex=="":
 				linelist=linex.split(";")
-				#preload samples
+				#preload samples and cache them into list structure.
 				if linelist[0]=="s":
 					try:
 						linelist[1]=pygame.mixer.Sound(os.path.join("sfx", linelist[1]))
@@ -160,6 +166,7 @@ class PLUGIN_dza_dza:
 						linelist[1]=None
 						
 				animset.extend([linelist])
+		#add exit at end of script.
 		animset.extend([["x"]])
 		#print(animset)
 		return animset
@@ -175,6 +182,7 @@ class PLUGIN_dza_dza:
 				layer=int(self.savitem.attrib.get("layer"))
 				self.globflg=int(self.savitem.attrib.get("global"))
 				y=int(self.savitem.attrib.get("y"))
+				#parse vars that might not be ints.
 				if framecountdown=="none":
 					framecountdown=None
 				else:
@@ -191,8 +199,10 @@ class PLUGIN_dza_dza:
 				print("fault")
 			#print(self.animlist)
 	def savwrite(self, savtag):
+		#remove old script pointers
 		for self.savitem in savtag.findall("DZAscriptpointer"):
 			savtag.remove(self.savitem)
+		#save each active script and its variout params as an element.
 		for self.scriptitem in self.animlist:
 			self.scriptelem=ET.SubElement(savtag, 'DZAscriptpointer')
 			self.scriptelem.set("point", str(self.scriptitem[1]))
@@ -207,7 +217,9 @@ class PLUGIN_dza_dza:
 
 
 
-
+#this plugin provides Desutezeoid with a script-based sequencing and animation system.
+#scripts can be rendered on as many layers as needed.
+#for example: you could have one animation behind a window, and another in front of it.
 
 
 
