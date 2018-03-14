@@ -42,6 +42,10 @@ class PLUGIN_test_test2:
 	def resume(self, seconds):
 		print("plugin test2.dzup.py receved resume call.")
 		print(seconds)
+	def keyup(self, event):
+		print("plugin test2.dzup.py receved KEYUP")
+	def keydown(self, event):
+		print("plugin test2.dzup.py receved KEYDOWN")
 
 
 

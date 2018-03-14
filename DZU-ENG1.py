@@ -1205,6 +1205,13 @@ while quitflag==0:
 		if event.type == QUIT:
 			uiquit=1
 			break
+		if event.type == KEYUP:
+			if not event.key == K_ESCAPE:
+				for pluginst in pluglistactive:
+					try:
+						pluginst.keyup(event)
+					except AttributeError:
+						continue
 		if event.type == KEYDOWN:
 			if event.key == K_ESCAPE:
 				pausereturn=pause()
@@ -1226,6 +1233,12 @@ while quitflag==0:
 						qpopflg=0
 						newgame()
 						break
+			else:
+				for pluginst in pluglistactive:
+					try:
+						pluginst.keydown(event)
+					except AttributeError:
+						continue
 		if event.type==MOUSEBUTTONUP:
 			for pluginst in pluglistactive:
 				pluginst.clickup(event)
