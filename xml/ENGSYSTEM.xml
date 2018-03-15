@@ -3,7 +3,7 @@
 	<!--window size-->
 	<screen x="800" y="600"/>
 	<!--Game/program Title/windown icon.-->
-	<title base="Desutezeoid v1.7.0 test program. " icon="icon.png" />
+	<title base="Desutezeoid v1.7.1 test program. " icon="icon.png" />
 	<!--page to load at engine start.-->
 	<beginref>startpage.xml</beginref>
 	<!--debug settings. used in development and testing. printkeys controls keyid list printing.

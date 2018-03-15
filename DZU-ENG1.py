@@ -23,7 +23,7 @@ import xml.etree.ElementTree as ET
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-engversion="v1.7.0"
+engversion="v1.7.1"
 print("Desutezeoid arbitrary point and click engine " + engversion)
 print("parsing ENGSYSTEM.xml")
 conftree = ET.parse(os.path.join("xml", "ENGSYSTEM.xml"))
@@ -485,7 +485,9 @@ def loader(savefile="autosave.sav", returnonerror=0):
 		BGMtrack=mainsavroot.find('pagelink').attrib.get("musictrack")
 		if BGMtrack=="??none??":
 			BGMtrack=None
+		pygame.mixer.music.stop()
 		if BGMtrack!=None:
+			
 			pygame.mixer.music.load(os.path.join(sfxpath, BGMtrack))
 			pygame.mixer.music.play(-1)
 		
@@ -568,6 +570,8 @@ def newgame():
 		keylist.extend(["0"])
 if not skipautoload:
 	loader()
+else:
+	newgame()
 	
 
 timeoutlist=list()

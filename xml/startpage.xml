@@ -10,7 +10,7 @@
 	</pagekeys>
 	<forks>
 		<anim keyid="fallcat" anim="catanim1.dza" layer="1"/>
-		<uipop keyid="aboutdiag" msg="A Point and Click Adventure game Engine. - V1.7.0" img="dzu_logo1.png" okkey="0"/>
+		<uipop keyid="aboutdiag" msg="A Point and Click Adventure game Engine. - V1.7.1" img="dzu_logo1.png" okkey="0"/>
 	</forks>
 	<core>
 		<label x="0" y="10" size="30" transp="1" FGCOLOR="#000000">

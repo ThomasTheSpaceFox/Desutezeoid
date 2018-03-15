@@ -1,6 +1,6 @@
 {THIS IS AN EXAMPLE README FOR USE BY DEVELOPERS}
 #Desutezeoid
-v1.7.0  {make sure this version number matches the engine version you use.}
+v1.7.1  {make sure this version number matches the engine version you use.}
 an arbitrary point and click engine.       
 Copyright (c) 2015-2018 Thomas Leathers and Contributors     
 see DZU_contributors.md for a list of contributors.

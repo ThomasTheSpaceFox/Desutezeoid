@@ -1,5 +1,5 @@
 #   Desutezeoid
-v1.7.0  
+v1.7.1  
 an arbitrary point and click engine.       
 Copyright (c) 2015-2018 Thomas Leathers and Contributors  
 see DZU_contributors.md for a list of contributors.
